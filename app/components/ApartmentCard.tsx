@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { Bed, Car, LinkSimple, MapPin, Ruler, Shower } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
+import { priceSuffix } from "@/lib/transaction";
 import { useApp, STATUS_LABELS } from "@/lib/AppContext";
 
 interface ApartmentCardProps {
@@ -82,13 +83,17 @@ export default function ApartmentCard({
           Comparar
         </label>
 
-        {/* Price tag */}
+        {/* Price tag (S006: "/mês" só no aluguel) */}
         <div className="absolute bottom-3 right-3">
           <div className="bg-navy-950/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-gold-400/20">
             <span className="text-gold-400 font-mono font-bold text-sm">
               {formatCurrency(apartment.total)}
             </span>
-            <span className="text-surface-400 text-xs ml-1">/mês</span>
+            {priceSuffix(apartment) && (
+              <span className="text-surface-400 text-xs ml-1">
+                {priceSuffix(apartment)}
+              </span>
+            )}
           </div>
         </div>
       </div>

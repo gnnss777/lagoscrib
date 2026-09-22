@@ -9,32 +9,43 @@ import {
   Buildings,
   MapPin,
 } from "@phosphor-icons/react";
-import { apartments as staticApartments, type Apartment } from "@/lib/data";
+import {
+  apartments as staticApartments,
+  saleApartments as staticSaleApartments,
+  type Apartment,
+} from "@/lib/data";
 import { COMPARE_MAX, COMPARE_MIN } from "@/lib/constants";
 import { toggleCompareSelection } from "@/lib/compare";
+import {
+  filterByTransaction,
+  type TransactionTab,
+} from "@/lib/transaction";
 import { useApp, STATUS_LABELS, type StatusType } from "@/lib/AppContext";
 import ApartmentCard from "./ApartmentCard";
 import AddApartmentForm from "./AddApartmentForm";
 import DetailModal from "./DetailModal";
 import CompareModal from "./CompareModal";
 
+const STATIC_POOL: Apartment[] = [...staticApartments, ...staticSaleApartments];
+
 const NEIGHBORHOODS = [
   "Todos",
-  ...Array.from(new Set(staticApartments.map((a) => a.neighborhood))),
+  ...Array.from(new Set(STATIC_POOL.map((a) => a.neighborhood))),
 ];
 
-// Combinar apartamentos estáticos com novos adicionados pelo usuário
+// Combinar apartamentos estáticos (aluguel + venda) com novos do usuário
+// (sem transaction = aluguel, aditivo S001).
 const getAllApartments = (): Apartment[] => {
   try {
     const stored = localStorage.getItem("apartamentos-app-new");
     if (stored) {
       const newApts: Apartment[] = JSON.parse(stored);
-      return [...staticApartments, ...newApts];
+      return [...STATIC_POOL, ...newApts];
     }
   } catch {
     // ignore
   }
-  return staticApartments;
+  return STATIC_POOL;
 };
 
 const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
@@ -52,6 +63,8 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [neighborhood, setNeighborhood] = useState("Todos");
   const [statusFilter, setStatusFilter] = useState<StatusType | "todos">("todos");
+  // Aba ativa (S006): Alugar exclui vendas; Comprar só vendas.
+  const [tab, setTab] = useState<TransactionTab>("alugar");
   const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(
     null
   );
@@ -78,8 +91,11 @@ export default function Dashboard() {
     compareIds.includes(a.id)
   );
 
+  // Pool da aba ativa — busca, bairro, status e stats operam sobre ele.
+  const tabApartments = filterByTransaction(allApartments, tab);
+
   const filteredApartments = useMemo(() => {
-    return allApartments.filter((apt) => {
+    return tabApartments.filter((apt) => {
       const matchesSearch =
         search === "" ||
         apt.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -94,10 +110,11 @@ export default function Dashboard() {
 
       return matchesSearch && matchesNeighborhood && matchesStatus;
     });
-  }, [search, neighborhood, statusFilter, getStatus, allApartments]);
+  }, [search, neighborhood, statusFilter, getStatus, tabApartments]);
 
+  // Stats refletem a aba ativa (AC-TOGGLE-01).
   const stats = useMemo(() => {
-    const all = allApartments.map((a) => ({ ...a, status: getStatus(a.id) }));
+    const all = tabApartments.map((a) => ({ ...a, status: getStatus(a.id) }));
     return {
       total: all.length,
       novo: all.filter((a) => a.status === "novo").length,
@@ -107,7 +124,7 @@ export default function Dashboard() {
       aprovado: all.filter((a) => a.status === "aprovado").length,
       recusado: all.filter((a) => a.status === "recusado").length,
     };
-  }, [allApartments, getStatus]);
+  }, [tabApartments, getStatus]);
 
   return (
     <div className="min-h-screen">
@@ -123,7 +140,7 @@ export default function Dashboard() {
                 Curitiba Apartamentos
               </h1>
               <p className="text-xs text-surface-500">
-                {allApartments.length} apartamentos encontrados
+                {tabApartments.length} apartamentos encontrados
               </p>
             </div>
           </div>
@@ -231,12 +248,40 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
+        {/* Toggle Alugar|Comprar (S006, UX spec F4, role switch duplo) */}
+        <div
+          data-testid="transaction-toggle"
+          role="group"
+          aria-label="Tipo de transação"
+          className="flex gap-1 p-1 mb-6 w-fit rounded-xl bg-navy-900/50 border border-navy-700/30"
+        >
+          {(
+            [
+              { value: "alugar", label: "Alugar" },
+              { value: "comprar", label: "Comprar" },
+            ] as { value: TransactionTab; label: string }[]
+          ).map(({ value, label }) => (
+            <button
+              key={value}
+              aria-pressed={tab === value}
+              onClick={() => setTab(value)}
+              className={`px-6 py-2.5 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
+                tab === value
+                  ? "bg-gold-400 text-navy-950"
+                  : "text-surface-400 hover:text-surface-50"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         {/* Results count */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-sm text-surface-400">
-            {filteredApartments.length === allApartments.length
+            {filteredApartments.length === tabApartments.length
               ? "Mostrando todos os apartamentos"
-              : `${filteredApartments.length} de ${allApartments.length} apartamentos`}
+              : `${filteredApartments.length} de ${tabApartments.length} apartamentos`}
           </p>
         </div>
 
