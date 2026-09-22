@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
   X,
   Bed,
@@ -16,8 +17,19 @@ import {
   NotePencil,
   Check,
   Clock,
+  CaretLeft,
+  CaretRight,
+  MagnifyingGlassPlus,
 } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
+import {
+  buildPhotoAlt,
+  buildPhotoCounter,
+  getGalleryPhotos,
+  nextPhotoIndex,
+  prevPhotoIndex,
+} from "@/lib/gallery";
+import ImageLightbox from "./ImageLightbox";
 import {
   useApp,
   STATUS_LABELS,
@@ -43,8 +55,43 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
   const [activeTab, setActiveTab] = useState<"details" | "notes">("details");
   const [newNote, setNewNote] = useState("");
   const [scheduledDate, setScheduledDate] = useState("");
+  // Galeria viewer-first (S003): índice, lightbox, falhas de carga (pula slide).
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [failedSrcs, setFailedSrcs] = useState<Set<string>>(new Set());
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  // Troca de imóvel = remount via key={apartment.id} no Dashboard:
+  // índice/lightbox/falhas sempre começam zerados, sem effect.
+
+  // Teclado da galeria (UX spec F1/AC-GAL-02): ←/→ navegam, Esc fecha o modal.
+  // (Com lightbox aberto, o Esc dele prevalece — o keydown dele fecha primeiro.)
+  useEffect(() => {
+    if (!apartment || lightboxOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [apartment, lightboxOpen, onClose]);
 
   if (!apartment) return null;
+
+  const allPhotos = getGalleryPhotos(apartment);
+  const photos = allPhotos.filter((p) => !failedSrcs.has(p.src));
+  const hasPhotos = photos.length > 0;
+  const safeIndex = hasPhotos ? photoIndex % photos.length : 0;
+  const currentPhoto = hasPhotos ? photos[safeIndex] : null;
+  const counter = hasPhotos ? buildPhotoCounter(safeIndex, photos.length) : null;
+
+  const goToPhoto = (i: number) => {
+    if (!hasPhotos) return;
+    setPhotoIndex(((i % photos.length) + photos.length) % photos.length);
+  };
+
+  const markFailed = (src: string) =>
+    setFailedSrcs((prev) => new Set(prev).add(src));
 
   const status = getStatus(apartment.id);
   const notes = getNotes(apartment.id);
@@ -93,40 +140,172 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
 
         {/* Modal content */}
         <motion.div
+          ref={panelRef}
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.4, 0, 0.2, 1] }}
           className="relative w-full max-w-2xl bg-navy-900 border border-navy-700/50 rounded-2xl overflow-hidden shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header image */}
-          <div className="relative h-56">
-            <img
-              src={apartment.image}
-              alt={apartment.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent" />
-
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 p-2 bg-navy-950/60 backdrop-blur-sm rounded-full border border-white/10 text-surface-50 hover:bg-navy-950/80 transition-colors"
+          {/* Galeria viewer-first (S003): principal 4:3 + thumbs + contador + legenda */}
+          <div data-testid="gallery">
+            <div
+              className="relative aspect-[4/3] bg-navy-950"
+              onTouchStart={(e) => setTouchStartX(e.touches[0].clientX)}
+              onTouchEnd={(e) => {
+                if (touchStartX === null) return;
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                setTouchStartX(null);
+                if (dx > 40) goToPhoto(prevPhotoIndex(safeIndex, photos.length));
+                else if (dx < -40) goToPhoto(nextPhotoIndex(safeIndex, photos.length));
+              }}
             >
-              <X size={20} />
-            </button>
+              {currentPhoto ? (
+                <button
+                  data-testid="gallery-main"
+                  aria-label={`Ampliar foto ${counter} de ${apartment.title}`}
+                  onClick={() => setLightboxOpen(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === "ArrowRight")
+                      goToPhoto(nextPhotoIndex(safeIndex, photos.length));
+                    else if (e.key === "ArrowLeft")
+                      goToPhoto(prevPhotoIndex(safeIndex, photos.length));
+                  }}
+                  className="absolute inset-0 w-full h-full cursor-zoom-in"
+                >
+                  <Image
+                    key={currentPhoto.src}
+                    src={currentPhoto.src}
+                    alt={buildPhotoAlt(apartment.title, safeIndex, photos.length)}
+                    fill
+                    sizes="(max-width: 672px) 100vw, 672px"
+                    className="object-cover"
+                    priority={safeIndex === 0}
+                    onError={() => markFailed(currentPhoto.src)}
+                  />
+                </button>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-surface-500">
+                  <Image
+                    src={apartment.image}
+                    alt={apartment.title}
+                    fill
+                    sizes="(max-width: 672px) 100vw, 672px"
+                    className="object-cover opacity-40"
+                  />
+                  <p className="relative text-sm bg-navy-950/70 px-3 py-1.5 rounded-lg">
+                    Fotos indisponíveis — veja o anúncio original
+                  </p>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent pointer-events-none" />
 
-            {/* Title overlay */}
-            <div className="absolute bottom-4 left-6 right-6">
-              <h2 className="text-xl font-bold text-surface-50 mb-1">
-                {apartment.title}
-              </h2>
-              <div className="flex items-center gap-1.5 text-surface-200 text-sm">
-                <MapPin size={14} weight="fill" className="text-gold-400" />
-                {apartment.address}
+              {/* Contador */}
+              {counter && (
+                <span
+                  data-testid="gallery-counter"
+                  className="absolute top-4 left-4 px-2.5 py-1 rounded-lg bg-navy-950/70 backdrop-blur-sm border border-white/10 text-surface-50 font-mono text-xs"
+                >
+                  {counter}
+                </span>
+              )}
+
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                aria-label="Fechar detalhes (Esc)"
+                className="absolute top-4 right-4 min-w-11 min-h-11 flex items-center justify-center bg-navy-950/60 backdrop-blur-sm rounded-full border border-white/10 text-surface-50 hover:bg-navy-950/80 transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Setas */}
+              {photos.length > 1 && (
+                <>
+                  <button
+                    data-testid="gallery-prev"
+                    aria-label="Foto anterior"
+                    onClick={() => goToPhoto(prevPhotoIndex(safeIndex, photos.length))}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center bg-navy-950/60 backdrop-blur-sm rounded-full border border-white/10 text-surface-50 hover:bg-navy-950/80 transition-colors"
+                  >
+                    <CaretLeft size={20} />
+                  </button>
+                  <button
+                    data-testid="gallery-next"
+                    aria-label="Próxima foto"
+                    onClick={() => goToPhoto(nextPhotoIndex(safeIndex, photos.length))}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center bg-navy-950/60 backdrop-blur-sm rounded-full border border-white/10 text-surface-50 hover:bg-navy-950/80 transition-colors"
+                  >
+                    <CaretRight size={20} />
+                  </button>
+                </>
+              )}
+
+              {/* Ampliar */}
+              {currentPhoto && (
+                <button
+                  aria-label="Abrir zoom da foto"
+                  onClick={() => setLightboxOpen(true)}
+                  className="absolute bottom-4 right-4 min-w-11 min-h-11 flex items-center justify-center gap-1.5 px-3 bg-navy-950/60 backdrop-blur-sm rounded-lg border border-white/10 text-surface-50 hover:bg-navy-950/80 transition-colors text-xs"
+                >
+                  <MagnifyingGlassPlus size={16} className="text-gold-400" />
+                  Ampliar
+                </button>
+              )}
+
+              {/* Title overlay */}
+              <div className="absolute bottom-4 left-6 right-24 pointer-events-none">
+                <h2 className="text-xl font-bold text-surface-50 mb-1">
+                  {apartment.title}
+                </h2>
+                <div className="flex items-center gap-1.5 text-surface-200 text-sm">
+                  <MapPin size={14} weight="fill" className="text-gold-400" />
+                  {apartment.address}
+                </div>
               </div>
             </div>
+
+            {/* Legenda + thumbs */}
+            {currentPhoto && (
+              <div className="px-6 pt-3">
+                <p data-testid="gallery-caption" className="text-surface-200 text-sm line-clamp-1">
+                  {currentPhoto.caption ?? `Foto ${safeIndex + 1} de ${photos.length}`}
+                </p>
+              </div>
+            )}
+            {photos.length > 1 && (
+              <div
+                data-testid="gallery-thumbs"
+                className="flex gap-2 overflow-x-auto px-6 pt-3 pb-1"
+                role="group"
+                aria-label="Miniaturas das fotos"
+              >
+                {photos.map((p, i) => (
+                  <button
+                    key={p.src}
+                    aria-label={`Ir para foto ${i + 1}`}
+                    aria-pressed={i === safeIndex}
+                    onClick={() => goToPhoto(i)}
+                    className={`relative w-20 h-14 shrink-0 rounded-xl overflow-hidden border transition-colors ${
+                      i === safeIndex
+                        ? "border-gold-400 ring-2 ring-gold-400/50"
+                        : "border-navy-700/50 opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <Image
+                      src={p.src}
+                      alt=""
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                      loading="lazy"
+                      onError={() => markFailed(p.src)}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Content */}
@@ -360,6 +539,20 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
             )}
           </div>
         </motion.div>
+
+        {/* Lightbox fullscreen (S003) — foco volta à galeria ao fechar */}
+        {lightboxOpen && hasPhotos && (
+          <ImageLightbox
+            photos={photos}
+            index={safeIndex}
+            title={apartment.title}
+            onIndexChange={goToPhoto}
+            onClose={() => {
+              setLightboxOpen(false);
+              panelRef.current?.querySelector<HTMLElement>('[data-testid="gallery-main"]')?.focus();
+            }}
+          />
+        )}
       </motion.div>
     </AnimatePresence>
   );

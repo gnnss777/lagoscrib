@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { Bed, Car, LinkSimple, MapPin, Ruler, Shower } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
@@ -38,12 +39,15 @@ export default function ApartmentCard({
       className="card-apartment cursor-pointer group"
       onClick={() => onSelect(apartment)}
     >
-      {/* Image */}
+      {/* Image (S003: capa default — mini-galeria P2 fora de escopo) */}
       <div className="relative h-48 overflow-hidden">
-        <img
+        <Image
           src={apartment.image}
           alt={apartment.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority={index === 0}
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-transparent" />

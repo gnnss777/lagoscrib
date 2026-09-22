@@ -251,9 +251,10 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Detail Modal */}
+      {/* Detail Modal (key = remount limpa galeria/lightbox por imóvel) */}
       {selectedApartment && (
         <DetailModal
+          key={selectedApartment.id}
           apartment={selectedApartment}
           onClose={() => setSelectedApartment(null)}
         />
