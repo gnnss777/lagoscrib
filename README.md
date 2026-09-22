@@ -84,3 +84,11 @@ lib/
 | Gold 400 | #C8A66B | Acentos e destaques |
 | Surface 50 | #F0F0F5 | Texto primário |
 | Surface 400 | #8A92A6 | Texto secundário |
+
+## Novidades (leva dores-consumidor — 22/09/2026)
+
+- **Galeria completa**: todo imóvel com 11 fotos reais do anúncio, navegáveis com zoom.
+- **Custo total de verdade**: aluguel + condomínio + IPTU somados, com estimativas de entrada e mudança (sempre rotuladas como estimativa).
+- **Compra e aluguel**: aba Alugar | Comprar com 5 imóveis à venda de Curitiba.
+- **Confiança**: selo de verificação com data e origem, botão Confirmar disponibilidade e aviso anti-golpe em todo contato.
+- **Visita e comparação**: checklist de visita exportável (copiar/WhatsApp), planta quando divulgada e comparação lado a lado de até 4 imóveis.
