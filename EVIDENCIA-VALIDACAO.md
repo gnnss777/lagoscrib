@@ -148,3 +148,7 @@ Evidencia por story (test-evidence-review: todas ADEQUATE, nao so existentes): S
 Regression: docs/regression-suite.md (fluxo aluguel intocado + novos fluxos, 100% verde); workers=1 (flake de imagem sob 4 workers = carga, nao bug).
 Changelog: corpo dos 2 PRs (interno) + README (player-facing).
 Proximo: push + PR-1 feat/dados-reais (48da29d) -> PR-2 feat/dores-consumidor -> upstream gnnss777/lagoscrib, merge em sequencia, CI monitorado. Travado ate OK do Gabriel.
+
+--- PRS ABERTOS (2026-09-22) ---
+PR-1: https://github.com/gnnss777/lagoscrib/pull/1 (feat/dados-reais -> master, MERGEABLE, sem CI no upstream).
+PR-2: https://github.com/gnnss777/lagoscrib/pull/2 (feat/dores-consumidor -> master, merge apos o #1).
