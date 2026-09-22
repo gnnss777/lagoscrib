@@ -48,7 +48,8 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
   // exact: sem ele, "Detalhes" casa por substring o "Fechar detalhes (Esc)".
   await page.getByRole("button", { name: "Detalhes", exact: true }).click();
   const agendado = page.getByRole("button", { name: "Visita agendada" });
-  await expect(agendado).toHaveAttribute("class", /ring-gold-400/);
+  // Tema lightbox (DESIGN.md v2): anel de seleção em ink sobre card claro.
+  await expect(agendado).toHaveAttribute("class", /ring-ink/);
 
   // Checklist v2 funciona sobre o estado v1 e persiste após reload.
   await page.getByRole("button", { name: "Checklist" }).click();

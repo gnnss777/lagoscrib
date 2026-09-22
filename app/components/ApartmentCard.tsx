@@ -55,7 +55,7 @@ export default function ApartmentCard({
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-night/80 via-transparent to-transparent" />
 
         {/* Status badge */}
         <div className="absolute top-3 left-3">
@@ -68,8 +68,8 @@ export default function ApartmentCard({
         <label
           className={`absolute top-3 right-3 flex items-center gap-1.5 min-w-11 min-h-11 px-2.5 rounded-lg backdrop-blur-sm border text-xs font-medium transition-colors cursor-pointer ${
             compareChecked
-              ? "bg-gold-400 text-navy-950 border-gold-400"
-              : "bg-navy-950/80 text-surface-50 border-white/10 hover:border-gold-400/50"
+              ? "bg-taxi text-ink border-taxi"
+              : "bg-night/80 text-paper border-paper/20 hover:border-taxi"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -78,19 +78,19 @@ export default function ApartmentCard({
             checked={compareChecked}
             onChange={() => onToggleCompare(apartment)}
             aria-label={`Comparar ${apartment.title}`}
-            className="w-5 h-5 shrink-0 accent-gold-400"
+            className="w-5 h-5 shrink-0 accent-taxi"
           />
           Comparar
         </label>
 
         {/* Price tag (S006: "/mês" só no aluguel) */}
         <div className="absolute bottom-3 right-3">
-          <div className="bg-navy-950/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-gold-400/20">
-            <span className="text-gold-400 font-mono font-bold text-sm">
+          <div className="bg-night/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-taxi/40">
+            <span className="text-taxi font-mono font-bold text-sm">
               {formatCurrency(apartment.total)}
             </span>
             {priceSuffix(apartment) && (
-              <span className="text-surface-400 text-xs ml-1">
+              <span className="text-paper/70 text-xs ml-1">
                 {priceSuffix(apartment)}
               </span>
             )}
@@ -101,18 +101,18 @@ export default function ApartmentCard({
       {/* Content */}
       <div className="p-5">
         {/* Title & Location */}
-        <h3 className="text-surface-50 font-semibold text-base mb-1 line-clamp-1">
+        <h3 className="text-ink font-semibold text-base mb-1 line-clamp-1">
           {apartment.title}
         </h3>
-        <div className="flex items-center gap-1.5 text-surface-400 text-sm mb-4">
-          <MapPin size={14} weight="fill" className="text-gold-400" />
+        <div className="flex items-center gap-1.5 text-ink-soft text-sm mb-4">
+          <MapPin size={14} weight="fill" className="text-amberink" />
           <span className="line-clamp-1">
             {apartment.neighborhood} &middot; Curitiba
           </span>
         </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-4 text-surface-400">
+        <div className="flex items-center gap-4 text-ink-soft">
           <div className="flex items-center gap-1.5">
             <Bed size={15} />
             <span className="text-sm">{apartment.bedrooms}</span>
@@ -132,14 +132,14 @@ export default function ApartmentCard({
         </div>
 
         {/* Main info: Address + Phone + WhatsApp */}
-        <div className="mt-2 mb-3 text-surface-300 text-xs space-y-0.5">
+        <div className="mt-2 mb-3 text-ink-soft text-xs space-y-0.5">
           <div className="line-clamp-1">{apartment.address}</div>
           {apartment.phone ? (
             <a
               href={`https://wa.me/55${apartment.phone.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-gold-400 hover:text-gold-300 font-medium"
+              className="inline-flex items-center gap-1 text-amberink hover:text-ink font-medium"
             >
               <span>📱</span>
               <span>{apartment.phone}</span>
@@ -149,7 +149,7 @@ export default function ApartmentCard({
               href={apartment.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-gold-400 hover:text-gold-300 font-medium"
+              className="inline-flex items-center gap-1 text-amberink hover:text-ink font-medium"
             >
               <LinkSimple size={13} />
               <span>{apartment.source ?? "Ver anúncio original"}</span>

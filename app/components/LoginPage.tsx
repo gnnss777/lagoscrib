@@ -30,8 +30,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      {/* Background subtle gradient */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,rgba(200,166,107,0.05)_0%,transparent_50%)]" />
+      {/* Background: dois brilhos táxi suaves (conceito lightbox) */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-taxi/20 blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-pastel/60 blur-3xl" />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -45,32 +48,32 @@ export default function LoginPage() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-500 mb-4"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-taxi to-taxi-strong mb-4 shadow-lg"
           >
-            <Key size={28} weight="bold" className="text-navy-950" />
+            <Key size={28} weight="bold" className="text-ink" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-surface-50 tracking-tight">
+          <h1 className="text-2xl font-bold text-ink tracking-tight">
             Curitiba Apartamentos
           </h1>
-          <p className="text-surface-400 mt-2 text-sm">
+          <p className="text-ink-soft mt-2 text-sm">
             Gerencie seus apartamentos em um só lugar
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="relative bg-navy-900/80 border border-navy-700/50 rounded-2xl p-8 backdrop-blur-sm">
-          {/* Gold top accent line */}
-          <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-gold-400/40 to-transparent" />
+        <div className="relative bg-card border border-line rounded-2xl p-8 shadow-xl">
+          {/* Taxi top accent line */}
+          <div className="absolute top-0 left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-taxi to-transparent" />
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-semibold text-surface-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-2">
                 Usuário
               </label>
               <div className="relative">
                 <User
                   size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-500"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
                 />
                 <input
                   type="text"
@@ -84,13 +87,13 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-surface-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-2">
                 Senha
               </label>
               <div className="relative">
                 <Lock
                   size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-500"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
                 />
                 <input
                   type="password"
@@ -107,7 +110,7 @@ export default function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm"
+                className="flex items-center gap-2 px-4 py-3 bg-st-red-bg border border-st-red/30 rounded-xl text-st-red text-sm"
               >
                 <X size={16} weight="bold" />
                 {error}
@@ -120,14 +123,14 @@ export default function LoginPage() {
               className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
-                <div className="w-5 h-5 border-2 border-navy-950/30 border-t-navy-950 rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-ink/30 border-t-ink rounded-full animate-spin" />
               ) : (
                 "Entrar"
               )}
             </button>
           </form>
 
-          <p className="text-center text-xs text-surface-500 mt-6">
+          <p className="text-center text-xs text-muted mt-6">
             MVP Demo &bull; Dados locais
           </p>
         </div>

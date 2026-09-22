@@ -89,7 +89,7 @@ export default function ImageLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={`${title} — ${counter}`}
-      className="fixed inset-0 z-[60] bg-navy-950/95 backdrop-blur-sm flex flex-col"
+      className="fixed inset-0 z-[60] bg-night/95 backdrop-blur-sm flex flex-col"
       onClick={onClose}
     >
       {/* Barra superior */}
@@ -97,7 +97,7 @@ export default function ImageLightbox({
         className="flex items-center justify-between px-4 h-16 shrink-0"
         onClick={(e) => e.stopPropagation()}
       >
-        <span data-testid="lightbox-counter" className="text-surface-50 font-mono text-sm">
+        <span data-testid="lightbox-counter" className="text-paper font-mono text-sm">
           {counter}
         </span>
         <div className="flex items-center gap-2">
@@ -105,16 +105,16 @@ export default function ImageLightbox({
             data-testid="lightbox-zoom"
             aria-label={`Zoom ${zoom}x — ativar para ${cycleZoomLevel(zoom)}x`}
             onClick={() => setZoom((z) => cycleZoomLevel(z))}
-            className="min-w-11 min-h-11 px-3 flex items-center justify-center gap-1.5 rounded-lg border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors text-sm font-mono"
+            className="min-w-11 min-h-11 px-3 flex items-center justify-center gap-1.5 rounded-lg border border-paper/25 text-paper hover:border-taxi transition-colors text-sm font-mono"
           >
-            <MagnifyingGlassPlus size={18} className="text-gold-400" />
+            <MagnifyingGlassPlus size={18} className="text-taxi" />
             {zoom}x
           </button>
           <button
             ref={closeRef}
             aria-label="Fechar zoom (Esc)"
             onClick={onClose}
-            className="min-w-11 min-h-11 flex items-center justify-center rounded-lg border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+            className="min-w-11 min-h-11 flex items-center justify-center rounded-lg border border-paper/25 text-paper hover:border-taxi transition-colors"
           >
             <X size={20} />
           </button>
@@ -179,17 +179,17 @@ export default function ImageLightbox({
         <button
           aria-label="Foto anterior"
           onClick={() => goTo(prevPhotoIndex(index, total))}
-          className="min-w-11 min-h-11 flex items-center justify-center rounded-lg border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+          className="min-w-11 min-h-11 flex items-center justify-center rounded-lg border border-paper/25 text-paper hover:border-taxi transition-colors"
         >
           <CaretLeft size={20} />
         </button>
-        <p className="text-surface-200 text-sm text-center line-clamp-1 flex-1">
+        <p className="text-paper text-sm text-center line-clamp-1 flex-1">
           {photo.caption ?? `Foto ${index + 1} de ${total}`}
         </p>
         <button
           aria-label="Próxima foto"
           onClick={() => goTo(nextPhotoIndex(index, total))}
-          className="min-w-11 min-h-11 flex items-center justify-center rounded-lg border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+          className="min-w-11 min-h-11 flex items-center justify-center rounded-lg border border-paper/25 text-paper hover:border-taxi transition-colors"
         >
           <CaretRight size={20} />
         </button>

@@ -35,7 +35,7 @@ export default function VisitChecklist({ apartment }: VisitChecklistProps) {
 
   return (
     <div data-testid="checklist" className="space-y-4">
-      <p className="text-surface-400 text-sm">
+      <p className="text-ink-soft text-sm">
         {checked.length} de {CHECKLIST_ITEMS.length} itens marcados
       </p>
 
@@ -47,8 +47,8 @@ export default function VisitChecklist({ apartment }: VisitChecklistProps) {
               <label
                 className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors min-h-11 ${
                   done
-                    ? "bg-gold-400/10 border-gold-400/30 text-surface-50"
-                    : "bg-navy-800/30 border-navy-700/30 text-surface-200 hover:border-navy-600"
+                    ? "bg-pastel border-taxi/50 text-ink"
+                    : "bg-card border-line text-ink hover:border-inputbd"
                 }`}
               >
                 <input
@@ -56,10 +56,10 @@ export default function VisitChecklist({ apartment }: VisitChecklistProps) {
                   checked={done}
                   onChange={() => toggleChecklistItem(apartment.id, item.id)}
                   aria-label={item.label}
-                  className="w-5 h-5 shrink-0 accent-gold-400"
+                  className="w-5 h-5 shrink-0 accent-taxi"
                 />
                 <span className="text-sm flex items-center gap-2">
-                  {done && <Check size={14} weight="bold" className="text-gold-400 shrink-0" />}
+                  {done && <Check size={14} weight="bold" className="text-amberink shrink-0" />}
                   {item.label}
                 </span>
               </label>
@@ -71,7 +71,7 @@ export default function VisitChecklist({ apartment }: VisitChecklistProps) {
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleCopy}
-          className="flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium bg-gold-400 text-navy-950 hover:bg-gold-500 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium bg-taxi text-ink hover:bg-taxi-strong transition-colors"
         >
           <CopySimple size={16} />
           Copiar
@@ -80,14 +80,14 @@ export default function VisitChecklist({ apartment }: VisitChecklistProps) {
           href={buildWhatsAppLink(text)}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-inputbd bg-card text-ink hover:border-ink transition-colors"
         >
-          <WhatsappLogo size={16} className="text-gold-400" />
+          <WhatsappLogo size={16} className="text-st-green" />
           WhatsApp
         </a>
       </div>
 
-      <p role="status" aria-live="polite" className="text-surface-200 text-sm min-h-6">
+      <p role="status" aria-live="polite" className="text-ink-soft text-sm min-h-6">
         {feedback}
       </p>
     </div>

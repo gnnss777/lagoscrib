@@ -172,29 +172,29 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-navy-950/80 backdrop-blur-md border-b border-navy-700/30">
+      <header className="sticky top-0 z-40 bg-paper/85 backdrop-blur-md border-b border-line">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center">
-              <Buildings size={20} weight="bold" className="text-navy-950" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-taxi to-taxi-strong flex items-center justify-center">
+              <Buildings size={20} weight="bold" className="text-ink" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-surface-50 tracking-tight">
+              <h1 className="text-lg font-bold text-ink tracking-tight">
                 Curitiba Apartamentos
               </h1>
-              <p className="text-xs text-surface-500">
+              <p className="text-xs text-muted">
                 {tabApartments.length} apartamentos encontrados
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-sm text-surface-400 hidden sm:block">
-              Olá, <span className="text-gold-400 font-medium">{username}</span>
+            <span className="text-sm text-ink-soft hidden sm:block">
+              Olá, <span className="text-amberink font-medium">{username}</span>
             </span>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-3 py-2 text-surface-400 hover:text-surface-50 hover:bg-navy-800/50 rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 text-ink-soft hover:text-ink hover:bg-sand rounded-lg transition-colors text-sm"
             >
               <SignOut size={16} />
               <span className="hidden sm:inline">Sair</span>
@@ -211,19 +211,19 @@ export default function Dashboard() {
           className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8"
         >
           {[
-            { label: "Total", value: stats.total, color: "text-surface-50" },
-            { label: "Novos", value: stats.novo, color: "text-surface-400" },
-            { label: "Agendados", value: stats.agendado, color: "text-blue-400" },
-            { label: "Feitas", value: stats.feita, color: "text-purple-400" },
-            { label: "Negociação", value: stats.negociacao, color: "text-gold-400" },
-            { label: "Aprovados", value: stats.aprovado, color: "text-green-400" },
+            { label: "Total", value: stats.total, color: "text-ink" },
+            { label: "Novos", value: stats.novo, color: "text-ink-soft" },
+            { label: "Agendados", value: stats.agendado, color: "text-st-blue" },
+            { label: "Feitas", value: stats.feita, color: "text-st-purple" },
+            { label: "Negociação", value: stats.negociacao, color: "text-amberink" },
+            { label: "Aprovados", value: stats.aprovado, color: "text-st-green" },
           ].map(({ label, value, color }) => (
             <div
               key={label}
-              className="bg-navy-900/50 border border-navy-700/30 rounded-xl p-3 text-center"
+              className="bg-card border border-line rounded-xl p-3 text-center shadow-sm"
             >
               <div className={`text-2xl font-bold ${color}`}>{value}</div>
-              <div className="text-xs text-surface-500 mt-0.5">{label}</div>
+              <div className="text-xs text-muted mt-0.5">{label}</div>
             </div>
           ))}
         </motion.div>
@@ -239,14 +239,14 @@ export default function Dashboard() {
           <div className="flex-1">
             <label
               htmlFor="dash-search"
-              className="block text-xs font-medium text-surface-400 mb-1"
+              className="block text-xs font-medium text-ink-soft mb-1"
             >
               Buscar
             </label>
             <div className="relative">
               <MagnifyingGlass
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
               />
               <input
                 id="dash-search"
@@ -265,14 +265,14 @@ export default function Dashboard() {
           <div>
             <label
               htmlFor="dash-bairro"
-              className="block text-xs font-medium text-surface-400 mb-1"
+              className="block text-xs font-medium text-ink-soft mb-1"
             >
               Bairro
             </label>
             <div className="relative">
               <MapPin
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
               />
               <select
                 id="dash-bairro"
@@ -295,14 +295,14 @@ export default function Dashboard() {
           <div>
             <label
               htmlFor="dash-status"
-              className="block text-xs font-medium text-surface-400 mb-1"
+              className="block text-xs font-medium text-ink-soft mb-1"
             >
               Status
             </label>
             <div className="relative">
               <FunnelSimple
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
               />
               <select
                 id="dash-status"
@@ -328,7 +328,7 @@ export default function Dashboard() {
           <div>
             <label
               htmlFor="dash-sort"
-              className="block text-xs font-medium text-surface-400 mb-1"
+              className="block text-xs font-medium text-ink-soft mb-1"
             >
               Ordenar
             </label>
@@ -354,7 +354,7 @@ export default function Dashboard() {
           data-testid="transaction-toggle"
           role="group"
           aria-label="Tipo de transação"
-          className="flex gap-1 p-1 mb-6 w-fit rounded-xl bg-navy-900/50 border border-navy-700/30"
+          className="flex gap-1 p-1 mb-6 w-fit rounded-xl bg-card border border-line shadow-sm"
         >
           {(
             [
@@ -368,8 +368,8 @@ export default function Dashboard() {
               onClick={() => setTab(value)}
               className={`px-6 py-2.5 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
                 tab === value
-                  ? "bg-gold-400 text-navy-950"
-                  : "text-surface-400 hover:text-surface-50"
+                  ? "bg-taxi text-ink shadow-sm"
+                  : "text-muted hover:text-ink"
               }`}
             >
               {label}
@@ -389,7 +389,7 @@ export default function Dashboard() {
 
         {/* Results count */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-surface-400" aria-live="polite">
+          <p className="text-sm text-ink-soft" aria-live="polite">
             {filteredApartments.length === tabApartments.length
               ? "Mostrando todos os apartamentos"
               : `${filteredApartments.length} de ${tabApartments.length} apartamentos`}
@@ -421,11 +421,11 @@ export default function Dashboard() {
             animate={{ opacity: 1 }}
             className="text-center py-16"
           >
-            <Buildings size={48} className="mx-auto text-surface-500 mb-4" />
-            <p className="text-surface-400 text-lg mb-2">
+            <Buildings size={48} className="mx-auto text-muted mb-4" />
+            <p className="text-ink-soft text-lg mb-2">
               Nenhum apartamento encontrado
             </p>
-            <p className="text-surface-500 text-sm mb-4">
+            <p className="text-muted text-sm mb-4">
               {activeFilterCount > 0
                 ? `Nenhum imóvel com os ${activeFilterCount} filtro${activeFilterCount > 1 ? "s" : ""} atuais — ajuste os filtros`
                 : "Tente ajustar os filtros de busca"}
@@ -433,7 +433,7 @@ export default function Dashboard() {
             {activeFilterCount > 0 && (
               <button
                 onClick={() => setFilters(DEFAULT_FILTERS)}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
               >
                 Limpar filtros
               </button>
@@ -446,11 +446,11 @@ export default function Dashboard() {
       {compareIds.length > 0 && (
         <div
           data-testid="compare-bar"
-          className="fixed bottom-0 inset-x-0 z-40 bg-navy-950/90 backdrop-blur-md border-t border-gold-400/20"
+          className="fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur-md border-t border-line shadow-[0_-4px_16px_rgba(26,26,26,0.08)]"
         >
           <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-3">
-            <p className="text-sm text-surface-200">
-              <span className="font-mono font-bold text-gold-400">
+            <p className="text-sm text-ink-soft">
+              <span className="font-mono font-bold text-amberink">
                 {compareIds.length}
               </span>{" "}
               selecionado{compareIds.length > 1 ? "s" : ""} (máx {COMPARE_MAX})
@@ -459,7 +459,7 @@ export default function Dashboard() {
               <p
                 data-testid="compare-blocked"
                 role="alert"
-                className="text-sm text-gold-300"
+                className="text-sm text-amberink"
               >
                 Máximo de {COMPARE_MAX} imóveis — desmarque um para trocar.
               </p>
@@ -467,7 +467,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <button
                 onClick={clearCompare}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-inputbd text-ink hover:border-ink transition-colors"
               >
                 Limpar
               </button>
@@ -480,7 +480,7 @@ export default function Dashboard() {
                     ? `Selecione pelo menos ${COMPARE_MIN} imóveis`
                     : "Abrir comparação"
                 }
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-gold-400 text-navy-950 hover:bg-gold-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Comparar ({compareIds.length})
               </button>
