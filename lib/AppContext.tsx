@@ -72,12 +72,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(defaultState);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount. Hidratação SSR-safe: localStorage só
+  // existe no client; ler no initializer causaria hydration mismatch.
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- ver comentário acima
         setState((prev) => ({ ...prev, ...parsed }));
       }
     } catch {
@@ -202,6 +204,7 @@ export function useApp(): AppContextValue {
 
 export function useHydrated(): boolean {
   const [hydrated, setHydrated] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- flag SSR-safe padrão: evita mismatch entre HTML do servidor e primeiro render do client.
   useEffect(() => setHydrated(true), []);
   return hydrated;
 }

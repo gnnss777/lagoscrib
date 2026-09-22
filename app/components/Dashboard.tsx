@@ -71,7 +71,7 @@ export default function Dashboard() {
 
       return matchesSearch && matchesNeighborhood && matchesStatus;
     });
-  }, [search, neighborhood, statusFilter, getStatus]);
+  }, [search, neighborhood, statusFilter, getStatus, allApartments]);
 
   const stats = useMemo(() => {
     const all = allApartments.map((a) => ({ ...a, status: getStatus(a.id) }));
@@ -84,7 +84,7 @@ export default function Dashboard() {
       aprovado: all.filter((a) => a.status === "aprovado").length,
       recusado: all.filter((a) => a.status === "recusado").length,
     };
-  }, [getStatus]);
+  }, [allApartments, getStatus]);
 
   return (
     <div className="min-h-screen">
