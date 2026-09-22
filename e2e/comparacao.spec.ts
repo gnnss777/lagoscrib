@@ -42,6 +42,11 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
   await expect(cols.nth(1)).toContainText("R$ 3.136");
   await expect(cols.nth(2)).toContainText("R$ 3.220");
 
+  // S012: metragem em cada escolha — título + m² + preço no cabeçalho.
+  await expect(cols.nth(0)).toContainText("123m²");
+  await expect(cols.nth(1)).toContainText("78m²");
+  await expect(cols.nth(2)).toContainText("90m²");
+
   // Totais corretos + flags honestas + links originais clicáveis.
   // (3 primeiros têm vaga — "sem garagem" é do Bufren, fora da seleção.)
   await expect(table).toContainText("R$ 2.350");
