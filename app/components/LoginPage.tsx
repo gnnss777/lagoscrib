@@ -1,31 +1,91 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Key, Lock, User, X } from "@phosphor-icons/react";
+import { signIn } from "next-auth/react";
 import { useApp } from "@/lib/AppContext";
+import { sanitizeNext } from "@/lib/sanitize";
 
 export default function LoginPage() {
-  const { login } = useApp();
+  const { login, setSessionUser } = useApp();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [backend, setBackend] = useState(false);
+  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
+
+  useEffect(() => {
+    fetch("/api/public/auth/status")
+      .then((r) => r.json())
+      .then((d) => setBackend(Boolean(d?.backend)))
+      .catch(() => setBackend(false));
+  }, []);
+
+  function redirectNext() {
+    const params = new URLSearchParams(window.location.search);
+    const next = sanitizeNext(params.get("next"));
+    if (next) window.location.assign(next);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setInfo("");
     setIsLoading(true);
 
-    // Simulate delay
-    await new Promise((r) => setTimeout(r, 400));
+    try {
+      if (!backend) {
+        // Modo legado local (sem backend configurado, apenas dev).
+        await new Promise((r) => setTimeout(r, 400));
+        if (login(username, password)) {
+          redirectNext();
+        } else {
+          setError("Usuário ou senha incorretos");
+        }
+        return;
+      }
 
-    if (login(username, password)) {
-      setError("");
-    } else {
-      setError("Usuário ou senha incorretos");
+      if (mode === "register") {
+        const res = await fetch("/api/public/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email: username, password }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setError(data?.details?.[0]?.message ?? data?.error ?? "Erro ao criar conta");
+          return;
+        }
+      }
+
+      if (mode === "forgot") {
+        await fetch("/api/public/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: username }),
+        });
+        setInfo("Se o e-mail existir, você receberá instruções de redefinição.");
+        return;
+      }
+
+      const result = await signIn("credentials", {
+        email: username,
+        password,
+        redirect: false,
+      });
+      if (result?.ok) {
+        setSessionUser(username.toLowerCase());
+        redirectNext();
+      } else {
+        setError("Usuário ou senha incorretos");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -66,9 +126,30 @@ export default function LoginPage() {
           <div className="absolute top-0 left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-taxi to-transparent" />
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {backend && mode === "register" && (
+              <div>
+                <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-2">
+                  Nome
+                </label>
+                <div className="relative">
+                  <User
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
+                  />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="input-field pl-12"
+                    placeholder="Digite seu nome"
+                    autoComplete="name"
+                  />
+                </div>
+              </div>
+            )}
             <div>
               <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-2">
-                Usuário
+                {backend ? "E-mail" : "Usuário"}
               </label>
               <div className="relative">
                 <User
@@ -76,16 +157,17 @@ export default function LoginPage() {
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
                 />
                 <input
-                  type="text"
+                  type={backend ? "email" : "text"}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="input-field pl-12"
-                  placeholder="Digite seu usuário"
+                  placeholder={backend ? "voce@exemplo.com" : "Digite seu usuário"}
                   autoComplete="username"
                 />
               </div>
             </div>
 
+            {mode !== "forgot" && (
             <div>
               <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-2">
                 Senha
@@ -105,6 +187,7 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+            )}
 
             {error && (
               <motion.div
@@ -117,21 +200,55 @@ export default function LoginPage() {
               </motion.div>
             )}
 
+            {info && (
+              <div className="px-4 py-3 border border-line rounded-xl text-ink-soft text-sm">
+                {info}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isLoading || !username || !password}
+              disabled={isLoading || !username || (mode !== "forgot" && !password) || (mode === "register" && !name)}
               className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-ink/30 border-t-ink rounded-full animate-spin" />
+              ) : mode === "register" ? (
+                "Criar conta"
+              ) : mode === "forgot" ? (
+                "Enviar instruções"
               ) : (
                 "Entrar"
               )}
             </button>
           </form>
 
+          {backend && (
+            <div className="flex items-center justify-center gap-4 mt-4 text-xs">
+              {mode !== "login" && (
+                <button type="button" className="text-ink-soft underline" onClick={() => { setMode("login"); setError(""); setInfo(""); }}>
+                  Entrar
+                </button>
+              )}
+              {mode !== "register" && (
+                <button type="button" className="text-ink-soft underline" onClick={() => { setMode("register"); setError(""); setInfo(""); }}>
+                  Criar conta
+                </button>
+              )}
+              {mode === "login" && (
+                <button type="button" className="text-ink-soft underline" onClick={() => { setMode("forgot"); setError(""); setInfo(""); }}>
+                  Esqueci a senha
+                </button>
+              )}
+            </div>
+          )}
+
           <p className="text-center text-xs text-muted mt-6">
-            MVP Demo &bull; Dados locais
+            {backend ? (
+              <a href="/privacidade" className="underline">Política de Privacidade</a>
+            ) : (
+              <>MVP Demo &bull; Dados locais</>
+            )}
           </p>
         </div>
       </motion.div>

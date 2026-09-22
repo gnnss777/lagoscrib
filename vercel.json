@@ -12,6 +12,12 @@
       "dest": "/$1"
     }
   ],
+  "crons": [
+    {
+      "path": "/api/cron/retention",
+      "schedule": "0 8 * * *"
+    }
+  ],
   "env": {
     "NODE_ENV": "production"
   }
