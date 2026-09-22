@@ -74,3 +74,69 @@ export const CHECKLIST_ITEMS = [
 // (aluguel: total all-in mensal; venda: preço). 5º bloqueado com aviso.
 export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
+
+// --- Filtros avançados (S008, ADR-003) ---
+// Faixas calibradas com os 12 imóveis reais (22/09/2026):
+// aluguel total 2.350–4.412 · venda 354.010–1.395.000 · área 66–140m² ·
+// condomínio 0–1.778 (alguns "a confirmar"). Limites com folga p/ imóveis novos.
+// REGRA (LL-006): UI lê daqui — nenhum literal de faixa em componente.
+
+// Chave própria de persistência (nunca tocar "apartamentos-app-state").
+export const FILTERS_STORAGE_KEY = "apartamentos-app-filters";
+export const FILTERS_STORAGE_VERSION = 1;
+
+// Debounce da persistência ao digitar (ms).
+export const FILTER_DEBOUNCE_MS = 300;
+
+// Valor "tanto faz" nos dropdowns de bairro.
+export const NEIGHBORHOOD_ALL = "Todos";
+
+// Opções "mín X+" (padrão de mercado; 0 = tanto faz, tratado na lógica).
+export const BEDROOM_OPTIONS = [1, 2, 3, 4] as const;
+export const BATHROOM_OPTIONS = [1, 2, 3, 4] as const;
+export const PARKING_OPTIONS = [1, 2, 3] as const;
+
+// Limites dos inputs numéricos (placeholders/validação — filtro aceita null).
+export const RENT_PRICE_BOUNDS = { min: 0, max: 10000 } as const;
+export const SALE_PRICE_BOUNDS = { min: 0, max: 2000000 } as const;
+export const AREA_BOUNDS = { min: 0, max: 1000 } as const;
+export const CONDO_MAX_BOUNDS = { min: 0, max: 5000 } as const;
+
+// Facilidades filtráveis, agrupadas p/ o painel. Calibradas com as features
+// reais dos anúncios Zap (matching normalizado em lib/filters.ts —
+// "9º andar com elevador" casa com "Elevador"; "SEM ELEVADOR" não casa).
+export const FACILITY_GROUPS = [
+  {
+    group: "Condomínio",
+    items: [
+      "Elevador",
+      "Portaria 24h",
+      "Piscina",
+      "Playground",
+      "Salão de festas",
+      "Academia",
+      "Quadra",
+      "Sauna",
+    ],
+  },
+  {
+    group: "Imóvel",
+    items: [
+      "Varanda",
+      "Ar-condicionado",
+      "Interfone",
+      "Espaço gourmet",
+      "Churrasqueira",
+      "Lavanderia",
+    ],
+  },
+] as const;
+
+// Ordenação client-side (opera sobre a lista já filtrada).
+export const SORT_OPTIONS = [
+  { value: "recentes", label: "Mais recentes" },
+  { value: "menor-preco", label: "Menor preço" },
+  { value: "maior-preco", label: "Maior preço" },
+  { value: "menor-preco-m2", label: "Menor preço/m²" },
+  { value: "maior-area", label: "Maior área" },
+] as const;
