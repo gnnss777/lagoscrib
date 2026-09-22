@@ -277,20 +277,24 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
                     Contato
                   </h4>
                   <div className="space-y-2">
-                    <a
-                      href={`tel:${apartment.phone}`}
-                      className="flex items-center gap-3 text-surface-50 hover:text-gold-400 transition-colors"
-                    >
-                      <Phone size={16} className="text-gold-400" />
-                      <span className="text-sm">{apartment.phone}</span>
-                    </a>
-                    <a
-                      href={`mailto:${apartment.email}`}
-                      className="flex items-center gap-3 text-surface-50 hover:text-gold-400 transition-colors"
-                    >
-                      <Envelope size={16} className="text-gold-400" />
-                      <span className="text-sm">{apartment.email}</span>
-                    </a>
+                    {apartment.phone && (
+                      <a
+                        href={`tel:${apartment.phone}`}
+                        className="flex items-center gap-3 text-surface-50 hover:text-gold-400 transition-colors"
+                      >
+                        <Phone size={16} className="text-gold-400" />
+                        <span className="text-sm">{apartment.phone}</span>
+                      </a>
+                    )}
+                    {apartment.email && (
+                      <a
+                        href={`mailto:${apartment.email}`}
+                        className="flex items-center gap-3 text-surface-50 hover:text-gold-400 transition-colors"
+                      >
+                        <Envelope size={16} className="text-gold-400" />
+                        <span className="text-sm">{apartment.email}</span>
+                      </a>
+                    )}
                     <a
                       href={apartment.link}
                       target="_blank"
