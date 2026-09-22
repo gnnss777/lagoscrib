@@ -20,6 +20,9 @@ import {
   CaretLeft,
   CaretRight,
   MagnifyingGlassPlus,
+  SealCheck,
+  WhatsappLogo,
+  Warning,
 } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
 import {
@@ -29,7 +32,22 @@ import {
   nextPhotoIndex,
   prevPhotoIndex,
 } from "@/lib/gallery";
+import {
+  buildEntryEstimate,
+  buildMovelCost,
+  buildWhatsAppConfirm,
+  buildWhatsAppLink,
+  formatBRL,
+} from "@/lib/antiDores";
+import { pricePerM2 } from "@/lib/pricing";
+import {
+  ENTRY_ESTIMATE_LABEL,
+  ESTIMATE_DISCLAIMER,
+  GOLDEN_RULE,
+  MOVING_ESTIMATE_LABEL,
+} from "@/lib/constants";
 import ImageLightbox from "./ImageLightbox";
+import VisitChecklist from "./VisitChecklist";
 import {
   useApp,
   STATUS_LABELS,
@@ -52,7 +70,7 @@ const STATUSES: StatusType[] = [
 
 export default function DetailModal({ apartment, onClose }: DetailModalProps) {
   const { getStatus, updateStatus, addNote, getNotes } = useApp();
-  const [activeTab, setActiveTab] = useState<"details" | "notes">("details");
+  const [activeTab, setActiveTab] = useState<"details" | "checklist" | "planta" | "notes">("details");
   const [newNote, setNewNote] = useState("");
   const [scheduledDate, setScheduledDate] = useState("");
   // Galeria viewer-first (S003): índice, lightbox, falhas de carga (pula slide).
@@ -110,6 +128,15 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
       hour: "2-digit",
       minute: "2-digit",
     }).format(new Date(dateString));
+
+  const formatDateShort = (dateString: string) =>
+    new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      // Meio-dia evita o shift de fuso em datas sem hora (ex.: "2026-09-22").
+      timeZone: "America/Sao_Paulo",
+    }).format(new Date(`${dateString}T12:00:00`));
 
   const handleAddNote = () => {
     if (newNote.trim()) {
@@ -311,7 +338,7 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
           {/* Content */}
           <div className="p-6 space-y-6">
             {/* Tabs */}
-            <div className="flex gap-2 border-b border-navy-700/50 pb-4">
+            <div className="flex gap-2 border-b border-navy-700/50 pb-4 overflow-x-auto">
               <button
                 onClick={() => setActiveTab("details")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -321,6 +348,26 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
                 }`}
               >
                 Detalhes
+              </button>
+              <button
+                onClick={() => setActiveTab("checklist")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  activeTab === "checklist"
+                    ? "bg-gold-400/10 text-gold-400 border border-gold-400/20"
+                    : "text-surface-400 hover:text-surface-50"
+                }`}
+              >
+                Checklist
+              </button>
+              <button
+                onClick={() => setActiveTab("planta")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  activeTab === "planta"
+                    ? "bg-gold-400/10 text-gold-400 border border-gold-400/20"
+                    : "text-surface-400 hover:text-surface-50"
+                }`}
+              >
+                Planta
               </button>
               <button
                 onClick={() => setActiveTab("notes")}
@@ -341,6 +388,19 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
                 animate={{ opacity: 1, x: 0 }}
                 className="space-y-6"
               >
+                {/* Selo de verificação anti-ghost (S004): data real ou só fonte */}
+                {(apartment.verifiedAt || apartment.source) && (
+                  <p
+                    data-testid="verified-badge"
+                    className="flex items-center gap-2 text-sm text-gold-300"
+                  >
+                    <SealCheck size={18} weight="fill" className="shrink-0" />
+                    {apartment.verifiedAt
+                      ? `Verificado em ${formatDateShort(apartment.verifiedAt)} · ${apartment.source ?? "Zap Imóveis"}`
+                      : `Fonte: ${apartment.source}`}
+                  </p>
+                )}
+
                 {/* Stats grid */}
                 <div className="grid grid-cols-4 gap-3">
                   {[
@@ -362,39 +422,133 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
                   ))}
                 </div>
 
-                {/* Price breakdown */}
-                <div className="bg-navy-800/30 rounded-xl p-4 border border-navy-700/30">
-                  <h4 className="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-3">
-                    Valores Mensais
-                  </h4>
-                  <div className="space-y-2.5">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-surface-400">Aluguel</span>
-                      <span className="text-surface-50 font-mono">
-                        {formatCurrency(apartment.rent)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-surface-400">Condomínio</span>
-                      <span className="text-surface-50 font-mono">
-                        {formatCurrency(apartment.condo)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-surface-400">IPTU</span>
-                      <span className="text-surface-50 font-mono">
-                        {formatCurrency(apartment.iptu)}
-                      </span>
-                    </div>
-                    <div className="pt-2 border-t border-navy-700/50 flex justify-between">
-                      <span className="text-surface-50 font-semibold text-sm">
-                        Total
-                      </span>
-                      <span className="text-gold-400 font-mono font-bold text-lg">
-                        {formatCurrency(apartment.total)}
-                      </span>
-                    </div>
-                  </div>
+                {/* AllInPanel — custo total efetivo + estimativas (S004) */}
+                <div
+                  data-testid="allin-panel"
+                  className="bg-navy-800/30 rounded-xl p-4 border border-navy-700/30"
+                >
+                  {apartment.transaction === "venda" ? (
+                    <>
+                      <h4 className="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-3">
+                        Valores de Compra
+                      </h4>
+                      <div className="space-y-2.5">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-surface-400">Preço</span>
+                          <span className="text-surface-50 font-mono">
+                            {formatBRL(apartment.salePrice ?? apartment.total)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-surface-400">Condomínio/mês</span>
+                          <span className="text-surface-50 font-mono">
+                            {formatBRL(apartment.condo)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-surface-400">IPTU</span>
+                          <span className="text-surface-50 font-mono">
+                            {apartment.iptu > 0
+                              ? formatBRL(apartment.iptu)
+                              : "Isento"}
+                          </span>
+                        </div>
+                        <div className="pt-2 border-t border-navy-700/50 flex justify-between">
+                          <span className="text-surface-50 font-semibold text-sm">
+                            Preço/m²
+                          </span>
+                          <span className="text-gold-400 font-mono font-bold text-lg">
+                            {formatBRL(
+                              pricePerM2(
+                                apartment.salePrice ?? apartment.total,
+                                apartment.area
+                              )
+                            )}
+                            /m²
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h4 className="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-3">
+                        Valores Mensais
+                      </h4>
+                      <div className="space-y-2.5">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-surface-400">Aluguel</span>
+                          <span className="text-surface-50 font-mono">
+                            {formatCurrency(apartment.rent)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-surface-400">Condomínio</span>
+                          <span className="text-surface-50 font-mono">
+                            {apartment.condoUnknown
+                              ? "A confirmar"
+                              : formatCurrency(apartment.condo)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-surface-400">IPTU</span>
+                          <span className="text-surface-50 font-mono">
+                            {apartment.iptu > 0
+                              ? formatCurrency(apartment.iptu)
+                              : "—"}
+                          </span>
+                        </div>
+                        <div className="pt-2 border-t border-navy-700/50 flex justify-between">
+                          <span className="text-surface-50 font-semibold text-sm">
+                            Total
+                          </span>
+                          <span className="text-gold-400 font-mono font-bold text-lg">
+                            {formatCurrency(apartment.total)}
+                          </span>
+                        </div>
+                        {(() => {
+                          const entry = buildEntryEstimate({
+                            rent: apartment.rent,
+                          });
+                          const movel = buildMovelCost(apartment.bedrooms);
+                          return (
+                            <div className="pt-2 border-t border-navy-700/50 space-y-2.5">
+                              {entry && (
+                                <div className="flex justify-between text-sm gap-2">
+                                  <span className="text-surface-400">
+                                    {ENTRY_ESTIMATE_LABEL}
+                                    <span className="block text-xs text-surface-500">
+                                      {ESTIMATE_DISCLAIMER}
+                                    </span>
+                                  </span>
+                                  <span
+                                    data-testid="entry-estimate"
+                                    className="text-surface-50 font-mono text-right"
+                                  >
+                                    {formatBRL(entry.min)} –{" "}
+                                    {formatBRL(entry.max)}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex justify-between text-sm gap-2">
+                                <span className="text-surface-400">
+                                  {MOVING_ESTIMATE_LABEL}
+                                  <span className="block text-xs text-surface-500">
+                                    {ESTIMATE_DISCLAIMER}
+                                  </span>
+                                </span>
+                                <span
+                                  data-testid="moving-estimate"
+                                  className="text-surface-50 font-mono text-right"
+                                >
+                                  {formatBRL(movel.min)} – {formatBRL(movel.max)}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Features */}
@@ -455,7 +609,25 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
                   <h4 className="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-3">
                     Contato
                   </h4>
+                  {/* Regra de ouro anti-golpe (S004): fixa em todo modal com contato */}
+                  <p
+                    data-testid="golden-rule"
+                    className="flex items-start gap-2 text-sm text-gold-300 bg-gold-400/10 border border-gold-400/20 rounded-lg px-3 py-2 mb-3"
+                  >
+                    <Warning size={16} className="shrink-0 mt-0.5" />
+                    {GOLDEN_RULE}
+                  </p>
                   <div className="space-y-2">
+                    <a
+                      data-testid="confirm-button"
+                      href={buildWhatsAppLink(buildWhatsAppConfirm(apartment))}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-gold-400 text-navy-950 hover:bg-gold-500 transition-colors"
+                    >
+                      <WhatsappLogo size={18} weight="fill" />
+                      Confirmar disponibilidade
+                    </a>
                     {apartment.phone && (
                       <a
                         href={`tel:${apartment.phone}`}
@@ -485,6 +657,58 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
                     </a>
                   </div>
                 </div>
+              </motion.div>
+            )}
+
+            {activeTab === "checklist" && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="space-y-6"
+              >
+                <VisitChecklist apartment={apartment} />
+              </motion.div>
+            )}
+
+            {activeTab === "planta" && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="space-y-4"
+              >
+                {apartment.floorPlan ? (
+                  <div
+                    data-testid="floorplan"
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden border border-navy-700/30"
+                  >
+                    <Image
+                      src={apartment.floorPlan}
+                      alt={`Planta baixa — ${apartment.title}`}
+                      fill
+                      sizes="(max-width: 672px) 100vw, 672px"
+                      className="object-contain bg-navy-950"
+                    />
+                  </div>
+                ) : (
+                  <div data-testid="floorplan" className="text-center py-8">
+                    <p className="text-surface-200 text-sm mb-1">
+                      Planta não divulgada no anúncio
+                    </p>
+                    <p className="text-surface-500 text-sm mb-4">
+                      Confira a distribuição dos cômodos nas fotos ou no link
+                      original.
+                    </p>
+                    <a
+                      href={apartment.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 text-sm font-medium"
+                    >
+                      <LinkSimple size={14} />
+                      Ver anúncio original
+                    </a>
+                  </div>
+                )}
               </motion.div>
             )}
 
