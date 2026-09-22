@@ -1,3 +1,8 @@
+export interface Photo {
+  src: string;
+  caption?: string;
+}
+
 export interface Apartment {
   id: string;
   title: string;
@@ -21,6 +26,14 @@ export interface Apartment {
   source?: string;
   zapId?: string;
   condoUnknown?: boolean;
+  // Leva dores-consumidor (S001, aditivo — ausente = aluguel, nada quebra)
+  transaction?: "aluguel" | "venda";
+  salePrice?: number;
+  photos?: Photo[];
+  floorPlan?: string;
+  pets?: string;
+  guarantor?: string;
+  verifiedAt?: string;
 }
 
 // Dados REAIS validados em 22/09/2026 (Zap Imóveis, HTTP 200).
@@ -184,5 +197,142 @@ export const apartments: Apartment[] = [
     description: "Andar alto com vista permanente: 3 quartos sendo 1 suíte (todos com armários), sala 2 ambientes com sacada, cozinha com armários, 2 vagas no subsolo. Salão de festas e churrasqueira, portaria 24h. Próximo ao Terminal do Cabral. AKG Imóveis.",
     source: "Zap Imóveis · AKG Imóveis",
     zapId: "2912447929",
+  },
+];
+
+// --- VENDA (S001, snapshot 22/09/2026, Zap Imóveis, HTTP 200 via browser real).
+// transaction: "venda"; total = salePrice (custo total efetivo de aquisição).
+// rent: 0 (não se aplica); contato sempre pelo link (telefones mascarados).
+// Fazendinha 80m² R$395k DESCARTADO: só 5 fotos (< 8 mínimas). Ecoville entrou no lugar.
+export const saleApartments: Apartment[] = [
+  {
+    id: "zap-bacacheri-parana-107",
+    title: "Apartamento com 3 Quartos à venda - Bacacheri",
+    neighborhood: "Bacacheri",
+    address: "Avenida Paraná - Bacacheri, Curitiba - PR",
+    area: 107,
+    bedrooms: 3,
+    bathrooms: 3,
+    parking: 2,
+    rent: 0,
+    condo: 1778,
+    iptu: 1991,
+    total: 800000,
+    phone: "",
+    email: "",
+    link: "https://www.zapimoveis.com.br/imovel/venda-apartamento-3-quartos-com-playground-bacacheri-curitiba-pr-107m2-id-2903681824/",
+    image: "/imoveis/zap-bacacheri-parana-107.webp",
+    features: ["1 suíte", "Varanda", "Elevador", "Playground", "Interfone", "Escritório"],
+    description: "3 quartos sendo 1 suíte, 107m² no Bacacheri (Av. Paraná). 3 banheiros, 2 vagas, varanda, elevador, playground, interfone e escritório. Condomínio R$1.778/mês, IPTU R$1.991. Hapen Imóveis. 25 fotos no anúncio — validar antes de visitar.",
+    source: "Zap Imóveis · Hapen Imóveis",
+    zapId: "2903681824",
+    transaction: "venda",
+    salePrice: 800000,
+    photos: [{ src: "/imoveis/zap-bacacheri-parana-107.webp", caption: "Foto principal" }],
+    verifiedAt: "2026-09-22",
+  },
+  {
+    id: "zap-tingui-brasilio-71",
+    title: "Apartamento com 3 Quartos à venda - Tingui",
+    neighborhood: "Tingui",
+    address: "Rua Brasílio Bacellar Filho - Tingui, Curitiba - PR",
+    area: 71,
+    bedrooms: 3,
+    bathrooms: 1,
+    parking: 1,
+    rent: 0,
+    condo: 550,
+    iptu: 0,
+    total: 354010,
+    phone: "",
+    email: "",
+    link: "https://www.zapimoveis.com.br/imovel/venda-apartamento-3-quartos-tingui-curitiba-pr-71m2-id-2913009858/",
+    image: "/imoveis/zap-tingui-brasilio-71.webp",
+    features: ["Aceita animais", "71m²", "IPTU isento"],
+    description: "3 quartos, 71m² no Tingui (Rua Brasílio Bacellar Filho). 1 banheiro, 1 vaga, aceita animais, IPTU isento. Condomínio R$550/mês. Corretor Lauzemar Adão Coelho de Andrade (CRECI 17067). Anúncio criado em 19/09/2026. 23 fotos no anúncio — validar antes de visitar.",
+    source: "Zap Imóveis · Lauzemar Adão Coelho (CRECI 17067)",
+    zapId: "2913009858",
+    transaction: "venda",
+    salePrice: 354010,
+    photos: [{ src: "/imoveis/zap-tingui-brasilio-71.webp", caption: "Foto principal" }],
+    verifiedAt: "2026-09-22",
+  },
+  {
+    id: "zap-aguaverde-iguacu-140",
+    title: "Apartamento com 3 Quartos à venda - Água Verde",
+    neighborhood: "Água Verde",
+    address: "Avenida Iguaçu - Água Verde, Curitiba - PR",
+    area: 140,
+    bedrooms: 3,
+    bathrooms: 5,
+    parking: 2,
+    rent: 0,
+    condo: 1300,
+    iptu: 3580,
+    total: 1395000,
+    phone: "",
+    email: "",
+    link: "https://www.zapimoveis.com.br/imovel/venda-apartamento-3-quartos-com-academia-agua-verde-curitiba-pr-140m2-id-2912939346/",
+    image: "/imoveis/zap-aguaverde-iguacu-140.webp",
+    features: ["3 suítes", "9º andar com elevador", "Aceita animais", "Ótimo preço (Zap)"],
+    description: "3 quartos sendo 3 suítes, 140m² na Água Verde (Av. Iguaçu). 5 banheiros, 2 vagas, 9º andar com elevador, aceita animais, academia no condomínio. Selo Ótimo preço do Zap. Condomínio R$1.300/mês, IPTU R$3.580. Sym Imóveis (Creci 06228-J-PR). Anúncio criado em 19/09/2026. 49 fotos no anúncio — validar antes de visitar.",
+    source: "Zap Imóveis · Sym Imóveis",
+    zapId: "2912939346",
+    transaction: "venda",
+    salePrice: 1395000,
+    photos: [{ src: "/imoveis/zap-aguaverde-iguacu-140.webp", caption: "Foto principal" }],
+    verifiedAt: "2026-09-22",
+  },
+  {
+    id: "zap-capaoraso-churchill-78",
+    title: "Apartamento com 3 Quartos à venda - Capão Raso",
+    neighborhood: "Capão Raso",
+    address: "Avenida Winston Churchill - Capão Raso, Curitiba - PR",
+    area: 78,
+    bedrooms: 3,
+    bathrooms: 1,
+    parking: 2,
+    rent: 0,
+    condo: 904,
+    iptu: 191,
+    total: 799000,
+    phone: "",
+    email: "",
+    link: "https://www.zapimoveis.com.br/imovel/venda-apartamento-3-quartos-com-piscina-capao-raso-curitiba-pr-78m2-id-2913043342/",
+    image: "/imoveis/zap-capaoraso-churchill-78.webp",
+    features: ["1 suíte", "Varanda", "Piscina", "Cozinha"],
+    description: "3 quartos sendo 1 suíte, 78m² no Capão Raso (Av. Winston Churchill). 1 banheiro, 2 vagas, varanda, piscina no condomínio. Condomínio R$904/mês, IPTU R$191. Cadena Imóveis - Vendas (Creci 06230-J-PR). Anúncio criado em 19/09/2026. 39 fotos no anúncio — validar antes de visitar.",
+    source: "Zap Imóveis · Cadena Imóveis",
+    zapId: "2913043342",
+    transaction: "venda",
+    salePrice: 799000,
+    photos: [{ src: "/imoveis/zap-capaoraso-churchill-78.webp", caption: "Foto principal" }],
+    verifiedAt: "2026-09-22",
+  },
+  {
+    id: "zap-ecoville-rosa-87",
+    title: "Apartamento com 3 Quartos à venda - Ecoville",
+    neighborhood: "Ecoville",
+    address: "Rua Rosa Kaint Nadolny - Ecoville, Curitiba - PR",
+    area: 87,
+    bedrooms: 3,
+    bathrooms: 2,
+    parking: 1,
+    rent: 0,
+    condo: 870,
+    iptu: 87,
+    total: 1317954,
+    phone: "",
+    email: "",
+    link: "https://www.zapimoveis.com.br/imovel/venda-apartamento-3-quartos-com-piscina-ecoville-curitiba-pr-87m2-id-2895188181/",
+    image: "/imoveis/zap-ecoville-rosa-87.webp",
+    features: ["1 suíte", "Varanda gourmet", "Aceita animais", "Ar-condicionado", "Lareira", "Depósito"],
+    description: "3 quartos sendo 1 suíte, 87m² no Ecoville (Rua Rosa Kaint Nadolny). 2 banheiros, 1 vaga, varanda gourmet, ar-condicionado, lareira, depósito, escritório, piscina no condomínio, aceita animais. Condomínio R$870/mês, IPTU R$87. L7 Imóveis (Creci 04131-J-PR). 65 fotos no anúncio — validar antes de visitar.",
+    source: "Zap Imóveis · L7 Imóveis",
+    zapId: "2895188181",
+    transaction: "venda",
+    salePrice: 1317954,
+    photos: [{ src: "/imoveis/zap-ecoville-rosa-87.webp", caption: "Foto principal" }],
+    verifiedAt: "2026-09-22",
   },
 ];
