@@ -298,6 +298,30 @@ describe("filters", () => {
     expect(ids(applySort(list, "menor-preco"))).toEqual(["barato", "nulo"]);
   });
 
+  it("test_filtros_mobiliado_sim_exige_mobiliado", () => {
+    const list = [
+      apt({ id: "mob", features: ["Mobiliado", "Elevador"] }),
+      apt({ id: "vazio", features: ["Elevador"] }),
+      apt({ id: "sem-info", features: [] }),
+    ];
+    expect(ids(applyFilters(list, base({ furnished: "yes" })))).toEqual([
+      "mob",
+      "sem-info",
+    ]);
+  });
+
+  it("test_filtros_mobiliado_nao_exclui_mobiliado", () => {
+    const list = [
+      apt({ id: "mob", features: ["Mobiliado"] }),
+      apt({ id: "vazio", features: ["Elevador"] }),
+      apt({ id: "sem-info", features: [] }),
+    ];
+    expect(ids(applyFilters(list, base({ furnished: "no" })))).toEqual([
+      "vazio",
+      "sem-info",
+    ]);
+  });
+
   it("test_filtros_contador_ativos_conta_corretamente", () => {
     expect(countActiveFilters(DEFAULT_FILTERS)).toBe(0);
     const f = base({

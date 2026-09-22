@@ -10,6 +10,8 @@ import { NEIGHBORHOOD_ALL } from "@/lib/constants";
 
 export type PetsFilter = "all" | "yes" | "no";
 
+export type FurnishedFilter = "all" | "yes" | "no";
+
 export type SortOption =
   | "recentes"
   | "menor-preco"
@@ -29,7 +31,7 @@ export interface FilterState {
   areaMax: number | null;
   condoMax: number | null;
   noCondo: boolean;
-  furnishedOnly: boolean;
+  furnished: FurnishedFilter;
   pets: PetsFilter;
   facilities: string[];
   status: string;
@@ -48,7 +50,7 @@ export const DEFAULT_FILTERS: FilterState = {
   areaMax: null,
   condoMax: null,
   noCondo: false,
-  furnishedOnly: false,
+  furnished: "all",
   pets: "all",
   facilities: [],
   status: "todos",
@@ -146,11 +148,14 @@ export function applyFilters(
     if (f.condoMax != null && !a.condoUnknown && a.condo != null && a.condo > f.condoMax)
       return false;
 
-    if (
-      f.furnishedOnly &&
-      !(a.features ?? []).some((feat) => normalizeText(feat).includes("mobiliado"))
-    )
+    // Mobiliado 3 estados: "yes" exige (salvo sem informação — regra 3);
+    // "no" exclui quem declara; sem features passa nos dois lados.
+    const hasFurnished = (a.features ?? []).some((feat) =>
+      normalizeText(feat).includes("mobiliado")
+    );
+    if (f.furnished === "yes" && !hasFurnished && (a.features ?? []).length > 0)
       return false;
+    if (f.furnished === "no" && hasFurnished) return false;
 
     if (f.pets === "yes" && rejectsPets(a)) return false;
     if (f.pets === "no" && acceptsPets(a)) return false;
@@ -239,7 +244,7 @@ export function countActiveFilters(f: FilterState): number {
   if (f.areaMin != null || f.areaMax != null) n += 1;
   if (f.condoMax != null) n += 1;
   if (f.noCondo) n += 1;
-  if (f.furnishedOnly) n += 1;
+  if (f.furnished !== "all") n += 1;
   if (f.pets !== "all") n += 1;
   n += f.facilities.length;
   if (f.status !== "todos") n += 1;
