@@ -92,3 +92,6 @@ lib/
 - **Compra e aluguel**: aba Alugar | Comprar com 5 imóveis à venda de Curitiba.
 - **Confiança**: selo de verificação com data e origem, botão Confirmar disponibilidade e aviso anti-golpe em todo contato.
 - **Visita e comparação**: checklist de visita exportável (copiar/WhatsApp), planta quando divulgada e comparação lado a lado de até 4 imóveis.
+
+- **Filtros avancados**: busque por quartos, banheiros, vagas, faixa de preco, area, condominio, mobiliado, pets e facilidades — com ordenacao (menor preco, maior area, mais recentes) e filtros salvos ao recarregar.
+- **Comparativo com metragem**: cada coluna mostra titulo + m2 + preco.
