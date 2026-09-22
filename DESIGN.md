@@ -179,7 +179,7 @@ Regras de componentes:
 - [ ] Contraste AA verificado (axe): texto ≥ 4.5:1, UI ≥ 3:1 — zero falhas.
 - [ ] `prefers-reduced-motion`: nenhum efeito anima quando ativo.
 - [ ] Zero CLS: toda imagem com dimensões/`aspect-ratio`; `grep` sem `img` sem width/height.
-- [ ] Fotos: galeria ≤ 350KB/arquivo; peso total por imóvel ≤ 3,5MB; 1ª `priority`, demais `lazy`; largura ≥ 800px.
+- [ ] Fotos: galeria ≤ 350KB/arquivo; peso total por imóvel ≤ 3,5MB; lado maior ≥ 800px e lado menor ≥ 500px (orientation-aware: retrato usa a altura como eixo — S002 provou que o CDN entrega fit-in); 1ª `priority`, demais `lazy`.
 - [ ] Alvos: touch ≥ 44px, desktop ≥ 32px (verificado por Playwright/computed style).
 - [ ] Teclado: Esc fecha, ←/→ navega galeria, Tab percorre tudo, foco visível em todo elemento interativo.
 - [ ] Zero erro de console no fluxo completo (Playwright).
