@@ -10,10 +10,13 @@ import {
   MapPin,
 } from "@phosphor-icons/react";
 import { apartments as staticApartments, type Apartment } from "@/lib/data";
+import { COMPARE_MAX, COMPARE_MIN } from "@/lib/constants";
+import { toggleCompareSelection } from "@/lib/compare";
 import { useApp, STATUS_LABELS, type StatusType } from "@/lib/AppContext";
 import ApartmentCard from "./ApartmentCard";
 import AddApartmentForm from "./AddApartmentForm";
 import DetailModal from "./DetailModal";
+import CompareModal from "./CompareModal";
 
 const NEIGHBORHOODS = [
   "Todos",
@@ -52,8 +55,28 @@ export default function Dashboard() {
   const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(
     null
   );
+  // Comparação (S005): seleção de ids + aviso de bloqueio + modal.
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [compareBlocked, setCompareBlocked] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  const toggleCompare = (apartment: Apartment) => {
+    const result = toggleCompareSelection(compareIds, apartment.id);
+    setCompareIds(result.selected);
+    setCompareBlocked(result.blocked);
+  };
+
+  const clearCompare = () => {
+    setCompareIds([]);
+    setCompareBlocked(false);
+    setCompareOpen(false);
+  };
 
   const allApartments = getAllApartments();
+
+  const compareApartments = allApartments.filter((a) =>
+    compareIds.includes(a.id)
+  );
 
   const filteredApartments = useMemo(() => {
     return allApartments.filter((apt) => {
@@ -231,6 +254,8 @@ export default function Dashboard() {
                 apartment={apartment}
                 index={index}
                 onSelect={setSelectedApartment}
+                compareChecked={compareIds.includes(apartment.id)}
+                onToggleCompare={toggleCompare}
               />
             ))}
           </div>
@@ -251,12 +276,67 @@ export default function Dashboard() {
         )}
       </main>
 
+      {/* CompareBar sticky (S005): contador 2–4 + bloqueio visível */}
+      {compareIds.length > 0 && (
+        <div
+          data-testid="compare-bar"
+          className="fixed bottom-0 inset-x-0 z-40 bg-navy-950/90 backdrop-blur-md border-t border-gold-400/20"
+        >
+          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-3">
+            <p className="text-sm text-surface-200">
+              <span className="font-mono font-bold text-gold-400">
+                {compareIds.length}
+              </span>{" "}
+              selecionado{compareIds.length > 1 ? "s" : ""} (máx {COMPARE_MAX})
+            </p>
+            {compareBlocked && (
+              <p
+                data-testid="compare-blocked"
+                role="alert"
+                className="text-sm text-gold-300"
+              >
+                Máximo de {COMPARE_MAX} imóveis — desmarque um para trocar.
+              </p>
+            )}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={clearCompare}
+                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+              >
+                Limpar
+              </button>
+              <button
+                data-testid="compare-open"
+                onClick={() => setCompareOpen(true)}
+                disabled={compareIds.length < COMPARE_MIN}
+                title={
+                  compareIds.length < COMPARE_MIN
+                    ? `Selecione pelo menos ${COMPARE_MIN} imóveis`
+                    : "Abrir comparação"
+                }
+                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-gold-400 text-navy-950 hover:bg-gold-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Comparar ({compareIds.length})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Detail Modal (key = remount limpa galeria/lightbox por imóvel) */}
       {selectedApartment && (
         <DetailModal
           key={selectedApartment.id}
           apartment={selectedApartment}
           onClose={() => setSelectedApartment(null)}
+        />
+      )}
+
+      {/* CompareModal: ordem default por custo total efetivo (dentro) */}
+      {compareOpen && compareApartments.length >= COMPARE_MIN && (
+        <CompareModal
+          apartments={compareApartments}
+          onClose={() => setCompareOpen(false)}
         />
       )}
     </div>

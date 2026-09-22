@@ -10,12 +10,16 @@ interface ApartmentCardProps {
   apartment: Apartment;
   index: number;
   onSelect: (apartment: Apartment) => void;
+  compareChecked: boolean;
+  onToggleCompare: (apartment: Apartment) => void;
 }
 
 export default function ApartmentCard({
   apartment,
   index,
   onSelect,
+  compareChecked,
+  onToggleCompare,
 }: ApartmentCardProps) {
   const { getStatus } = useApp();
   const status = getStatus(apartment.id);
@@ -58,6 +62,25 @@ export default function ApartmentCard({
             {STATUS_LABELS[status]}
           </span>
         </div>
+
+        {/* Comparar (S005): 44px, fora do clique do card */}
+        <label
+          className={`absolute top-3 right-3 flex items-center gap-1.5 min-w-11 min-h-11 px-2.5 rounded-lg backdrop-blur-sm border text-xs font-medium transition-colors cursor-pointer ${
+            compareChecked
+              ? "bg-gold-400 text-navy-950 border-gold-400"
+              : "bg-navy-950/80 text-surface-50 border-white/10 hover:border-gold-400/50"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <input
+            type="checkbox"
+            checked={compareChecked}
+            onChange={() => onToggleCompare(apartment)}
+            aria-label={`Comparar ${apartment.title}`}
+            className="w-5 h-5 shrink-0 accent-gold-400"
+          />
+          Comparar
+        </label>
 
         {/* Price tag */}
         <div className="absolute bottom-3 right-3">

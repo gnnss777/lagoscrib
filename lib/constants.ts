@@ -68,3 +68,9 @@ export const CHECKLIST_ITEMS = [
   { id: "areas-comuns", label: "Áreas comuns do condomínio" },
   { id: "documentacao", label: "Documentação e garantia" },
 ] as const;
+
+// --- Comparação (S005, ADR-002 decisão 4) ---
+// Client-side, 2–4 imóveis, ordem default por custo total efetivo
+// (aluguel: total all-in mensal; venda: preço). 5º bloqueado com aviso.
+export const COMPARE_MIN = 2;
+export const COMPARE_MAX = 4;
