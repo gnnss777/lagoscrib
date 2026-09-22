@@ -166,3 +166,10 @@ Proximo: push + PR-3 feat/filtros-avancados -> upstream gnnss777/lagoscrib (apos
 
 --- PR-3 ABERTO (2026-09-22) ---
 PR-3: https://github.com/gnnss777/lagoscrib/pull/3 (feat/filtros-avancados -> master, merge apos #1/#2, MERGEABLE, sem CI no upstream).
+
+--- LEVA LIGHTBOX-ANALOGICO — DONE (2026-09-22) ---
+Branch feat/lightbox-analogico (base: feat/filtros-avancados local): rebrand completo dark navy+gold -> claro papel-creme + amarelo-taxi (DESIGN.md v1.0 -> v2.0).
+TDD RED->GREEN: tests/unit/lightbox-contrast.test.ts (4 testes) + lib/contrast.ts + THEME_PALETTE em lib/constants.ts (LL-006 estendido a design). Pisos: texto normal >= 7:1 (AAA), UI/borda >= 3:1, pares proibidos (branco-sobre-taxi) documentados e provados falhos.
+Gates (ordem, todos PASS): tsc + lint(0/0) + 67 unit (63 + 4 novos) + build estatico (tokens novos confirmados no CSS compilado, zero residuo navy/gold/surface) + 9/9 e2e. 2 specs atualizados por mudanca intencional (ring-gold-400 -> ring-ink em venda/persistencia); resto intacto, zero erro de console.
+Correcoes de contraste herdadas do dark: placeholder surface-500 (3.89:1, falhava AA) -> muted (7.25:1); foco em ink (taxi-sobre-creme = 1.55:1, proibido); kill-switch prefers-reduced-motion global em globals.css.
+Escopo: 9/9 componentes migrados (só classes/tokens, zero mudança de estrutura); scrim night mantido SÓ sobre fotos; galeria interna do vault +2 entradas. Proximo: commit nesta branch (push/PR a criterio do Gabriel, apos merges #1/#2/#3).
