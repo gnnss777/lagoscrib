@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy-950: #0B1121;
+  --color-navy-900: #0F1629;
+  --color-navy-800: #131B33;
+  --color-navy-700: #1A2442;
+  --color-navy-600: #243054;
+  --color-gold-400: #C8A66B;
+  --color-gold-500: #B8924F;
+  --color-gold-300: #D9BE8A;
+  --color-surface-50: #F0F0F5;
+  --color-surface-100: #E4E4EC;
+  --color-surface-200: #C8C8D4;
+  --color-surface-400: #8A92A6;
+  --color-surface-500: #6B7280;
+
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-slide-up: slide-up 0.4s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-navy-950);
+    color: var(--color-surface-50);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: rgba(200, 166, 107, 0.25);
+    color: var(--color-surface-50);
+  }
+}
+
+@layer components {
+  .card-apartment {
+    background: linear-gradient(145deg, rgba(19, 27, 51, 0.85) 0%, rgba(15, 22, 41, 0.95) 100%);
+    border: 1px solid rgba(200, 166, 107, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .card-apartment::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(200, 166, 107, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .card-apartment:hover {
+    border-color: rgba(200, 166, 107, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(200, 166, 107, 0.1);
+  }
+
+  .card-apartment:hover::before {
+    opacity: 1;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-gold-400) 0%, var(--color-gold-500) 100%);
+    color: var(--color-navy-950);
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -8px rgba(200, 166, 107, 0.5);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background: rgba(200, 166, 107, 0.1);
+    color: var(--color-gold-400);
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(200, 166, 107, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(200, 166, 107, 0.15);
+    border-color: rgba(200, 166, 107, 0.35);
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+  }
+
+  .status-novo {
+    background: rgba(138, 146, 166, 0.15);
+    color: var(--color-surface-400);
+  }
+
+  .status-agendado {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+  }
+
+  .status-feita {
+    background: rgba(168, 85, 247, 0.15);
+    color: #C084FC;
+  }
+
+  .status-negociacao {
+    background: rgba(200, 166, 107, 0.15);
+    color: var(--color-gold-400);
+  }
+
+  .status-aprovado {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ADE80;
+  }
+
+  .status-recusado {
+    background: rgba(239, 68, 68, 0.15);
+    color: #F87171;
+  }
+
+  .input-field {
+    background: rgba(19, 27, 51, 0.8);
+    border: 1px solid rgba(138, 146, 166, 0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--color-surface-50);
+    font-size: 15px;
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+
+  .input-field::placeholder {
+    color: var(--color-surface-500);
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: var(--color-gold-400);
+    box-shadow: 0 0 0 3px rgba(200, 166, 107, 0.1);
+  }
+
+  .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    background: rgba(138, 146, 166, 0.1);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--color-surface-400);
+    font-weight: 500;
+  }
+
+  .detail-overlay {
+    background: rgba(11, 17, 33, 0.95);
+    backdrop-filter: blur(12px);
+  }
+}
