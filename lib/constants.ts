@@ -140,3 +140,93 @@ export const SORT_OPTIONS = [
   { value: "menor-preco-m2", label: "Menor preço/m²" },
   { value: "maior-area", label: "Maior área" },
 ] as const;
+
+// --- Tema "Lightbox Analógico" (leva lightbox-analogico, DESIGN.md v2 §cores) ---
+// REGRA (LL-006 estendido a design): nenhum hex de cor fora de THEME_PALETTE —
+// globals.css (@theme) e componentes Tailwind consomem estes valores. Hex fora
+// daqui = erro de review (invariante #2 do estúdio). Todos os pares texto/fundo
+// foram medidos em 22/09/2026 e travados em tests/unit/lightbox-contrast.test.ts:
+// texto normal ≥ 7:1 (AAA), UI/borda ≥ 3:1 (WCAG 2.2).
+export const THEME_PALETTE = {
+  // Superfícies claras
+  paper: "#FAF9F6", // fundo do app (papel creme quente)
+  card: "#FFFFFF", // cards, modais, inputs
+  sand: "#F3E9D7", // pastel de apoio (badge "novo" — só com texto ink)
+  // Tinta
+  ink: "#1A1A1A", // texto principal (16.53:1 no paper)
+  "ink-soft": "#4B5563", // texto secundário (7.18:1 no paper, 7.56 no card)
+  muted: "#57534E", // placeholder/label (7.25:1 no paper, 7.63 no card)
+  // Voz da marca: amarelo táxi (texto sempre ink por cima — nunca branco)
+  taxi: "#F5C518", // CTA, seleção, logo (10.68:1 com ink)
+  "taxi-strong": "#E0B400", // hover do CTA (8.87:1 com ink)
+  pastel: "#FDF096", // chip/badge de destaque (14.99:1 com ink)
+  // Pastéis de status (fundo + texto escuro calibrado, nunca só por cor)
+  peach: "#FFE3D1",
+  water: "#DDF3F0",
+  amberink: "#5F4100", // links/texto âmbar (9.36:1 no card, 7.78 na sand)
+  "st-blue-bg": "#DBEAFE",
+  "st-blue": "#1E40AF", // 7.15:1 no próprio bg
+  "st-purple-bg": "#F3E8FF",
+  "st-purple": "#6B21A8", // 7.39:1 no próprio bg
+  "st-green-bg": "#DCFCE7",
+  "st-green": "#14532D", // 8.30:1 no próprio bg
+  "st-red-bg": "#FEE2E2",
+  "st-red": "#7F1D1D", // 8.20:1 no próprio bg
+  // Linhas e foco
+  line: "#E7E2D8", // hairline decorativa (nunca único indicador)
+  inputbd: "#78716C", // borda de input (4.80:1 no card — piso UI 3:1)
+  // Exceção foto: scrim escuro SÓ sobre imagens (legibilidade da foto,
+  // padrão de portal; 18.81:1 com texto branco por cima)
+  night: "#0B1121",
+} as const;
+
+export type ThemeToken = keyof typeof THEME_PALETTE;
+
+export interface ThemeContrastPair {
+  fg: ThemeToken;
+  bg: ThemeToken;
+  floor: number;
+  label: string;
+}
+
+// Texto normal: piso AAA (7:1). Cada par tem redundância de estado onde há cor
+// (ícone/label/aria) — camada AAA existente do projeto, preservada.
+export const THEME_CONTRAST_TEXT: ThemeContrastPair[] = [
+  { fg: "ink", bg: "paper", floor: 7, label: "texto principal no fundo" },
+  { fg: "ink", bg: "card", floor: 7, label: "texto principal no card" },
+  { fg: "ink-soft", bg: "paper", floor: 7, label: "texto secundário no fundo" },
+  { fg: "ink-soft", bg: "card", floor: 7, label: "texto secundário no card" },
+  { fg: "muted", bg: "paper", floor: 7, label: "placeholder no fundo" },
+  { fg: "muted", bg: "card", floor: 7, label: "placeholder no card" },
+  { fg: "ink", bg: "taxi", floor: 7, label: "texto no CTA táxi" },
+  { fg: "ink", bg: "taxi-strong", floor: 7, label: "texto no hover do CTA" },
+  { fg: "ink", bg: "pastel", floor: 7, label: "texto no chip pastel" },
+  { fg: "ink", bg: "sand", floor: 7, label: "texto no badge areia" },
+  { fg: "ink", bg: "peach", floor: 7, label: "texto no pastel pêssego" },
+  { fg: "ink", bg: "water", floor: 7, label: "texto no pastel água" },
+  { fg: "amberink", bg: "card", floor: 7, label: "link âmbar no card" },
+  { fg: "amberink", bg: "sand", floor: 7, label: "link âmbar na areia" },
+  { fg: "st-blue", bg: "st-blue-bg", floor: 7, label: "badge agendado" },
+  { fg: "st-purple", bg: "st-purple-bg", floor: 7, label: "badge visita feita" },
+  { fg: "st-green", bg: "st-green-bg", floor: 7, label: "badge aprovado" },
+  { fg: "st-red", bg: "st-red-bg", floor: 7, label: "badge recusado" },
+];
+
+// UI não-textual: piso WCAG 2.2 de componente gráfico (3:1).
+export const THEME_CONTRAST_UI: ThemeContrastPair[] = [
+  { fg: "inputbd", bg: "card", floor: 3, label: "borda de input" },
+  { fg: "ink", bg: "paper", floor: 3, label: "anel de foco no fundo" },
+  { fg: "ink", bg: "card", floor: 3, label: "anel de foco no card" },
+];
+
+// Pares proibidos pelo DESIGN.md v2 (documentados para ninguém reintroduzir).
+export const THEME_FORBIDDEN_PAIRS: ThemeContrastPair[] = [
+  // Branco sobre táxi = 1.63:1 — CTA leva tinta preta, sem exceção.
+  { fg: "card", bg: "taxi", floor: 4.5, label: "branco sobre táxi (usar ink)" },
+  {
+    fg: "card",
+    bg: "taxi-strong",
+    floor: 4.5,
+    label: "branco sobre táxi-strong (usar ink)",
+  },
+];
