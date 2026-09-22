@@ -163,3 +163,6 @@ Evidencia por story (todas ADEQUATE): S008 filters(22)+ADR-003; S009 FilterPanel
 Regression: docs/regression-suite.md estendido (fluxos antigos intactos + 9 novos).
 Changelog: corpo do PR-3 (interno) + README Novidades (player-facing).
 Proximo: push + PR-3 feat/filtros-avancados -> upstream gnnss777/lagoscrib (apos PR-1/PR-2), CI monitorado. Travado ate OK do Gabriel.
+
+--- PR-3 ABERTO (2026-09-22) ---
+PR-3: https://github.com/gnnss777/lagoscrib/pull/3 (feat/filtros-avancados -> master, merge apos #1/#2, MERGEABLE, sem CI no upstream).
