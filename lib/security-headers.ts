@@ -6,9 +6,14 @@
  */
 
 export function buildCsp(nonce: string): string {
+  // Nonce não funciona aqui: a home é estaticamente prerenderizada (○ no build),
+  // então o HTML não carrega o nonce por request e os inline scripts do Next
+  // (hidratação) eram bloqueados -> página em branco (React #412).
+  // 'unsafe-inline' em script-src é o padrão p/ App Router sem SSR-nonce;
+  // as outras diretivas continuam bloqueando origens externas e plugins.
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://va.vercel-analytics.com`,
+    "script-src 'self' 'unsafe-inline' https://va.vercel-analytics.com",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' https://fonts.gstatic.com",
