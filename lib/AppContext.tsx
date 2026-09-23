@@ -52,6 +52,8 @@ interface AppContextValue extends AppState {
   /** Sincroniza sessão do NextAuth (backend) com o estado local. */
   setSessionUser: (username: string | null) => void;
   addApartment: (apartment: Apartment) => void;
+  /** Remove imóvel adicionado pelo usuário (ids `new-...`); estáticos não. */
+  removeApartment: (apartmentId: string) => void;
   addNote: (apartmentId: string, text: string) => void;
   updateStatus: (
     apartmentId: string,
@@ -181,6 +183,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const removeApartment = useCallback((apartmentId: string) => {
+    // Só imóveis do usuário vivem em USER_ADDED_KEY; estáticos (data.ts)
+    // não podem ser removidos — filtro por prefixo do id (new-).
+    if (!apartmentId.startsWith("new-")) return;
+    try {
+      const stored = localStorage.getItem("apartamentos-app-new");
+      const list: import("@/lib/data").Apartment[] = stored ? JSON.parse(stored) : [];
+      localStorage.setItem(
+        "apartamentos-app-new",
+        JSON.stringify(list.filter((a) => a.id !== apartmentId)),
+      );
+    } catch {
+      // ignore
+    }
+    // Limpa também estado órfão (status/notas/checklist/follow-up).
+    setState((prev) => ({
+      ...prev,
+      statuses: prev.statuses.filter((s) => s.apartmentId !== apartmentId),
+      notes: prev.notes.filter((n) => n.apartmentId !== apartmentId),
+      checklist: Object.fromEntries(
+        Object.entries(prev.checklist).filter(([id]) => id !== apartmentId),
+      ),
+      followUps: Object.fromEntries(
+        Object.entries(prev.followUps).filter(([id]) => id !== apartmentId),
+      ),
+    }));
+  }, []);
+
   const addNote = useCallback((apartmentId: string, text: string) => {
     const note: Note = {
       id: `note-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -301,6 +331,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         logout,
         setSessionUser,
         addApartment,
+        removeApartment,
         addNote,
         updateStatus,
         moveCardTo,
