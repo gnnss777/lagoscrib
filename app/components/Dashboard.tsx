@@ -23,6 +23,7 @@ import {
   SORT_OPTIONS,
 } from "@/lib/constants";
 import { toggleCompareSelection } from "@/lib/compare";
+import { getRegional, REGIONAL_GROUPS } from "@/lib/neighborhoods";
 import {
   applyFilters,
   applySort,
@@ -105,6 +106,27 @@ export default function Dashboard() {
     NEIGHBORHOOD_ALL,
     ...Array.from(new Set(allApartments.map((a) => a.neighborhood))),
   ];
+
+  // Agrupamento por Regional (lib/neighborhoods.ts) só p/ exibição do
+  // dropdown — o filtro continua por igualdade exata de bairro.
+  // useMemo: estabiliza a identidade p/ o React Compiler (preserve-manual-memoization).
+  const neighborhoodGroups: { label: string | null; items: string[] }[] =
+    useMemo(
+      () => [
+        ...REGIONAL_GROUPS.map((g) => ({
+          label: `Regional ${g.regional}`,
+          items: neighborhoods.filter((n) => getRegional(n) === g.regional),
+        })).filter((g) => g.items.length > 0),
+        {
+          label: null,
+          items: neighborhoods.filter(
+            (n) => n !== NEIGHBORHOOD_ALL && getRegional(n) === null
+          ),
+        },
+      ],
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- neighborhoods deriva de allApartments (identidade estável por render c/ dados estáticos + user add)
+      [allApartments]
+    );
 
   // Hidrata filtros salvos (SSR-safe: localStorage só no client).
   useEffect(() => {
@@ -282,11 +304,26 @@ export default function Dashboard() {
                 }
                 className="input-field pl-10 pr-8 appearance-none cursor-pointer min-w-[160px] min-h-11"
               >
-                {neighborhoods.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
+                {neighborhoods.includes(NEIGHBORHOOD_ALL) && (
+                  <option value={NEIGHBORHOOD_ALL}>{NEIGHBORHOOD_ALL}</option>
+                )}
+                {neighborhoodGroups.map((g) =>
+                  g.label ? (
+                    <optgroup key={g.label} label={g.label}>
+                      {g.items.map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ) : (
+                    g.items.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))
+                  )
+                )}
               </select>
             </div>
           </div>

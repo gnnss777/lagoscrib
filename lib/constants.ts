@@ -76,9 +76,9 @@ export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
 
 // --- Filtros avançados (S008, ADR-003) ---
-// Faixas calibradas com os 12 imóveis reais (22/09/2026):
-// aluguel total 2.350–4.412 · venda 354.010–1.395.000 · área 66–140m² ·
-// condomínio 0–1.778 (alguns "a confirmar"). Limites com folga p/ imóveis novos.
+// Faixas calibradas com 109 imóveis reais (22/09/2026, expansão 5 fontes):
+// aluguel total 1.152–19.300 · venda 150.000–30.000.000 · área 21–874m² ·
+// condomínio 0–4.300 (alguns "a confirmar"). Limites com folga p/ imóveis novos.
 // REGRA (LL-006): UI lê daqui — nenhum literal de faixa em componente.
 
 // Chave própria de persistência (nunca tocar "apartamentos-app-state").
@@ -97,8 +97,8 @@ export const BATHROOM_OPTIONS = [1, 2, 3, 4] as const;
 export const PARKING_OPTIONS = [1, 2, 3] as const;
 
 // Limites dos inputs numéricos (placeholders/validação — filtro aceita null).
-export const RENT_PRICE_BOUNDS = { min: 0, max: 10000 } as const;
-export const SALE_PRICE_BOUNDS = { min: 0, max: 2000000 } as const;
+export const RENT_PRICE_BOUNDS = { min: 0, max: 20000 } as const;
+export const SALE_PRICE_BOUNDS = { min: 0, max: 35000000 } as const;
 export const AREA_BOUNDS = { min: 0, max: 1000 } as const;
 export const CONDO_MAX_BOUNDS = { min: 0, max: 5000 } as const;
 

@@ -9,11 +9,29 @@ import { apartments, saleApartments } from "@/lib/data";
 describe("galeria", () => {
   const todos = [...apartments, ...saleApartments];
 
-  it("test_galeria_todos_imoveis_com_11_fotos", () => {
-    expect(todos).toHaveLength(12);
+  it("test_galeria_originais_11_fotos_novos_minimo_1", () => {
+    expect(todos).toHaveLength(109);
+    const originais = new Set([
+      "zap-aguaverde-castro-123",
+      "zap-aguaverde-raul-90",
+      "zap-ahu-eca-78",
+      "zap-centro-comendador-130",
+      "zap-centro-bufren-96",
+      "zap-juveve-goulin-66",
+      "zap-cabral-manoel-104",
+      "zap-bacacheri-parana-107",
+      "zap-tingui-brasilio-71",
+      "zap-aguaverde-iguacu-140",
+      "zap-capaoraso-churchill-78",
+      "zap-ecoville-rosa-87",
+    ]);
     for (const a of todos) {
-      // capa (photos[0] = image, compat) + 10 da galeria
-      expect(a.photos?.length, `${a.id} fotos`).toBe(11);
+      // capa (photos[0] = image, compat); originais têm 11, novos ≥ 1
+      const piso = originais.has(a.id) ? 11 : 1;
+      expect(a.photos?.length, `${a.id} fotos`).toBeGreaterThanOrEqual(piso);
+      if (originais.has(a.id)) {
+        expect(a.photos?.length, `${a.id} fotos`).toBe(11);
+      }
       expect(a.photos?.[0].src, `${a.id} photos[0]`).toBe(a.image);
     }
   });
