@@ -152,3 +152,17 @@ Proximo: push + PR-1 feat/dados-reais (48da29d) -> PR-2 feat/dores-consumidor ->
 --- PRS ABERTOS (2026-09-22) ---
 PR-1: https://github.com/gnnss777/lagoscrib/pull/1 (feat/dados-reais -> master, MERGEABLE, sem CI no upstream).
 PR-2: https://github.com/gnnss777/lagoscrib/pull/2 (feat/dores-consumidor -> master, merge apos o #1).
+
+--- LEVA FILTROS-AVANCADOS — DONE (2026-09-22) ---
+Branch feat/filtros-avancados (base: feat/dores-consumidor local, PR-3 sequencial): 2033111 (S008) + a386e9a (S009) + acee308 (S012) + d87b95d (S010).
+Gates F4 (ordem, todos PASS): tsc + lint(0 err/0 warn) + 63 unit + build estatico + 9/9 e2e (smoke, galeria, antidores, persistencia, comparacao, venda, filtros x2, form). Zero erro de console em todos os specs.
+UX: spec docs/ux/filtros-avancados.md ux-review NEEDS_REVISION -> corrigida (teclado, labels, reduced-motion, asserts) -> APPROVED; 10 ACs numerados.
+TDD pegou 3 bugs reais: substring aceita-em-nao-aceita, nulo no topo do maior-preco, min-0 nos inputs novos (sugestao do review S010). Review independente: passed em S008/S009/S010.
+Persistencia: chave nova apartamentos-app-filters v1 c/ debounce 300ms (nunca toca apartamentos-app-state); Dashboard-local por decisao documentada (evita re-render global).
+Evidencia por story (todas ADEQUATE): S008 filters(22)+ADR-003; S009 FilterPanel+filtros.spec+screenshots; S012 metragem header+asserts; S010 form+form.spec+screenshot.
+Regression: docs/regression-suite.md estendido (fluxos antigos intactos + 9 novos).
+Changelog: corpo do PR-3 (interno) + README Novidades (player-facing).
+Proximo: push + PR-3 feat/filtros-avancados -> upstream gnnss777/lagoscrib (apos PR-1/PR-2), CI monitorado. Travado ate OK do Gabriel.
+
+--- PR-3 ABERTO (2026-09-22) ---
+PR-3: https://github.com/gnnss777/lagoscrib/pull/3 (feat/filtros-avancados -> master, merge apos #1/#2, MERGEABLE, sem CI no upstream).

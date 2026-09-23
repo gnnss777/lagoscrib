@@ -1,8 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X } from "@phosphor-icons/react";
+import { Check, Plus, X } from "@phosphor-icons/react";
 import { useApp } from "@/lib/AppContext";
+import { FACILITY_GROUPS } from "@/lib/constants";
+
+// Facilidades selecionáveis (achatado dos grupos de constantes — mesma fonte
+// dos filtros, sem duplicar lista).
+const FACILITY_OPTIONS: string[] = FACILITY_GROUPS.flatMap((g) => [...g.items]);
+
+// Mapeia o select de pets p/ o schema (pets?: string — S001 aditivo).
+// "Aceita animais"/"Não aceita animais" casam com o filtro de pets (S008).
+const PETS_OPTIONS = [
+  { value: "nao-informado", label: "Pets: não informado", pets: undefined },
+  { value: "sim", label: "Pets: aceita", pets: "Aceita animais" },
+  { value: "nao", label: "Pets: não aceita", pets: "Não aceita animais" },
+] as const;
 
 export default function AddApartmentForm() {
   const { addApartment } = useApp();
@@ -16,6 +29,8 @@ export default function AddApartmentForm() {
     bedrooms: 2,
     bathrooms: 1,
     parking: 1,
+    petsOption: "nao-informado" as (typeof PETS_OPTIONS)[number]["value"],
+    customFacility: "",
     transaction: "aluguel" as "aluguel" | "venda",
     rent: 2500,
     condo: 500,
@@ -32,13 +47,17 @@ export default function AddApartmentForm() {
     const isSale = form.transaction === "venda";
     // Venda: total = preço (sem simular financiamento — S006 out-of-scope).
     const total = isSale ? form.salePrice : form.rent + form.condo + form.iptu;
+    const pets = PETS_OPTIONS.find((o) => o.value === form.petsOption)?.pets;
+    // Campos auxiliares do form (select de pets, input livre) não persistem.
+    const { petsOption, customFacility, ...fields } = form;
     addApartment({
-      ...form,
+      ...fields,
       id: `new-${Date.now()}`,
       total,
       transaction: form.transaction,
       salePrice: isSale ? form.salePrice : undefined,
       rent: isSale ? 0 : form.rent,
+      pets,
       description: "Novo imóvel adicionado pelo usuário.",
       features: form.features,
     });
@@ -90,6 +109,72 @@ export default function AddApartmentForm() {
         <input type="number" placeholder="IPTU (R$)" value={form.iptu} onChange={e => setForm({ ...form, iptu: Number(e.target.value) })} className="input-field" />
         <input type="number" placeholder="Área (m²)" value={form.area} onChange={e => setForm({ ...form, area: Number(e.target.value) })} className="input-field" />
         <input type="number" placeholder="Quartos" value={form.bedrooms} onChange={e => setForm({ ...form, bedrooms: Number(e.target.value) })} className="input-field" />
+        <input type="number" min={0} placeholder="Banheiros" value={form.bathrooms} onChange={e => setForm({ ...form, bathrooms: Number(e.target.value) })} className="input-field" />
+        <input type="number" min={0} placeholder="Vagas" value={form.parking} onChange={e => setForm({ ...form, parking: Number(e.target.value) })} className="input-field" />
+        <select
+          aria-label="Aceita pets"
+          value={form.petsOption}
+          onChange={e => setForm({ ...form, petsOption: e.target.value as typeof form.petsOption })}
+          className="input-field col-span-2 cursor-pointer"
+        >
+          {PETS_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Facilidades editáveis (S010): chips de constantes + campo livre */}
+      <div>
+        <p className="text-xs font-medium text-surface-400 mb-2">Facilidades</p>
+        <div className="flex flex-wrap gap-1.5">
+          {FACILITY_OPTIONS.map((item) => {
+            const on = form.features.includes(item);
+            return (
+              <button
+                key={item}
+                type="button"
+                aria-pressed={on}
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    features: on
+                      ? form.features.filter((f) => f !== item)
+                      : [...form.features, item],
+                  })
+                }
+                className={`inline-flex items-center gap-1 px-2.5 py-1.5 min-h-11 rounded-lg border text-xs font-medium transition-colors ${
+                  on
+                    ? "bg-gold-400 text-navy-950 border-gold-400"
+                    : "text-surface-400 border-navy-600 hover:border-gold-400/50"
+                }`}
+              >
+                {on && <Check size={12} weight="bold" />}
+                {item}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex gap-2 mt-2">
+          <input
+            placeholder="Outra facilidade (ex: Churrasqueira)"
+            value={form.customFacility}
+            onChange={e => setForm({ ...form, customFacility: e.target.value })}
+            className="input-field flex-1"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              const v = form.customFacility.trim().replace(/^\w/, (c) => c.toUpperCase());
+              if (v && !form.features.includes(v)) {
+                setForm({ ...form, features: [...form.features, v], customFacility: "" });
+              }
+            }}
+            className="px-4 min-h-11 rounded-lg text-sm font-semibold border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors shrink-0"
+          >
+            Adicionar
+          </button>
+        </div>
       </div>
       <button type="submit" className="w-full py-2 bg-gold-400 text-navy-950 rounded-md font-bold hover:bg-gold-500 transition">
         Importar Novo Imóvel

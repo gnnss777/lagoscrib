@@ -1,7 +1,7 @@
-# Regression Suite — leva dores-consumidor (S007)
+# Regression Suite — levas dores-consumidor (S007) + filtros-avancados (S011)
 
 > Cobertura de não-regressão: cada comportamento antigo tem spec que o trava.
-> 100% verde em 22/09/2026 (41 unit + 6 e2e). Rodar antes de todo push.
+> 100% verde em 22/09/2026 (63 unit + 9 e2e). Rodar antes de todo push.
 
 ## Fluxo de aluguel (pré-leva, intocado)
 
@@ -29,6 +29,21 @@
 | Lógica pura transação | `tests/unit/transaction.test.ts` (5) | verde |
 | Precificação (`pricePerM2`, `totalAllIn`) | `tests/unit/pricing.test.ts` | verde |
 | Dados: 7 aluguel sem venda + 12×11 fotos em disco | `tests/unit/s001-data.test.ts`, `tests/unit/s002-galeria.test.ts` | verde |
+| Metragem no header do comparativo (123/78/90m²) | `e2e/comparacao.spec.ts` (S012) | verde |
+
+## Novos fluxos — leva filtros-avancados (PR-3)
+
+| Comportamento | Trava | Status |
+|---|---|---|
+| Núcleo puro filtros (busca, mín X+, preço/área, AND facilidades, negação, pets/mobiliado 3-state, ausente passa, sorts, contador) | `tests/unit/filters.test.ts` (22) | verde |
+| Combinação quartos 3+ + máx 3800 + Elevador → 1 card; limpar → 7 | `e2e/filtros.spec.ts` | verde |
+| Teclado (Enter abre, Esc fecha + foco volta, chip via Enter) | `e2e/filtros.spec.ts` | verde |
+| Persistência filtros no reload (poll do debounce) | `e2e/filtros.spec.ts` | verde |
+| Sort menor preço / maior área no primeiro card | `e2e/filtros.spec.ts` | verde |
+| Empty state cita filtros + limpar dentro | `e2e/filtros.spec.ts` | verde |
+| Bairro de imóvel novo no dropdown e filtra | `e2e/filtros.spec.ts` | verde |
+| Form completo: 4/2/2 entra em 3+ + Elevador, sai em banheiros 3+ | `e2e/form.spec.ts` | verde |
+| Filtros default = ordem antiga intacta (smoke segue 7 cards) | `e2e/smoke.spec.ts` | verde |
 
 ## Infra de determinismo
 

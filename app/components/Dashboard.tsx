@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
 import {
   SignOut,
@@ -15,7 +15,22 @@ import {
   type Apartment,
 } from "@/lib/data";
 import { COMPARE_MAX, COMPARE_MIN } from "@/lib/constants";
+import {
+  FILTER_DEBOUNCE_MS,
+  FILTERS_STORAGE_KEY,
+  FILTERS_STORAGE_VERSION,
+  NEIGHBORHOOD_ALL,
+  SORT_OPTIONS,
+} from "@/lib/constants";
 import { toggleCompareSelection } from "@/lib/compare";
+import {
+  applyFilters,
+  applySort,
+  countActiveFilters,
+  DEFAULT_FILTERS,
+  type FilterState,
+  type SortOption,
+} from "@/lib/filters";
 import {
   filterByTransaction,
   type TransactionTab,
@@ -25,13 +40,9 @@ import ApartmentCard from "./ApartmentCard";
 import AddApartmentForm from "./AddApartmentForm";
 import DetailModal from "./DetailModal";
 import CompareModal from "./CompareModal";
+import FilterPanel from "./FilterPanel";
 
 const STATIC_POOL: Apartment[] = [...staticApartments, ...staticSaleApartments];
-
-const NEIGHBORHOODS = [
-  "Todos",
-  ...Array.from(new Set(STATIC_POOL.map((a) => a.neighborhood))),
-];
 
 // Combinar apartamentos estáticos (aluguel + venda) com novos do usuário
 // (sem transaction = aluguel, aditivo S001).
@@ -60,9 +71,10 @@ const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
 
 export default function Dashboard() {
   const { username, logout, getStatus } = useApp();
-  const [search, setSearch] = useState("");
-  const [neighborhood, setNeighborhood] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState<StatusType | "todos">("todos");
+  // Filtros avançados (S009): estado único + persistência aditiva em chave
+  // própria (nunca toca "apartamentos-app-state").
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [filtersHydrated, setFiltersHydrated] = useState(false);
   // Aba ativa (S006): Alugar exclui vendas; Comprar só vendas.
   const [tab, setTab] = useState<TransactionTab>("alugar");
   const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(
@@ -87,6 +99,46 @@ export default function Dashboard() {
 
   const allApartments = getAllApartments();
 
+  // Bairros dinâmicos (fix S009): incluem imóveis novos do usuário.
+  // Sem useMemo de propósito — lista curta, recomputa barato a cada render.
+  const neighborhoods: string[] = [
+    NEIGHBORHOOD_ALL,
+    ...Array.from(new Set(allApartments.map((a) => a.neighborhood))),
+  ];
+
+  // Hidrata filtros salvos (SSR-safe: localStorage só no client).
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(FILTERS_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.version === FILTERS_STORAGE_VERSION && parsed.filters) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratação pós-mount, padrão AppContext
+          setFilters({ ...DEFAULT_FILTERS, ...parsed.filters });
+        }
+      }
+    } catch {
+      // ignore
+    }
+    setFiltersHydrated(true);
+  }, []);
+
+  // Persiste com debounce (evita escrita a cada tecla).
+  useEffect(() => {
+    if (!filtersHydrated) return;
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          FILTERS_STORAGE_KEY,
+          JSON.stringify({ version: FILTERS_STORAGE_VERSION, filters })
+        );
+      } catch {
+        // ignore
+      }
+    }, FILTER_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [filters, filtersHydrated]);
+
   const compareApartments = allApartments.filter((a) =>
     compareIds.includes(a.id)
   );
@@ -95,22 +147,13 @@ export default function Dashboard() {
   const tabApartments = filterByTransaction(allApartments, tab);
 
   const filteredApartments = useMemo(() => {
-    return tabApartments.filter((apt) => {
-      const matchesSearch =
-        search === "" ||
-        apt.title.toLowerCase().includes(search.toLowerCase()) ||
-        apt.neighborhood.toLowerCase().includes(search.toLowerCase()) ||
-        apt.address.toLowerCase().includes(search.toLowerCase());
+    return applySort(
+      applyFilters(tabApartments, filters, getStatus),
+      filters.sort
+    );
+  }, [filters, getStatus, tabApartments]);
 
-      const matchesNeighborhood =
-        neighborhood === "Todos" || apt.neighborhood === neighborhood;
-
-      const status = getStatus(apt.id);
-      const matchesStatus = statusFilter === "todos" || status === statusFilter;
-
-      return matchesSearch && matchesNeighborhood && matchesStatus;
-    });
-  }, [search, neighborhood, statusFilter, getStatus, tabApartments]);
+  const activeFilterCount = countActiveFilters(filters);
 
   // Stats refletem a aba ativa (AC-TOGGLE-01).
   const stats = useMemo(() => {
@@ -185,61 +228,119 @@ export default function Dashboard() {
           ))}
         </motion.div>
 
-        {/* Filters */}
+        {/* Filters (S009: labels visíveis AAA + sort; lógica em lib/filters) */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex flex-col sm:flex-row gap-4 mb-8"
+          className="flex flex-col sm:flex-row gap-4 mb-4"
         >
           {/* Search */}
-          <div className="relative flex-1">
-            <MagnifyingGlass
-              size={18}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-500"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por título, bairro ou endereço..."
-              className="input-field pl-12"
-            />
+          <div className="flex-1">
+            <label
+              htmlFor="dash-search"
+              className="block text-xs font-medium text-surface-400 mb-1"
+            >
+              Buscar
+            </label>
+            <div className="relative">
+              <MagnifyingGlass
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-500"
+              />
+              <input
+                id="dash-search"
+                type="text"
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters({ ...filters, search: e.target.value })
+                }
+                placeholder="Buscar por título, bairro ou endereço..."
+                className="input-field pl-12"
+              />
+            </div>
           </div>
 
           {/* Neighborhood filter */}
-          <div className="relative">
-            <MapPin
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500"
-            />
-            <select
-              value={neighborhood}
-              onChange={(e) => setNeighborhood(e.target.value)}
-              className="input-field pl-10 pr-8 appearance-none cursor-pointer min-w-[160px]"
+          <div>
+            <label
+              htmlFor="dash-bairro"
+              className="block text-xs font-medium text-surface-400 mb-1"
             >
-              {NEIGHBORHOODS.map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
+              Bairro
+            </label>
+            <div className="relative">
+              <MapPin
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500"
+              />
+              <select
+                id="dash-bairro"
+                value={filters.neighborhood}
+                onChange={(e) =>
+                  setFilters({ ...filters, neighborhood: e.target.value })
+                }
+                className="input-field pl-10 pr-8 appearance-none cursor-pointer min-w-[160px] min-h-11"
+              >
+                {neighborhoods.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Status filter */}
-          <div className="relative">
-            <FunnelSimple
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500"
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) =>
-                setStatusFilter(e.target.value as StatusType | "todos")
-              }
-              className="input-field pl-10 pr-8 appearance-none cursor-pointer min-w-[160px]"
+          <div>
+            <label
+              htmlFor="dash-status"
+              className="block text-xs font-medium text-surface-400 mb-1"
             >
-              {STATUS_FILTERS.map((s) => (
+              Status
+            </label>
+            <div className="relative">
+              <FunnelSimple
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500"
+              />
+              <select
+                id="dash-status"
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    status: e.target.value as StatusType | "todos",
+                  })
+                }
+                className="input-field pl-10 pr-8 appearance-none cursor-pointer min-w-[160px] min-h-11"
+              >
+                {STATUS_FILTERS.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Sort */}
+          <div>
+            <label
+              htmlFor="dash-sort"
+              className="block text-xs font-medium text-surface-400 mb-1"
+            >
+              Ordenar
+            </label>
+            <select
+              id="dash-sort"
+              value={filters.sort}
+              onChange={(e) =>
+                setFilters({ ...filters, sort: e.target.value as SortOption })
+              }
+              className="input-field pr-8 appearance-none cursor-pointer min-w-[160px] min-h-11"
+            >
+              {SORT_OPTIONS.map((s) => (
                 <option key={s.value} value={s.value}>
                   {s.label}
                 </option>
@@ -276,9 +377,19 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* Painel de filtros avançados (S009) */}
+        <FilterPanel
+          filters={filters}
+          onChange={setFilters}
+          onClear={() => setFilters(DEFAULT_FILTERS)}
+          pool={tabApartments}
+          getStatus={getStatus}
+          tab={tab}
+        />
+
         {/* Results count */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-surface-400">
+          <p className="text-sm text-surface-400" aria-live="polite">
             {filteredApartments.length === tabApartments.length
               ? "Mostrando todos os apartamentos"
               : `${filteredApartments.length} de ${tabApartments.length} apartamentos`}
@@ -314,9 +425,19 @@ export default function Dashboard() {
             <p className="text-surface-400 text-lg mb-2">
               Nenhum apartamento encontrado
             </p>
-            <p className="text-surface-500 text-sm">
-              Tente ajustar os filtros de busca
+            <p className="text-surface-500 text-sm mb-4">
+              {activeFilterCount > 0
+                ? `Nenhum imóvel com os ${activeFilterCount} filtro${activeFilterCount > 1 ? "s" : ""} atuais — ajuste os filtros`
+                : "Tente ajustar os filtros de busca"}
             </p>
+            {activeFilterCount > 0 && (
+              <button
+                onClick={() => setFilters(DEFAULT_FILTERS)}
+                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+              >
+                Limpar filtros
+              </button>
+            )}
           </motion.div>
         )}
       </main>

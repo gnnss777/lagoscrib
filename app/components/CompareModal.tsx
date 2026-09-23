@@ -162,6 +162,10 @@ export default function CompareModal({ apartments, onClose }: CompareModalProps)
                     <span className="block text-surface-50 font-semibold text-sm line-clamp-2">
                       {a.title}
                     </span>
+                    {/* S012: metragem em cada escolha — título + m² + preço */}
+                    <span className="block text-surface-400 text-xs mt-0.5">
+                      {a.area}m²
+                    </span>
                     <span className="block font-mono text-gold-400 font-bold text-sm mt-1">
                       {formatBRL(effectiveTotal(a))}
                       {a.transaction !== "venda" && (
