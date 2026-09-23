@@ -153,6 +153,44 @@ test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
 
+test("test_kanban_drag_drop_move_card_entre_colunas", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (err) => errors.push(err.message));
+  await gotoAuthed(page);
+  const view = await openKanban(page);
+
+  const colFrom = view.getByRole("region", { name: /Não visitado/ });
+  const colTo = view.getByRole("region", { name: /Visita agendada/ });
+  const card = colFrom.locator("article").first();
+  await card.waitFor({ state: "visible" });
+
+  // HTML5 DnD: dragstart no card + dragover/drop na coluna destino
+  // (Playwright dragTo dispara a sequência nativa de DragEvents).
+  await card.dragTo(colTo);
+
+  // Card saiu da origem (assumindo >1 card na origem; se era o único,
+  // verifica no destino) e aparece na coluna destino.
+  await expect(colTo.locator("article").first()).toBeVisible();
+  const fromCount = await colFrom.locator("article").count();
+  const toCount = await colTo.locator("article").count();
+  expect(toCount).toBeGreaterThanOrEqual(1);
+  expect(fromCount + toCount).toBeGreaterThan(1);
+
+  // aria-live anuncia o move do drag também (mesma via do teclado).
+  const live = view.locator('[aria-live="polite"]');
+  await expect(live).toContainText(/movido para Visita agendada/);
+
+  // Persistiu no localStorage (mesmo contrato do move por menu).
+  const stored = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("apartamentos-app-state") ?? "{}"),
+  );
+  expect(
+    (stored.statuses ?? []).some((s: { status: string }) => s.status === "agendado"),
+  ).toBe(true);
+
+  expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
+});
+
 test("test_kanban_estatico_sem_scroll_contador_mais", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (err) => errors.push(err.message));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Check, DotsThree, Phone, X } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
@@ -44,6 +44,30 @@ function moveShortcut(
   if (key === "<") return { to: status, toIndex: 0 };
   if (key === ">") return { to: status };
   return null;
+}
+
+// Slot de inserção a partir do cursor (leva kanban-drag-drop): metade de
+// cima do card = antes, metade de baixo = depois (padrão Trello). O índice
+// é calculado entre os cards VISÍVEIS da coluna (data-kanban-card).
+function slotFromPoint(
+  container: HTMLElement,
+  status: StatusType,
+  clientY: number,
+): { status: StatusType; index: number } {
+  const cards = Array.from(
+    container.querySelectorAll<HTMLElement>("[data-kanban-card]"),
+  );
+  for (let i = 0; i < cards.length; i++) {
+    const r = cards[i].getBoundingClientRect();
+    if (clientY >= r.top && clientY <= r.bottom) {
+      const after = clientY > r.top + r.height / 2;
+      return { status, index: i + (after ? 1 : 0) };
+    }
+  }
+  if (cards.length === 0) return { status, index: 0 };
+  const first = cards[0].getBoundingClientRect();
+  if (clientY < first.top) return { status, index: 0 };
+  return { status, index: cards.length };
 }
 
 // Linha de selo do follow-up (AC-3: texto visível, nunca só cor).
@@ -99,6 +123,25 @@ export default function KanbanBoard({
   const overflowTrigger = useRef<HTMLElement | null>(null);
   const overflowPanelRef = useRef<HTMLDivElement>(null);
 
+  // --- Drag & drop nativo (leva kanban-drag-drop): HTML5, sem lib nova. ---
+  const [dragId, setDragIdState] = useState<string | null>(null);
+  const [dropSlot, setDropSlot] = useState<{
+    status: StatusType;
+    index: number;
+  } | null>(null);
+  const dragIdRef = useRef<string | null>(null);
+  const dropSlotRef = useRef<{ status: StatusType; index: number } | null>(null);
+
+  const setDragId = (id: string | null) => {
+    dragIdRef.current = id;
+    setDragIdState(id);
+  };
+  const setSlot = (slot: { status: StatusType; index: number } | null) => {
+    dropSlotRef.current = slot;
+    setDropSlot(slot);
+  };
+
+
   const byId = useMemo(() => new Map(apartments.map((a) => [a.id, a])), [apartments]);
 
   // Entradas sintetizadas: todo imóvel do pool tem posição (default = novo/fim).
@@ -136,6 +179,25 @@ export default function KanbanBoard({
       `Card ${a?.title ?? apartmentId} movido para ${columnLabel(to, colConfig)} (posição ${pos + 1} de ${total})`,
     );
     setMenuFor(null);
+  };
+
+  // Commit do drop (leva kanban-drag-drop): ajusta o índice quando o card
+  // se move dentro da própria coluna (slot conta posições VISÍVEIS
+  // incluindo o card arrastado; moveCard espera a posição SEM o card).
+  // No-op se a posição não mudou.
+  const commitDrop = () => {
+    const id = dragIdRef.current;
+    const slot = dropSlotRef.current;
+    setDragId(null);
+    setSlot(null);
+    if (!id || !slot) return;
+    const col = columns.find((c) => c.status === slot.status);
+    const ids = col ? col.ids : [];
+    const origIdx = ids.indexOf(id);
+    let target = slot.index;
+    if (origIdx >= 0 && origIdx < target) target -= 1;
+    if (origIdx === target) return;
+    move(id, slot.status, target);
   };
 
   const staleTotal = useMemo(
@@ -224,6 +286,21 @@ export default function KanbanBoard({
             <section
               key={col.status}
               aria-label={`${col.label}, ${ids.length} imóveis`}
+              onDragOver={(e) => {
+                // Drop zone da coluna inteira (leva kanban-drag-drop).
+                if (!dragIdRef.current) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+                const slot = slotFromPoint(e.currentTarget, col.status, e.clientY);
+                const cur = dropSlotRef.current;
+                if (!cur || cur.status !== slot.status || cur.index !== slot.index) {
+                  setSlot(slot);
+                }
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                commitDrop();
+              }}
               className="flex min-h-0 w-72 shrink-0 flex-col overflow-hidden rounded-xl border border-line bg-sand p-2 shadow-sm sm:w-80 lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink"
             >
               <header className="mb-2 shrink-0">
@@ -249,15 +326,40 @@ export default function KanbanBoard({
                     {KANBAN_EMPTY_COLUMN_HINT}
                   </p>
                 )}
-                {visible.map((id) => {
+                {visible.map((id, i) => {
                   const a = byId.get(id);
                   if (!a) return null;
                   const fu = followUps[id];
+                  const showIndicator =
+                    dragId !== null &&
+                    dropSlot !== null &&
+                    dropSlot.status === col.status &&
+                    dropSlot.index === i;
                   return (
+                    <Fragment key={id}>
+                      {showIndicator && (
+                        <div
+                          data-testid="kanban-drop-indicator"
+                          role="presentation"
+                          className="mx-1 my-0.5 h-1 shrink-0 rounded-full bg-taxi"
+                        />
+                      )}
                     <article
-                      key={id}
                       tabIndex={0}
                       aria-label={`${a.title}, ${col.label}`}
+                      draggable
+                      data-kanban-card
+                      onDragStart={(e) => {
+                        // HTML5 DnD: data obrigatória pro Firefox pegar o drag.
+                        e.dataTransfer.setData("text/plain", id);
+                        e.dataTransfer.effectAllowed = "move";
+                        setDragId(id);
+                      }}
+                      onDragEnd={() => {
+                        // Se soltou fora de qualquer coluna, limpa o estado.
+                        if (dragIdRef.current === id) setDragId(null);
+                        setSlot(null);
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && menuFor !== id) {
                           e.preventDefault();
@@ -271,7 +373,9 @@ export default function KanbanBoard({
                         }
                         if (e.key === "Escape") setMenuFor(null);
                       }}
-                      className="bg-card border border-line rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                      className={`bg-card border border-line rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ink ${
+                        dragId === id ? "opacity-50" : ""
+                      }`}
                     >
                       {/* Pílula compacta (ESTÁTICO-SEM-SCROLL): miniatura 40px +
                           título/bairro/preço + selo; mover/contato no menu. */}
@@ -379,12 +483,21 @@ export default function KanbanBoard({
                         </div>
                       )}
                     </article>
+                    </Fragment>
                   );
                 })}
+                {/* Slot "fim da coluna": depois do último card visível. */}
+                {dragId !== null &&
+                  dropSlot !== null &&
+                  dropSlot.status === col.status &&
+                  dropSlot.index >= visible.length && (
+                    <div
+                      data-testid="kanban-drop-indicator"
+                      role="presentation"
+                      className="mx-1 my-0.5 h-1 shrink-0 rounded-full bg-taxi"
+                    />
+                  )}
               </div>
-
-              {/* Overflow do board estático: o que passa da trava vira
-                  contador clicável (padrão Trello/Linear, sem scroll). */}
               {hidden.length > 0 && (
                 <button
                   onClick={() => setOverflowFor(col.status)}
