@@ -72,10 +72,11 @@ test("test_venda_toggle_abas_valores_modal", async ({ page }) => {
   await expect(page.getByTestId("gallery-counter")).toHaveText("1/11");
 
   // Status workflow reutilizado na venda (mesmo código, sem duplicar).
+  // Tema lightbox (DESIGN.md v2): anel de seleção em ink sobre card claro.
   await page.getByRole("button", { name: "Em negociação" }).click();
   await expect(
     page.getByRole("button", { name: "Em negociação" })
-  ).toHaveAttribute("class", /ring-gold-400/);
+  ).toHaveAttribute("class", /ring-ink/);
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });

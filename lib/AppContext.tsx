@@ -47,6 +47,8 @@ interface AppState {
 interface AppContextValue extends AppState {
   login: (username: string, password: string) => boolean;
   logout: () => void;
+  /** Sincroniza sessão do NextAuth (backend) com o estado local. */
+  setSessionUser: (username: string | null) => void;
   addApartment: (apartment: Apartment) => void;
   addNote: (apartmentId: string, text: string) => void;
   updateStatus: (apartmentId: string, status: StatusType, scheduledDate?: string) => void;
@@ -69,13 +71,22 @@ const AppContext = createContext<AppContextValue | null>(null);
 
 const STORAGE_KEY = "apartamentos-app-state";
 
-const USERS: Record<string, string> = {
-  // Credenciais via ambiente (.env.local) — fallbacks só para dev local.
-  // Auth é client-side (não é barreira real); ver docs/ADR-001-pipeline.md.
-  [(process.env.NEXT_PUBLIC_APP_USER ?? "guinness").toLowerCase()]:
-    process.env.NEXT_PUBLIC_APP_PASS ?? "curitiba2026",
-  admin: process.env.NEXT_PUBLIC_ADMIN_PASS ?? "admin123",
-};
+// Modo legado (pré-backend): auth client-side — NÃO é barreira real.
+// Em produção os fallbacks são removidos (fail-closed); com backend
+// configurado este mapa nem é usado (NextAuth assume — ver lib/auth.ts).
+const isDev = process.env.NODE_ENV !== "production";
+if (isDev) {
+  console.warn("[auth] modo legado local ativo — migrar para backend (NextAuth)");
+}
+function buildLegacyUsers(): Record<string, string> {
+  const users: Record<string, string> = {};
+  const user = (process.env.NEXT_PUBLIC_APP_USER ?? (isDev ? "guinness" : "")).toLowerCase();
+  const pass = process.env.NEXT_PUBLIC_APP_PASS ?? (isDev ? "curitiba2026" : "");
+  // Fail-closed: sem usuário/senha configurados, ninguém entra (nem ""/"").
+  if (user && pass) users[user] = pass;
+  return users;
+}
+const USERS: Record<string, string> = buildLegacyUsers();
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(defaultState);
@@ -127,6 +138,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ...prev,
       isAuthenticated: false,
       username: null,
+    }));
+  }, []);
+
+  const setSessionUser = useCallback((username: string | null) => {
+    setState((prev) => ({
+      ...prev,
+      isAuthenticated: username !== null,
+      username,
     }));
   }, []);
 
@@ -222,6 +241,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ...state,
         login,
         logout,
+        setSessionUser,
         addApartment,
         addNote,
         updateStatus,

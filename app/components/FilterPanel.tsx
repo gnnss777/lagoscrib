@@ -35,7 +35,7 @@ interface FilterPanelProps {
 
 const inputCls =
   "input-field w-full min-h-11 cursor-pointer text-sm";
-const labelCls = "block text-xs font-medium text-surface-400 mb-1";
+const labelCls = "block text-xs font-medium text-ink-soft mb-1";
 const chipBase =
   "inline-flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-lg border text-sm font-medium transition-colors";
 
@@ -64,7 +64,7 @@ function TriState({
         role="group"
         aria-labelledby={`${testid}-label`}
         data-testid={testid}
-        className="flex gap-1 p-1 rounded-xl bg-navy-950/60 border border-navy-700/30 w-fit"
+        className="flex gap-1 p-1 rounded-xl bg-paper border border-line w-fit"
       >
         {opts.map(({ v, label: l }) => (
           <button
@@ -74,8 +74,8 @@ function TriState({
             onClick={() => onChange(v)}
             className={`px-4 py-2 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
               value === v
-                ? "bg-gold-400 text-navy-950"
-                : "text-surface-400 hover:text-surface-50"
+                ? "bg-taxi text-ink shadow-sm"
+                : "text-muted hover:text-ink"
             }`}
           >
             {l}
@@ -196,7 +196,7 @@ export default function FilterPanel({
         aria-controls="filter-panel"
         data-testid="filter-toggle"
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-xl border border-navy-600 text-sm font-semibold text-surface-50 hover:border-gold-400/50 transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-xl border border-inputbd bg-card text-sm font-semibold text-ink shadow-sm hover:border-ink transition-colors"
       >
         <FunnelSimple size={16} />
         Mais filtros{active > 0 ? ` (${active})` : ""}
@@ -209,7 +209,7 @@ export default function FilterPanel({
           initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.2 }}
-          className="mt-3 bg-navy-900/60 border border-navy-700/30 rounded-2xl p-5 space-y-5"
+          className="mt-3 bg-card border border-line rounded-2xl p-5 space-y-5 shadow-sm"
         >
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {minSelect(
@@ -286,14 +286,14 @@ export default function FilterPanel({
               (v) => onChange({ ...filters, condoMax: v }),
               CONDO_MAX_BOUNDS.max
             )}
-            <label className="flex items-center gap-2.5 min-h-11 text-sm text-surface-50 cursor-pointer">
+            <label className="flex items-center gap-2.5 min-h-11 text-sm text-ink cursor-pointer">
               <input
                 type="checkbox"
                 checked={filters.noCondo}
                 onChange={(e) =>
                   onChange({ ...filters, noCondo: e.target.checked })
                 }
-                className="w-5 h-5 shrink-0 accent-gold-400"
+                className="w-5 h-5 shrink-0 accent-taxi"
               />
               Sem condomínio
             </label>
@@ -324,7 +324,7 @@ export default function FilterPanel({
               return (
                 <div key={group} role="group" aria-label={`Facilidades: ${group}`}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-surface-400">
+                    <span className="text-xs font-medium text-ink-soft">
                       {group}
                     </span>
                     <div className="flex gap-2">
@@ -341,7 +341,7 @@ export default function FilterPanel({
                             ],
                           })
                         }
-                        className="text-xs text-gold-400 hover:text-gold-300 font-medium min-h-11 px-2"
+                        className="text-xs text-amberink hover:text-ink font-medium min-h-11 px-2"
                       >
                         Marcar todas
                       </button>
@@ -355,7 +355,7 @@ export default function FilterPanel({
                             ),
                           })
                         }
-                        className="text-xs text-surface-400 hover:text-surface-50 font-medium min-h-11 px-2"
+                        className="text-xs text-muted hover:text-ink font-medium min-h-11 px-2"
                       >
                         Limpar todas
                       </button>
@@ -380,8 +380,8 @@ export default function FilterPanel({
                           }
                           className={`${chipBase} ${
                             on
-                              ? "bg-gold-400 text-navy-950 border-gold-400 font-semibold"
-                              : "bg-navy-950/60 text-surface-50 border-navy-600 hover:border-gold-400/50"
+                              ? "bg-taxi text-ink border-taxi font-semibold shadow-sm"
+                              : "bg-paper text-ink border-inputbd hover:border-ink"
                           }`}
                         >
                           {on && <Check size={14} weight="bold" />}
@@ -402,7 +402,7 @@ export default function FilterPanel({
 
           {active > 0 && (
             <div className="flex items-center justify-between pt-1">
-              <p className="text-sm text-surface-400">
+              <p className="text-sm text-ink-soft">
                 {active} filtro{active > 1 ? "s" : ""} ativo
                 {active > 1 ? "s" : ""}
               </p>
@@ -410,7 +410,7 @@ export default function FilterPanel({
                 ref={clearRef}
                 type="button"
                 onClick={onClear}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-inputbd bg-card text-ink hover:border-ink transition-colors"
               >
                 Limpar filtros
               </button>

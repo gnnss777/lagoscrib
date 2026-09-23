@@ -75,15 +75,18 @@ lib/
 | `npm run build` | Build de produção |
 | `npm start` | Servidor de produção |
 
-## Paleta de Cores
+## Paleta de Cores (tema "Lightbox Analógico" — DESIGN.md v2.0)
 
 | Cor | Hex | Uso |
 |-----|-----|-----|
-| Navy 950 | #0B1121 | Fundo principal |
-| Navy 900 | #0F1629 | Cards |
-| Gold 400 | #C8A66B | Acentos e destaques |
-| Surface 50 | #F0F0F5 | Texto primário |
-| Surface 400 | #8A92A6 | Texto secundário |
+| Paper | #FAF9F6 | Fundo principal (papel creme) |
+| Card | #FFFFFF | Cards, modais, inputs |
+| Ink | #1A1A1A | Texto principal |
+| Taxi | #F5C518 | Acentos e destaques (CTA, seleção, logo) |
+| Ink-soft | #4B5563 | Texto secundário |
+| Muted | #57534E | Placeholders e labels |
+
+Contraste AAA em todo texto (≥ 7:1) — trava automatizada em `tests/unit/lightbox-contrast.test.ts`.
 
 ## Novidades (leva dores-consumidor — 22/09/2026)
 
@@ -95,3 +98,8 @@ lib/
 
 - **Filtros avancados**: busque por quartos, banheiros, vagas, faixa de preco, area, condominio, mobiliado, pets e facilidades — com ordenacao (menor preco, maior area, mais recentes) e filtros salvos ao recarregar.
 - **Comparativo com metragem**: cada coluna mostra titulo + m2 + preco.
+
+## Novidades (leva lightbox-analogico — 22/09/2026)
+
+- **Tema claro**: fundo papel creme com destaques em amarelo táxi — leitura mais confortável e cara de portal imobiliário.
+- **Acessibilidade AAA**: todo texto com contraste ≥ 7:1 (antes, alguns textos secundários falhavam até o mínimo); foco visível em tinta preta em todo botão e campo.

@@ -1,19 +1,18 @@
 ---
-version: 1.0
+version: 2.0
 name: lagoscrib
-description: Gestor pessoal de imóveis (aluguel + venda) em Curitiba — dashboard limpo, dark premium navy + dourado, extremamente intuitivo, zero atrito. UI exibe estado; nunca é dona do estado.
+description: Gestor pessoal de imóveis (aluguel + venda) em Curitiba — dashboard claro "Lightbox Analógico" (papel creme + amarelo táxi), contraste AAA, extremamente intuitivo, zero atrito. UI exibe estado; nunca é dona do estado.
 stack: Next.js 16 App Router + Tailwind 4 + motion/react + Phosphor + Geist
 colors:
-  paper: "#0B1121"
-  surface: "#0F1629"
-  surface-2: "#131B33"
-  accent: "#C8A66B"
-  accent-strong: "#B8924F"
-  accent-soft: "#D9BE8A"
-  ink: "#F0F0F5"
-  ink-soft: "#C8C8D4"
-  muted: "#8A92A6"
-  disabled: "#6B7280"
+  paper: "#FAF9F6"
+  card: "#FFFFFF"
+  sand: "#F3E9D7"
+  ink: "#1A1A1A"
+  ink-soft: "#4B5563"
+  muted: "#57534E"
+  accent: "#F5C518"
+  accent-strong: "#E0B400"
+  accent-soft: "#FDF096"
 typography:
   display: { fontFamily: Geist, weight: 700 }
   body: { fontFamily: Geist, weight: 400 }
@@ -23,7 +22,7 @@ typography:
 # DESIGN.md — lagoscrib
 
 > Sistema de design para desenvolvimento assistido por IA. Fonte única de verdade visual.
-> Última revisão: 2026-09-22 | Dono: Gabriel | Revisão trimestral: sim
+> Última revisão: 2026-09-22 (v2.0 "Lightbox Analógico" — virou claro) | Dono: Gabriel | Revisão trimestral: sim
 > O agente LÊ este arquivo antes de gerar qualquer UI (invariante #1). Diz o *como*; o plano de leva diz o *quê*.
 > Aprovado em review de PR (F0′ da leva dores-consumidor).
 
@@ -56,28 +55,36 @@ Estas 4 regras dominam TODA decisão de UI. Qualquer tela que as viole = erro de
 - **Fallbacks:** imagem com erro → placeholder local (nunca ícone quebrado); dado ausente → "—" ou "não informado" (nunca inventar).
 - **Dados protegidos:** contatos só se o dado existir (campos vazios escondem botão); link do anúncio original SEMPRE presente; localStorage com try/catch + schema aditivo versionado.
 
-## 1. Colors (tokens reais — `app/globals.css` `@theme`)
+## 1. Colors (tokens reais — `app/globals.css` `@theme`, espelho em `THEME_PALETTE`)
 
-| Token (Tailwind) | Hex | Papel |
-|---|---|---|
-| `navy-950` | `#0B1121` | Fundo do app (--paper) |
-| `navy-900` | `#0F1629` | Superfície (cards, modais) |
-| `navy-800` | `#131B33` | Superfície elevada (inputs, painéis) |
-| `navy-700` | `#1A2442` | Bordas fortes, hover de superfície |
-| `navy-600` | `#243054` | Divisórias, ícones inativos |
-| `gold-400` | `#C8A66B` | **Accent** (ações primárias, valores, foco, marca) |
-| `gold-500` | `#B8924F` | Accent hover/pressed |
-| `gold-300` | `#D9BE8A` | Accent sobre navy p/ legibilidade alta, glow |
-| `surface-50` | `#F0F0F5` | Texto primário (--ink) |
-| `surface-100` | `#E4E4EC` | Texto secundário |
-| `surface-200` | `#C8C8D4` | Metadados legíveis |
-| `surface-400` | `#8A92A6` | **Muted** (labels, hints, "—") |
-| `surface-500` | `#6B7280` | Desabilitado, placeholders |
+**Conceito "Lightbox Analógico" (v2.0):** fundo papel creme quente (print analógico, não branco hospitalar), voz da marca em **amarelo táxi com tinta preta** (par AAA nativo: 10.68:1), pastéis quentes como superfícies de apoio. Exceção foto: scrim escuro SÓ sobre imagens (legibilidade da foto, padrão de portal).
+
+| Token (Tailwind) | Hex | Papel | Contraste medido |
+|---|---|---|---|
+| `paper` | `#FAF9F6` | Fundo do app | — |
+| `card` | `#FFFFFF` | Cards, modais, inputs | — |
+| `sand` | `#F3E9D7` | Pastel de apoio (só com texto `ink`) | 14.46:1 com ink |
+| `ink` | `#1A1A1A` | Texto principal | 16.53:1 no paper |
+| `ink-soft` | `#4B5563` | Texto secundário | 7.18:1 no paper |
+| `muted` | `#57534E` | Placeholder/label | 7.25:1 no paper |
+| `taxi` | `#F5C518` | **Accent** (CTA, seleção, logo — texto sempre `ink`) | 10.68:1 com ink |
+| `taxi-strong` | `#E0B400` | Accent hover/pressed | 8.87:1 com ink |
+| `pastel` | `#FDF096` | Chip/badge de destaque (texto `ink`) | 14.99:1 com ink |
+| `peach` / `water` | `#FFE3D1` / `#DDF3F0` | Pastéis reserva p/ status | 14.2–15.0:1 com ink |
+| `amberink` | `#5F4100` | Links/texto âmbar (card, sand, paper) | 7.78–9.36:1 |
+| `st-blue` / `st-blue-bg` | `#1E40AF` / `#DBEAFE` | Badge "agendado" | 7.15:1 |
+| `st-purple` / `st-purple-bg` | `#6B21A8` / `#F3E8FF` | Badge "visita feita" | 7.39:1 |
+| `st-green` / `st-green-bg` | `#14532D` / `#DCFCE7` | Badge "aprovado" | 8.30:1 |
+| `st-red` / `st-red-bg` | `#7F1D1D` / `#FEE2E2` | Badge "recusado" + erro de login | 8.20:1 |
+| `line` | `#E7E2D8` | Hairline decorativa (nunca único indicador) | — |
+| `inputbd` | `#78716C` | Borda de input/checkbox | 4.80:1 no card |
+| `night` | `#0B1121` | Scrim SÓ sobre fotos (texto `paper` por cima) | 18.81:1 com paper |
 
 Regras:
-- **NUNCA hex solto fora desta tabela** (invariante #2). Nova cor? Adicionar token aqui + revisão no PR.
-- Semânticas: `success`/`warning`/`danger` só em badge de status e validação — nunca reinventar por tela; usar tints de gold para positivo ("Verificado"), surface para neutro.
-- **Contraste AA verificado no QC:** texto sobre navy-950 ≥ 4.5:1; gold-400 sobre navy-950 ≥ 4.5:1 (texto); texto navy-950 sobre gold-400 ≥ 4.5:1 (botões primários). Conferir com axe na F7.
+- **NUNCA hex solto fora desta tabela** (invariante #2). Nova cor? Adicionar token aqui + `THEME_PALETTE` + revisão no PR.
+- **AAA de verdade, com número:** texto normal ≥ 7:1, UI/borda ≥ 3:1 — travado em `tests/unit/lightbox-contrast.test.ts` (roda na suite; quebrou o piso = build vermelho, sem discussão).
+- **Proibições documentadas** (o teste prova que falham): branco sobre `taxi` (1.63:1) e sobre `taxi-strong` (1.96:1) — CTA leva tinta preta, sem exceção. Anel de foco é `ink` (táxi sobre creme = 1.55:1, falha UI).
+- Semânticas: `success`/`warning`/`danger` só em badge de status e validação — nunca reinventar por tela; badges pastel + texto escuro calibrado + label textual (estado nunca só por cor).
 
 ## 2. Typography (Geist + Geist Mono — já no `layout.tsx`)
 
@@ -89,7 +96,7 @@ Regras:
 | Caption | Geist | 500 | 0.8125rem | 1.4 | Labels, metadados, legendas de foto |
 | Mono | Geist Mono | 600 | 0.9375rem | 1.25 | **Valores monetários, preço/m², contadores** |
 
-Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários SEMPRE Mono (consistência de leitura); texto grande ≥ 3:1, normal ≥ 4.5:1.
+Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários SEMPRE Mono (consistência de leitura); texto normal ≥ 7:1 (AAA), UI ≥ 3:1.
 
 ## 3. Spacing & shapes
 
@@ -103,15 +110,15 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 
 | Componente | Variantes | Anatomia (tokens) | Estados obrigatórios |
 |---|---|---|---|
-| Button | primary / secondary / ghost | primary: `bg-gold-400 text-navy-950`; ghost: `border-navy-600 text-surface-50` | default, hover, active, disabled (+motivo), loading, focus-visible ring gold |
-| Input + Select | default / error | `bg-navy-800 border-navy-700 rounded-lg px-3 h-11` | default, focus (ring gold), error (+mensagem inline), disabled |
+| Button | primary / secondary / ghost | primary: `bg-taxi text-ink` (hover `taxi-strong`); ghost: `border-inputbd text-ink` | default, hover, active, disabled (+motivo), loading, focus-visible ring ink |
+| Input + Select | default / error | `bg-card border-inputbd rounded-lg px-3 h-11` | default, focus (borda ink + sombra ink/12), error (+mensagem inline), disabled |
 | Toggle (kit #4) | Alugar\|Comprar | pill 48×28, knob branco, accent quando on, `role="switch"` | checked/unchecked, focus-visible, reduced-motion |
-| StatusBadge (kit #2) | tom ok/warn/accent por status | pill 13px semibold + borda de tom | estático; acessível via `aria-label` quando só-icone |
-| VerifiedBadge | "Verificado em {data} · {origem}" | pill gold-300/navy-950 com ícone ✓ | estático; tooltip com data exata |
-| Card (ApartmentCard) | — | gradient navy, `rounded-2xl`, hover translateY(-4px) | default, hover (clicável), focus-visible; **loading = skeleton com a MESMA geometria** |
-| Dialog (DetailModal) | Detalhes \| Notas \| Checklist \| Planta (Tabs) | overlay navy-950/80 + panel `max-w-2xl` | open/close com spring; focus trap; Esc; rolável |
+| StatusBadge (kit #2) | tom ok/warn/accent por status | pill 13px semibold pastel + texto escuro calibrado (todos ≥ 7:1) | estático; acessível via `aria-label` quando só-icone |
+| VerifiedBadge | "Verificado em {data} · {origem}" | texto `amberink` + ícone ✓ | estático; tooltip com data exata |
+| Card (ApartmentCard) | — | `bg-card`, `rounded-2xl`, borda `line`, hover translateY(-4px) + brilho táxi | default, hover (clicável), focus-visible; **loading = skeleton com a MESMA geometria** |
+| Dialog (DetailModal) | Detalhes \| Notas \| Checklist \| Planta (Tabs) | overlay `night/60` + panel `bg-card max-w-2xl` | open/close com spring; focus trap; Esc; rolável |
 | Gallery (Carousel) | — | principal 4:3 `object-cover` + thumbs (lazy) + setas ◀▶ + contador "3/12" + legenda | 1ª photo priority; thumbs lazy; swipe mobile; ←/→ teclado; empty (0 fotos → capa + aviso) |
-| Lightbox (Dialog) | — | fullscreen escuro; zoom clique/scroll/pinch; pan arrastar | open/close; Esc; contador; reduced-motion desativa zoom animado |
+| Lightbox (Dialog) | — | fullscreen escuro (`night/95`); zoom clique/scroll/pinch; pan arrastar | open/close; Esc; contador; reduced-motion desativa zoom animado |
 | AllInPanel | aluguel / venda | painel com linhas aluguel/cond/IPTU + "Entrada estimada" + "Mudança estimada" | rotulado "estimativa — confirmar com a imobiliária"; venda: preço + cond + IPTU + preço/m² |
 | VisitChecklist | — | lista de itens com checkbox + botões "Copiar" / "WhatsApp" | TDD: marca→persiste; copy→toast; lista vazia→empty state |
 | CompareBar + CompareTable (Table) | — | barra sticky com contador (2–4) + tabela comparativa | máx 4 selecionáveis (bloqueio visível); ordem default por custo total efetivo; dado ausente = "—" |
@@ -122,19 +129,19 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 | Tooltip (kit hint) | — | dica curta em hover/foco | só-leitura |
 
 Regras de componentes:
-- Todo botão/input tem `focus-visible` com ring gold (invariante #3).
+- Todo botão/input tem `focus-visible` com ring `ink` (invariante #3).
 - Alvos: toque ≥ 44px; desktop ≥ 32px. Verificado no QC.
 - `img` SEMPRE com `alt` descritivo/caption (a11y) e dimensões ou `aspect-ratio` fixos (zero CLS).
 - Ícones Phosphor 24px; peso regular em metadados, duotone no CTA primário e no logo.
 
-## 5. Elevation
+## 5. Elevation (tema claro: sombras suaves e quentes)
 
 | Nível | Sombra | Uso |
 |---|---|---|
-| 0 | none | Superfícies planas |
-| 1 | `0 4px 12px -4px rgba(0,0,0,.4)` | Cards (default) |
-| 2 | `0 20px 40px -15px rgba(0,0,0,.5)` | Cards hover, painéis |
-| 3 | `0 8px 30px rgba(0,0,0,.45)` | Dialog, Toast, CompareBar (sticky) |
+| 0 | none | Superfícies planas (paper) |
+| 1 | `0 1px 2px rgba(26,26,26,.05)` + `shadow-sm` | Cards (default), toggles |
+| 2 | `0 20px 40px -15px rgba(26,26,26,.18)` | Cards hover, painéis |
+| 3 | `shadow-xl` / `shadow-2xl` | Dialog, login card, CompareBar (sticky) |
 
 ## 6. Motion (motion/react — já no projeto)
 
@@ -154,12 +161,14 @@ Regras de componentes:
 - ❌ Sem dados inventados (condomínio desconhecido = `condoUnknown` + flag, nunca chute).
 - ❌ Sem quebrar fluxo existente: suite completa roda antes de push; mudar comportamento antigo = teste de regressão.
 
-## 8. Referências do projeto (galeria interna — 3 registradas)
+## 8. Referências do projeto (galeria interna — 6 registradas)
 
 1. **Minimal Gallery** (minimal.gallery) — estilo `minimal` / `dark`: densidade de informação baixa em dashboards premium. Inspiração.
 2. **Uiverse — Toast/Badge/Skeleton** (uiverse.io, MIT) — padrão de auto-contido zero-dep que o kit do estúdio segue. Reuso de código.
 3. **AppShot** (appshot.gallery) — filtro `mobile-app` × `professional` × `dark`: check de polimento de card/modal mobile. Inspiração.
 4. **Padrão de processo (do plano de leva):** galeria viewer-first + thumbnails + lightbox zoom/pan (Zillow/Rightmove — menor bounce do setor). Inspiração de comportamento, código próprio.
+5. **Padrão portal claro BR (QuintoAndar/ZAP/VivaReal):** fundo claro + foto protagonista + confiança por "luz natural". Convenção do setor que a v2.0 adota. Inspiração de comportamento.
+6. **Par amarelo/preto editorial (Ikea/Best Buy/Wizz Air):** acento único de alta energia com texto preto — par AAA nativo (10–20:1). Base do `taxi` + `ink` da v2.0. Inspiração de cor.
 
 ## 9. Glossário do projeto (novos nomes — invariante #8)
 
@@ -176,8 +185,8 @@ Regras de componentes:
 
 ## 10. QC (checklist com números — roda na F7)
 
-- [ ] Contraste AA verificado (axe): texto ≥ 4.5:1, UI ≥ 3:1 — zero falhas.
-- [ ] `prefers-reduced-motion`: nenhum efeito anima quando ativo.
+- [ ] Contraste AAA automatizado: `tests/unit/lightbox-contrast.test.ts` verde — texto ≥ 7:1, UI ≥ 3:1, pares proibidos documentados. Zero falhas.
+- [ ] `prefers-reduced-motion`: nenhum efeito anima quando ativo (kill-switch global em `globals.css` + `useReducedMotion`).
 - [ ] Zero CLS: toda imagem com dimensões/`aspect-ratio`; `grep` sem `img` sem width/height.
 - [ ] Fotos: galeria ≤ 350KB/arquivo; peso total por imóvel ≤ 3,5MB; lado maior ≥ 800px e lado menor ≥ 500px (orientation-aware: retrato usa a altura como eixo — S002 provou que o CDN entrega fit-in); 1ª `priority`, demais `lazy`.
 - [ ] Alvos: touch ≥ 44px, desktop ≥ 32px (verificado por Playwright/computed style).

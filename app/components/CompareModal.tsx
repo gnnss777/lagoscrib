@@ -36,13 +36,13 @@ export default function CompareModal({ apartments, onClose }: CompareModalProps)
   }, [onClose]);
 
   const cell = (value: string) => (
-    <span className="text-surface-50 text-sm">{value}</span>
+    <span className="text-ink text-sm">{value}</span>
   );
 
   const moneyCell = (a: Apartment, value: number, suffix?: string) => (
     <span className="font-mono text-sm">
-      <span className="text-gold-400 font-bold">{formatBRL(value)}</span>
-      {suffix && <span className="text-surface-400 text-xs"> {suffix}</span>}
+      <span className="text-amberink font-bold">{formatBRL(value)}</span>
+      {suffix && <span className="text-muted text-xs"> {suffix}</span>}
     </span>
   );
 
@@ -111,7 +111,7 @@ export default function CompareModal({ apartments, onClose }: CompareModalProps)
           href={a.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-gold-400 hover:text-gold-300 text-sm font-medium"
+          className="inline-flex items-center gap-1 text-amberink hover:text-ink text-sm font-medium"
         >
           <LinkSimple size={14} />
           Ver anúncio
@@ -122,7 +122,7 @@ export default function CompareModal({ apartments, onClose }: CompareModalProps)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto bg-navy-950/80"
+      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto bg-night/60"
       onClick={onClose}
     >
       <div
@@ -130,18 +130,18 @@ export default function CompareModal({ apartments, onClose }: CompareModalProps)
         aria-modal="true"
         aria-label={`Comparando ${ordered.length} imóveis`}
         data-testid="compare-table"
-        className="relative w-full max-w-5xl bg-navy-900 border border-navy-700/50 rounded-2xl shadow-2xl p-6"
+        className="relative w-full max-w-5xl bg-card border border-line rounded-2xl shadow-2xl p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-surface-50">
+          <h2 className="text-lg font-semibold text-ink">
             Comparando {ordered.length} imóveis
           </h2>
           <button
             ref={closeRef}
             onClick={onClose}
             aria-label="Fechar comparação (Esc)"
-            className="min-w-11 min-h-11 flex items-center justify-center rounded-full border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors"
+            className="min-w-11 min-h-11 flex items-center justify-center rounded-full border border-inputbd text-ink hover:border-ink transition-colors"
           >
             <X size={20} />
           </button>
@@ -159,17 +159,17 @@ export default function CompareModal({ apartments, onClose }: CompareModalProps)
                     scope="col"
                     className="text-left align-top pb-3 pr-4 min-w-48"
                   >
-                    <span className="block text-surface-50 font-semibold text-sm line-clamp-2">
+                    <span className="block text-ink font-semibold text-sm line-clamp-2">
                       {a.title}
                     </span>
                     {/* S012: metragem em cada escolha — título + m² + preço */}
-                    <span className="block text-surface-400 text-xs mt-0.5">
+                    <span className="block text-muted text-xs mt-0.5">
                       {a.area}m²
                     </span>
-                    <span className="block font-mono text-gold-400 font-bold text-sm mt-1">
+                    <span className="block font-mono text-amberink font-bold text-sm mt-1">
                       {formatBRL(effectiveTotal(a))}
                       {a.transaction !== "venda" && (
-                        <span className="text-surface-400 text-xs font-normal"> /mês</span>
+                        <span className="text-muted text-xs font-normal"> /mês</span>
                       )}
                     </span>
                   </th>
@@ -178,10 +178,10 @@ export default function CompareModal({ apartments, onClose }: CompareModalProps)
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.label} className="border-t border-navy-700/30">
+                <tr key={row.label} className="border-t border-line">
                   <th
                     scope="row"
-                    className="text-left text-surface-400 text-xs font-medium uppercase tracking-wider py-3 pr-4 align-top"
+                    className="text-left text-ink-soft text-xs font-medium uppercase tracking-wider py-3 pr-4 align-top"
                   >
                     {row.label}
                   </th>

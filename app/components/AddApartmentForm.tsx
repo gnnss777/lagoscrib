@@ -69,7 +69,7 @@ export default function AddApartmentForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-gold-400 text-navy-950 rounded-md font-semibold hover:bg-gold-500 transition text-sm"
+        className="flex items-center gap-2 px-4 py-2 bg-taxi text-ink rounded-md font-semibold hover:bg-taxi-strong transition text-sm"
       >
         <Plus size={16} weight="bold" /> Adicionar Novo Imóvel
       </button>
@@ -77,10 +77,10 @@ export default function AddApartmentForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-navy-900 border border-gold-400/20 rounded-xl p-5 space-y-3">
+    <form onSubmit={handleSubmit} className="bg-card border border-taxi/40 rounded-xl p-5 space-y-3 shadow-sm">
       <div className="flex items-center justify-between">
-        <h4 className="text-gold-400 font-semibold">Novo Imóvel</h4>
-        <button type="button" onClick={() => setOpen(false)} className="text-surface-400 hover:text-surface-50">
+        <h4 className="text-amberink font-semibold">Novo Imóvel</h4>
+        <button type="button" onClick={() => setOpen(false)} className="text-muted hover:text-ink">
           <X size={18} />
         </button>
       </div>
@@ -126,7 +126,7 @@ export default function AddApartmentForm() {
       </div>
       {/* Facilidades editáveis (S010): chips de constantes + campo livre */}
       <div>
-        <p className="text-xs font-medium text-surface-400 mb-2">Facilidades</p>
+        <p className="text-xs font-medium text-ink-soft mb-2">Facilidades</p>
         <div className="flex flex-wrap gap-1.5">
           {FACILITY_OPTIONS.map((item) => {
             const on = form.features.includes(item);
@@ -145,8 +145,8 @@ export default function AddApartmentForm() {
                 }
                 className={`inline-flex items-center gap-1 px-2.5 py-1.5 min-h-11 rounded-lg border text-xs font-medium transition-colors ${
                   on
-                    ? "bg-gold-400 text-navy-950 border-gold-400"
-                    : "text-surface-400 border-navy-600 hover:border-gold-400/50"
+                    ? "bg-taxi text-ink border-taxi"
+                    : "text-muted border-inputbd hover:border-ink"
                 }`}
               >
                 {on && <Check size={12} weight="bold" />}
@@ -170,13 +170,13 @@ export default function AddApartmentForm() {
                 setForm({ ...form, features: [...form.features, v], customFacility: "" });
               }
             }}
-            className="px-4 min-h-11 rounded-lg text-sm font-semibold border border-navy-600 text-surface-50 hover:border-gold-400/50 transition-colors shrink-0"
+            className="px-4 min-h-11 rounded-lg text-sm font-semibold border border-inputbd bg-card text-ink hover:border-ink transition-colors shrink-0"
           >
             Adicionar
           </button>
         </div>
       </div>
-      <button type="submit" className="w-full py-2 bg-gold-400 text-navy-950 rounded-md font-bold hover:bg-gold-500 transition">
+      <button type="submit" className="w-full py-2 bg-taxi text-ink rounded-md font-bold hover:bg-taxi-strong transition">
         Importar Novo Imóvel
       </button>
     </form>

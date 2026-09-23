@@ -1,0 +1,148 @@
+// Prisma 7 — lagoscrib (multiusuário). Padrão reaproveitado do app `só`:
+// User mínimo (espelho de só/prisma/schema.prisma:11) + domínio do app
+// (SavedProperty, FollowUp, Note) com isolamento por userId + LGPD
+// (PrivacyConsent, PrivacyAuditLog, PasswordResetToken) + central
+// agregadora (PropertyContact, RemovalRequest).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          Role      @default(USER)
+  anonymizedAt  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  properties SavedProperty[]
+  followUps  FollowUp[]
+  notes      Note[]
+  consents   PrivacyConsent[]
+  auditLog   PrivacyAuditLog[]
+  resetTokens PasswordResetToken[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model SavedProperty {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  externalId  String
+  portal      String
+  urlOriginal String
+  status      String   @default("novo")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  followUps FollowUp[]
+  notes     Note[]
+
+  @@unique([userId, externalId, portal])
+  @@index([userId])
+}
+
+model FollowUp {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId  String
+  property    SavedProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  attempts    Int           @default(0)
+  status      String        @default("aguardando")
+  lastContactAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([userId, propertyId])
+  @@index([userId])
+}
+
+model Note {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId  String
+  property    SavedProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  text        String
+  createdAt   DateTime      @default(now())
+
+  @@index([userId, propertyId])
+}
+
+// Contato do anunciante p/ o gate de horário comercial (seção 5.1 do plano).
+// Telefone NUNCA vai ao client fora do horário — a rota omite o campo.
+model PropertyContact {
+  id         String   @id @default(cuid())
+  externalId String
+  portal     String
+  phone      String?
+  sourceUrl  String
+  updatedAt  DateTime @updatedAt
+
+  @@unique([externalId, portal])
+}
+
+// Pedido de remoção de anúncio por anunciante (direito de eliminação, art. 18 VI).
+model RemovalRequest {
+  id          String    @id @default(cuid())
+  externalId  String
+  portal      String
+  reason      String?
+  contactHint String?
+  status      String    @default("pendente")
+  createdAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+
+  @@index([status])
+}
+
+model PrivacyConsent {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scope         String
+  policyVersion String
+  acceptedAt    DateTime @default(now())
+
+  @@unique([userId, scope])
+  @@index([userId])
+}
+
+model PrivacyAuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
