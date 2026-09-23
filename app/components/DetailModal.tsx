@@ -346,7 +346,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
             <div className="flex gap-2 border-b border-line pb-4 overflow-x-auto">
               <button
                 onClick={() => setActiveTab("details")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   activeTab === "details"
                     ? "bg-pastel text-ink border border-taxi/50 font-semibold"
                     : "text-muted hover:text-ink"
@@ -356,7 +356,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
               </button>
               <button
                 onClick={() => setActiveTab("checklist")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   activeTab === "checklist"
                     ? "bg-pastel text-ink border border-taxi/50 font-semibold"
                     : "text-muted hover:text-ink"
@@ -366,7 +366,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
               </button>
               <button
                 onClick={() => setActiveTab("planta")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   activeTab === "planta"
                     ? "bg-pastel text-ink border border-taxi/50 font-semibold"
                     : "text-muted hover:text-ink"
@@ -376,7 +376,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
               </button>
               <button
                 onClick={() => setActiveTab("notes")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
                   activeTab === "notes"
                     ? "bg-pastel text-ink border border-taxi/50 font-semibold"
                     : "text-muted hover:text-ink"
@@ -656,7 +656,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
                       href={buildWhatsAppLink(buildWhatsAppConfirm(apartment))}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors"
                     >
                       <WhatsappLogo size={18} weight="fill" />
                       Confirmar disponibilidade

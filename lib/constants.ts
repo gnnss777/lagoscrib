@@ -103,6 +103,22 @@ export const SALE_PRICE_BOUNDS = { min: 0, max: 35000000 } as const;
 export const AREA_BOUNDS = { min: 0, max: 1000 } as const;
 export const CONDO_MAX_BOUNDS = { min: 0, max: 5000 } as const;
 
+// --- Slider de preço (leva kanban-tela-inteira-ui, AC-U4/U5) ---
+// Substitui os inputs numéricos mín/máx por slider duplo. Lógica pura em
+// lib/priceSlider.ts; componente só chama e renderiza (LL-006).
+// Aluguel: linear 0–20k em 400 passos (R$50/passo — granularidade de portal).
+// Venda: log 0–35M em 380 passos (pos 0 = R$0 "tanto faz"; pos ≥1 parte do
+// piso PRICE_SLIDER_SALE_FLOOR — log(0) é indefinido, posição 0 cobre o zero).
+export const PRICE_SLIDER_RENT_STEPS = 400;
+export const PRICE_SLIDER_SALE_STEPS = 380;
+export const PRICE_SLIDER_SALE_FLOOR = 50000;
+export const PRICE_SLIDER_RENT_SCALE = "linear" as const;
+export const PRICE_SLIDER_SALE_SCALE = "log" as const;
+
+// Nomes acessíveis dos thumbs (AC-U6: getByRole("slider") distintos por aba).
+export const PRICE_SLIDER_MIN_LABEL = "Preço mínimo";
+export const PRICE_SLIDER_MAX_LABEL = "Preço máximo";
+
 // Facilidades filtráveis, agrupadas p/ o painel. Calibradas com as features
 // reais dos anúncios Zap (matching normalizado em lib/filters.ts —
 // "9º andar com elevador" casa com "Elevador"; "SEM ELEVADOR" não casa).

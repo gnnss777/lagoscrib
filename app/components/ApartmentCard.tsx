@@ -179,7 +179,7 @@ export default function ApartmentCard({
             onProspect(apartment);
           }}
           aria-label={`Prospectar ${apartment.title} no kanban`}
-          className="mt-4 w-full min-h-11 px-4 rounded-lg text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
+          className="mt-4 w-full min-h-11 px-4 rounded-full text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
         >
           {KANBAN_PROSPECT_LABEL} →
         </button>

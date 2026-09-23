@@ -1,26 +1,33 @@
-# UX Spec — Kanban de Prospecção (leva kanban-prospeccao)
+# UX Spec — Kanban de Prospecção (leva kanban-prospeccao + tela-inteira-ui)
 
 > Status: IMPLEMENTED (22/09/2026 — branch `feat/kanban-prospeccao`).
+> Adendo TELA-CHEIA (22/09/2026, plano `lagoscrib-kanban-tela-inteira-ui.md`):
+> board sai do diálogo e vira view full-viewport; Stats bar da home removida;
+> slider duplo de preço; CTAs pill. Seções alteradas marcadas com [TELA-CHEIA].
 > Regras-mãe: plano `lagoscrib-kanban-correcao-intuitivo.md` + decisões WS-A
 > (`lagoscrib-kanban-central-agregadora.md` §2.4/§3: sem lib de drag, schema
 > aditivo, mover por botões/menu + teclado) + camada AAA + DESIGN.md v2
 > (Lightbox Analógico: paper/taxi/ink, pares ≥7:1 travados).
 
-## Superfície
+## Superfície [TELA-CHEIA]
 
-- Header do Dashboard: "Olá, {username}" é **botão** (`aria-haspopup="dialog"`)
-  → abre o **Perfil** (`ProfileModal`, `role="dialog"`, Esc fecha).
-- Perfil tem 2 abas (`role="tablist"`): **Prospecção** (principal, `KANBAN_TAB_LABEL`)
-  e **Configurar quadro**. Clique no card do kanban abre o `DetailModal` atual
-  (zero duplicação de detalhe).
+- Header do Dashboard: botão pill **"Prospecção"** (`KANBAN_TAB_LABEL`, visível
+  também no mobile) + "Olá, {username}" (desktop) → abrem a **view tela cheia**
+  (`ProfileModal`, `fixed inset-0 z-50`, `role="dialog"`, `data-testid="kanban-view"`).
+- View tem header próprio (voltar ← p/ busca, engrenagem "Configurar quadro",
+  fechar ×, Esc fecha/volta); sem abas — board sempre visível. Clique no card
+  abre o `DetailModal` atual (zero duplicação de detalhe).
 - Board respeita a **aba ativa** (Alugar | Comprar) — mesmos dados do dashboard
   via `lib/pool.ts` (pool único, fecha B2).
+- Home SEM Stats bar (removida — duplicava o funil): header mantém
+  "N apartamentos encontrados".
 
-## Colunas e cards
+## Colunas e cards [TELA-CHEIA]
 
 - 6 colunas na ordem do pipeline (`KANBAN_COLUMNS`, fonte única em `lib/kanban.ts`):
   Não visitado → Visita agendada → Visita feita → Em negociação → Aprovado → Recusado.
-- Scroll horizontal em `overflow-x-auto`, coluna `w-72`; header com **contagem**
+- Scroll horizontal em 100vw (`w-max min-w-full`), coluna `w-72 sm:w-80` com
+  scroll vertical próprio (`max-h-[calc(100vh-230px)]`); header com **contagem**
   (`aria-label "N imóveis em {coluna}"`) + alerta textual quando há pendentes
   ("N sem retorno há 7+ dias", `FOLLOWUP_STALE_DAYS`).
 - Card: foto (h-28), título/bairro/preço (`formatBRL`), **selo de retorno na dobra
@@ -59,12 +66,31 @@
   ação explícita "limpar data" (`null` ≠ `undefined` no contrato).
 - Data visível também em "Visita feita" como histórico.
 
-## Customização do cliente (AC-9)
+## Customização do cliente (AC-9) [TELA-CHEIA]
 
-- Aba **Configurar quadro**: renomear (Enter/blur, vazio = volta ao padrão),
+- Painel lateral **Configurar quadro** (engrenagem no header, `aria-expanded`,
+  `role="complementary"`): renomear (Enter/blur, vazio = volta ao padrão),
   subir/descer, ocultar/mostrar (`aria-pressed`), **"Voltar ao padrão"**.
 - Persistência em chave própria `apartamentos-app-kanban-cols` v1 (só UI —
   nunca estado do imóvel); lixo/versão velha → default exato; reload preserva.
+
+## Slider de preço [TELA-CHEIA]
+
+- `PriceRangeSlider` no lugar dos inputs numéricos mín/máx: slider duplo com
+  trilho + trecho ativo `bg-taxi` entre os thumbs, chips de valor ao vivo
+  (`aria-live`, "Sem mín"/"Sem máx" nos extremos).
+- Mesmos campos `FilterState.priceMin/priceMax` (schema intacto);
+  lógica em `lib/priceSlider.ts` (linear aluguel 0–20k/400 passos;
+  log venda 0–35M/380 passos, piso `PRICE_SLIDER_SALE_FLOOR`).
+- AAA: thumbs nativos (`role="slider"`, setas/Home/End sem handler),
+  `aria-valuetext` em BRL, foco visível no thumb, altura tocável `h-11`.
+
+## Pílulas premium [TELA-CHEIA]
+
+- `rounded-full` nos CTAs: `.btn-primary`/`.btn-secondary` (global, cobre
+  Entrar), Mais filtros, tabs Alugar/Comprar, Prospectar, Comparar/Limpar,
+  ações do kanban (Mover…, Contatei, Retornou ✓), tabs do DetailModal.
+  Nenhum par novo de cor (contraste travado intacto).
 
 ## Acessibilidade AAA (regras duras, verificáveis no e2e)
 
@@ -86,6 +112,15 @@
 - AC-7: agendado→feita→agendado preserva a data (unit + `moveCard clearDate`).
 - AC-8: `toSyncFollowUps` passa 100% no `syncPushSchema` (unit, 2 entradas).
 - AC-9: rename + reload preserva; reset volta aos 6 (spec dedicado).
+- AC-U1: Stats bar removida (sem `grid-cols-3 sm:grid-cols-6` nem memo `stats`).
+- AC-U2: view `fixed inset-0` 100vw, coluna com scroll vertical próprio
+  (spec: largura ≥900px + regions visíveis).
+- AC-U3: painel lateral com renomear/reordenar/ocultar/reset (spec dedicado).
+- AC-U4: slider escreve `priceMin/Max` com `clampRange` (unit + spec teclado).
+- AC-U5: round-trip linear ≤1 posição; log ≤5% relativo (unit).
+- AC-U6: 2 sliders/aba com nomes distintos + `aria-valuetext` BRL (spec).
+- AC-U7: CTAs `rounded-full`, contraste travado 100% (unit contraste intacto).
+- AC-U8: typecheck + lint 0/0 + unit + build + e2e kanban/slider verdes.
 
 \* Nota honesta 22/09/2026: `persistencia/smoke/filtros/venda` falham **no HEAD
 sem esta leva** (`Expected: 7, Received: 57` — base 7→57 da expansão 5-fontes).

@@ -10,7 +10,7 @@ import {
   MapPin,
 } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
-import { COMPARE_MAX, COMPARE_MIN } from "@/lib/constants";
+import { COMPARE_MAX, COMPARE_MIN, KANBAN_TAB_LABEL } from "@/lib/constants";
 import {
   FILTER_DEBOUNCE_MS,
   FILTERS_STORAGE_KEY,
@@ -168,20 +168,6 @@ export default function Dashboard() {
 
   const activeFilterCount = countActiveFilters(filters);
 
-  // Stats refletem a aba ativa (AC-TOGGLE-01).
-  const stats = useMemo(() => {
-    const all = tabApartments.map((a) => ({ ...a, status: getStatus(a.id) }));
-    return {
-      total: all.length,
-      novo: all.filter((a) => a.status === "novo").length,
-      agendado: all.filter((a) => a.status === "agendado").length,
-      feita: all.filter((a) => a.status === "feita").length,
-      negociacao: all.filter((a) => a.status === "negociacao").length,
-      aprovado: all.filter((a) => a.status === "aprovado").length,
-      recusado: all.filter((a) => a.status === "recusado").length,
-    };
-  }, [tabApartments, getStatus]);
-
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -201,7 +187,15 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Kanban tela cheia (leva kanban-tela-inteira-ui): pill visível
+                também no mobile — o "Olá" some em telas pequenas. */}
+            <button
+              onClick={() => setProfileOpen(true)}
+              className="px-4 py-2 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors shadow-sm"
+            >
+              {KANBAN_TAB_LABEL}
+            </button>
             <button
               onClick={() => setProfileOpen(true)}
               aria-haspopup="dialog"
@@ -211,7 +205,7 @@ export default function Dashboard() {
             </button>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-3 py-2 text-ink-soft hover:text-ink hover:bg-sand rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 text-ink-soft hover:text-ink hover:bg-sand rounded-full transition-colors text-sm"
             >
               <SignOut size={16} />
               <span className="hidden sm:inline">Sair</span>
@@ -221,30 +215,6 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats bar */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8"
-        >
-          {[
-            { label: "Total", value: stats.total, color: "text-ink" },
-            { label: "Novos", value: stats.novo, color: "text-ink-soft" },
-            { label: "Agendados", value: stats.agendado, color: "text-st-blue" },
-            { label: "Feitas", value: stats.feita, color: "text-st-purple" },
-            { label: "Negociação", value: stats.negociacao, color: "text-amberink" },
-            { label: "Aprovados", value: stats.aprovado, color: "text-st-green" },
-          ].map(({ label, value, color }) => (
-            <div
-              key={label}
-              className="bg-card border border-line rounded-xl p-3 text-center shadow-sm"
-            >
-              <div className={`text-2xl font-bold ${color}`}>{value}</div>
-              <div className="text-xs text-muted mt-0.5">{label}</div>
-            </div>
-          ))}
-        </motion.div>
-
         {/* Filters (S009: labels visíveis AAA + sort; lógica em lib/filters) */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -386,7 +356,7 @@ export default function Dashboard() {
           data-testid="transaction-toggle"
           role="group"
           aria-label="Tipo de transação"
-          className="flex gap-1 p-1 mb-6 w-fit rounded-xl bg-card border border-line shadow-sm"
+          className="flex gap-1 p-1 mb-6 w-fit rounded-full bg-card border border-line shadow-sm"
         >
           {(
             [
@@ -398,7 +368,7 @@ export default function Dashboard() {
               key={value}
               aria-pressed={tab === value}
               onClick={() => setTab(value)}
-              className={`px-6 py-2.5 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-6 py-2.5 min-h-11 rounded-full text-sm font-semibold transition-colors ${
                 tab === value
                   ? "bg-taxi text-ink shadow-sm"
                   : "text-muted hover:text-ink"
@@ -466,7 +436,7 @@ export default function Dashboard() {
             {activeFilterCount > 0 && (
               <button
                 onClick={() => setFilters(DEFAULT_FILTERS)}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
               >
                 Limpar filtros
               </button>
@@ -500,7 +470,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <button
                 onClick={clearCompare}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-inputbd text-ink hover:border-ink transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-full text-sm font-medium border border-inputbd text-ink hover:border-ink transition-colors"
               >
                 Limpar
               </button>
@@ -513,7 +483,7 @@ export default function Dashboard() {
                     ? `Selecione pelo menos ${COMPARE_MIN} imóveis`
                     : "Abrir comparação"
                 }
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Comparar ({compareIds.length})
               </button>

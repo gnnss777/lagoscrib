@@ -116,7 +116,7 @@ export default function KanbanBoard({
         <button
           onClick={() => setStaleOnly((v) => !v)}
           aria-pressed={staleOnly}
-          className={`px-3 py-2 min-h-11 rounded-lg text-sm font-medium border transition-colors ${
+          className={`px-4 py-2 min-h-11 rounded-full text-sm font-medium border transition-colors ${
             staleOnly
               ? "bg-taxi text-ink border-taxi"
               : "bg-card text-ink-soft border-line hover:text-ink"
@@ -135,7 +135,7 @@ export default function KanbanBoard({
         {announce}
       </div>
 
-      <div className="flex gap-4 overflow-x-auto pb-4 items-start">
+      <div className="flex gap-4 pb-4 items-start w-max min-w-full">
         {columns.map((col) => {
           const ids = staleOnly
             ? col.ids.filter((id) =>
@@ -149,7 +149,7 @@ export default function KanbanBoard({
             <section
               key={col.status}
               aria-label={`${col.label}, ${ids.length} imóveis`}
-              className="shrink-0 w-72 bg-paper border border-line rounded-xl p-3"
+              className="shrink-0 w-72 sm:w-80 bg-paper border border-line rounded-xl p-3 flex flex-col max-h-[calc(100vh-230px)]"
             >
               <header className="mb-3">
                 <div className="flex items-center justify-between">
@@ -168,7 +168,7 @@ export default function KanbanBoard({
                 )}
               </header>
 
-              <div className="space-y-3">
+              <div className="space-y-3 overflow-y-auto pr-0.5 min-h-12">
                 {ids.length === 0 && (
                   <p className="text-xs text-muted bg-card border border-dashed border-line rounded-lg p-3">
                     {KANBAN_EMPTY_COLUMN_HINT}
@@ -252,7 +252,7 @@ export default function KanbanBoard({
                           aria-label={`Mover ${a.title} para coluna anterior`}
                           disabled={idx <= 0}
                           onClick={() => move(id, visibleOrder[idx - 1])}
-                          className="min-w-11 min-h-11 flex items-center justify-center rounded-lg text-ink-soft hover:text-ink hover:bg-sand disabled:opacity-30 transition-colors"
+                          className="min-w-11 min-h-11 flex items-center justify-center rounded-full text-ink-soft hover:text-ink hover:bg-sand disabled:opacity-30 transition-colors"
                         >
                           <CaretLeft size={18} weight="bold" />
                         </button>
@@ -263,7 +263,7 @@ export default function KanbanBoard({
                           onClick={() =>
                             setMenuFor((v) => (v === id ? null : id))
                           }
-                          className="min-h-11 flex-1 flex items-center justify-center gap-1 rounded-lg text-xs font-medium text-ink-soft hover:text-ink hover:bg-sand transition-colors"
+                          className="min-h-11 flex-1 flex items-center justify-center gap-1 rounded-full text-xs font-medium text-ink-soft hover:text-ink hover:bg-sand transition-colors"
                         >
                           <DotsThree size={18} weight="bold" />
                           Mover…
@@ -272,7 +272,7 @@ export default function KanbanBoard({
                           aria-label={`Mover ${a.title} para próxima coluna`}
                           disabled={idx < 0 || idx >= visibleOrder.length - 1}
                           onClick={() => move(id, visibleOrder[idx + 1])}
-                          className="min-w-11 min-h-11 flex items-center justify-center rounded-lg text-ink-soft hover:text-ink hover:bg-sand disabled:opacity-30 transition-colors"
+                          className="min-w-11 min-h-11 flex items-center justify-center rounded-full text-ink-soft hover:text-ink hover:bg-sand disabled:opacity-30 transition-colors"
                         >
                           <CaretRight size={18} weight="bold" />
                         </button>
@@ -282,14 +282,14 @@ export default function KanbanBoard({
                       <div className="flex items-center gap-2 px-3 pb-3">
                         <button
                           onClick={() => markContact(id)}
-                          className="min-h-9 flex-1 text-xs font-medium px-2 rounded-lg border border-line text-ink-soft hover:text-ink hover:border-ink transition-colors"
+                          className="min-h-9 flex-1 text-xs font-medium px-2 rounded-full border border-line text-ink-soft hover:text-ink hover:border-ink transition-colors"
                         >
                           {KANBAN_CONTACT_LABEL}
                           {fu && fu.attempts > 0 ? ` ×${fu.attempts}` : ""}
                         </button>
                         <button
                           onClick={() => markReturned(id)}
-                          className="min-h-9 flex-1 text-xs font-medium px-2 rounded-lg border border-line text-ink-soft hover:text-ink hover:border-ink transition-colors"
+                          className="min-h-9 flex-1 text-xs font-medium px-2 rounded-full border border-line text-ink-soft hover:text-ink hover:border-ink transition-colors"
                         >
                           {KANBAN_RETURNED_LABEL}
                         </button>

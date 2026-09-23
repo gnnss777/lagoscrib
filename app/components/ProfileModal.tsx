@@ -5,14 +5,17 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowDown,
   ArrowUp,
+  ArrowLeft,
   Eye,
   EyeSlash,
+  GearSix,
   X,
 } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
 import {
   KANBAN_COLS_STORAGE_KEY,
   KANBAN_COLS_STORAGE_VERSION,
+  KANBAN_TAB_LABEL,
 } from "@/lib/constants";
 import {
   DEFAULT_COLUMN_CONFIG,
@@ -22,7 +25,6 @@ import {
   parseColumnConfig,
   type ColumnConfig,
 } from "@/lib/kanban";
-import { KANBAN_TAB_LABEL } from "@/lib/constants";
 import KanbanBoard from "./KanbanBoard";
 
 interface ProfileModalProps {
@@ -43,6 +45,9 @@ function loadConfig(): ColumnConfig {
   return { ...DEFAULT_COLUMN_CONFIG };
 }
 
+// Kanban em tela cheia (leva kanban-tela-inteira-ui, AC-U2/U3): view
+// full-viewport com header próprio; "Configurar quadro" vira painel lateral
+// (engrenagem) em vez de aba de diálogo. Mesma chave de persistência.
 export default function ProfileModal({
   open,
   onClose,
@@ -50,7 +55,7 @@ export default function ProfileModal({
   apartments,
   onSelect,
 }: ProfileModalProps) {
-  const [tab, setTab] = useState<"prospeccao" | "quadro">("prospeccao");
+  const [configOpen, setConfigOpen] = useState(false);
   const [cfg, setCfg] = useState<ColumnConfig>(DEFAULT_COLUMN_CONFIG);
   const [hydrated, setHydrated] = useState(false);
 
@@ -77,11 +82,14 @@ export default function ProfileModal({
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        if (configOpen) setConfigOpen(false);
+        else onClose();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, onClose, configOpen]);
 
   const moveOrder = (status: (typeof KANBAN_COLUMNS)[number], dir: -1 | 1) => {
     setCfg((prev) => {
@@ -124,159 +132,155 @@ export default function ProfileModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="detail-overlay fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto"
-          onClick={onClose}
+          transition={{ duration: 0.2 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${KANBAN_TAB_LABEL} de ${username ?? "usuário"}`}
+          data-testid="kanban-view"
+          className="fixed inset-0 z-50 bg-paper flex flex-col"
         >
-          <div className="fixed inset-0" />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Perfil de ${username ?? "usuário"}`}
-            className="relative w-full max-w-6xl bg-card border border-line rounded-2xl overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-line">
-              <div>
-                <h2 className="text-lg font-bold text-ink">
-                  Olá, <span className="text-amberink">{username}</span>
-                </h2>
-                <div className="flex gap-2 mt-2" role="tablist" aria-label="Abas do perfil">
-                  <button
-                    role="tab"
-                    aria-selected={tab === "prospeccao"}
-                    onClick={() => setTab("prospeccao")}
-                    className={`px-3 py-2 min-h-11 rounded-lg text-sm font-medium transition-colors ${
-                      tab === "prospeccao"
-                        ? "bg-taxi text-ink"
-                        : "text-ink-soft hover:text-ink hover:bg-sand"
-                    }`}
-                  >
-                    {KANBAN_TAB_LABEL}
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={tab === "quadro"}
-                    onClick={() => setTab("quadro")}
-                    className={`px-3 py-2 min-h-11 rounded-lg text-sm font-medium transition-colors ${
-                      tab === "quadro"
-                        ? "bg-taxi text-ink"
-                        : "text-ink-soft hover:text-ink hover:bg-sand"
-                    }`}
-                  >
-                    Configurar quadro
-                  </button>
-                </div>
-              </div>
+          {/* Header próprio da view */}
+          <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-3 border-b border-line bg-card shrink-0">
+            <div className="flex items-center gap-2 min-w-0">
               <button
                 onClick={onClose}
-                aria-label="Fechar perfil (Esc)"
-                className="min-w-11 min-h-11 flex items-center justify-center rounded-lg text-ink-soft hover:text-ink hover:bg-sand transition-colors"
+                aria-label="Voltar para a busca (Esc)"
+                className="min-w-11 min-h-11 flex items-center justify-center rounded-full text-ink-soft hover:text-ink hover:bg-sand transition-colors"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <h2 className="text-lg font-bold text-ink truncate">
+                {KANBAN_TAB_LABEL}
+                <span className="hidden sm:inline text-sm font-normal text-ink-soft">
+                  {" "}
+                  · {username}
+                </span>
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setConfigOpen((v) => !v)}
+                aria-expanded={configOpen}
+                aria-controls="kanban-config-panel"
+                className={`inline-flex items-center gap-2 px-4 py-2 min-h-11 rounded-full text-sm font-semibold border transition-colors ${
+                  configOpen
+                    ? "bg-taxi text-ink border-taxi"
+                    : "bg-card text-ink-soft border-line hover:text-ink hover:border-ink"
+                }`}
+              >
+                <GearSix size={16} />
+                Configurar quadro
+              </button>
+              <button
+                onClick={onClose}
+                aria-label="Fechar prospecção (Esc)"
+                className="min-w-11 min-h-11 flex items-center justify-center rounded-full text-ink-soft hover:text-ink hover:bg-sand transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
+          </div>
 
-            <div className="p-6 max-h-[75vh] overflow-y-auto">
-              {tab === "prospeccao" && (
-                <div role="tabpanel" aria-label={KANBAN_TAB_LABEL}>
-                  <KanbanBoard
-                    apartments={apartments}
-                    colConfig={cfg}
-                    onSelect={onSelect}
-                  />
-                </div>
-              )}
-
-              {tab === "quadro" && (
-                <div role="tabpanel" aria-label="Configurar quadro">
-                  <p className="text-sm text-ink-soft mb-4">
-                    Renomeie, reordene ou oculte colunas. Vale para este
-                    dispositivo; o funil continua o mesmo.
-                  </p>
-                  <ul className="space-y-2">
-                    {cfg.order.map((s) => {
-                      const hidden = cfg.hidden.includes(s);
-                      return (
-                        <li
-                          key={s}
-                          className="flex items-center gap-2 bg-paper border border-line rounded-xl p-2"
-                        >
-                          <div className="flex flex-col">
-                            <button
-                              aria-label={`Subir coluna ${columnLabel(s, cfg)}`}
-                              onClick={() => moveOrder(s, -1)}
-                              className="min-w-9 min-h-9 flex items-center justify-center rounded-md text-ink-soft hover:text-ink hover:bg-sand"
-                            >
-                              <ArrowUp size={16} />
-                            </button>
-                            <button
-                              aria-label={`Descer coluna ${columnLabel(s, cfg)}`}
-                              onClick={() => moveOrder(s, 1)}
-                              className="min-w-9 min-h-9 flex items-center justify-center rounded-md text-ink-soft hover:text-ink hover:bg-sand"
-                            >
-                              <ArrowDown size={16} />
-                            </button>
-                          </div>
-                          <input
-                            aria-label={`Nome da coluna ${STATUS_LABELS[s]}`}
-                            defaultValue={columnLabel(s, cfg)}
-                            placeholder={STATUS_LABELS[s]}
-                            onBlur={(e) => rename(s, e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                rename(s, (e.target as HTMLInputElement).value);
-                                (e.target as HTMLInputElement).blur();
-                              }
-                            }}
-                            className="input-field flex-1 py-2 text-sm"
-                          />
-                          <button
-                            aria-label={hidden ? `Mostrar coluna ${columnLabel(s, cfg)}` : `Ocultar coluna ${columnLabel(s, cfg)}`}
-                            aria-pressed={hidden}
-                            onClick={() => toggleHidden(s)}
-                            className="min-w-11 min-h-11 flex items-center justify-center rounded-lg text-ink-soft hover:text-ink hover:bg-sand transition-colors"
-                          >
-                            {hidden ? <EyeSlash size={18} /> : <Eye size={18} />}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  {/* Colunas fora da ordem (caso a config venha de versão antiga) */}
-                  {KANBAN_COLUMNS.filter((s) => !cfg.order.includes(s)).length > 0 && (
-                    <button
-                      onClick={() =>
-                        setCfg((prev) => ({
-                          ...prev,
-                          order: [
-                            ...prev.order,
-                            ...KANBAN_COLUMNS.filter(
-                              (s) => !prev.order.includes(s),
-                            ),
-                          ],
-                        }))
-                      }
-                      className="mt-3 text-sm text-amberink hover:text-ink font-medium"
-                    >
-                      Restaurar colunas ausentes
-                    </button>
-                  )}
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setCfg({ ...DEFAULT_COLUMN_CONFIG })}
-                      className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-paper border border-line text-ink-soft hover:text-ink hover:border-ink transition-colors"
-                    >
-                      Voltar ao padrão (6 colunas)
-                    </button>
-                  </div>
-                </div>
-              )}
+          <div className="flex flex-1 min-h-0">
+            {/* Board: scroll horizontal em 100vw */}
+            <div className="flex-1 min-w-0 overflow-x-auto px-4 sm:px-6 py-4">
+              <KanbanBoard
+                apartments={apartments}
+                colConfig={cfg}
+                onSelect={onSelect}
+              />
             </div>
-          </motion.div>
+
+            {/* Painel lateral de configuração */}
+            {configOpen && (
+              <aside
+                id="kanban-config-panel"
+                aria-label="Configurar quadro"
+                className="shrink-0 w-80 max-w-[85vw] border-l border-line bg-card overflow-y-auto p-4"
+              >
+                <p className="text-sm text-ink-soft mb-4">
+                  Renomeie, reordene ou oculte colunas. Vale para este
+                  dispositivo; o funil continua o mesmo.
+                </p>
+                <ul className="space-y-2">
+                  {cfg.order.map((s) => {
+                    const hidden = cfg.hidden.includes(s);
+                    return (
+                      <li
+                        key={s}
+                        className="flex items-center gap-2 bg-paper border border-line rounded-xl p-2"
+                      >
+                        <div className="flex flex-col">
+                          <button
+                            aria-label={`Subir coluna ${columnLabel(s, cfg)}`}
+                            onClick={() => moveOrder(s, -1)}
+                            className="min-w-9 min-h-9 flex items-center justify-center rounded-md text-ink-soft hover:text-ink hover:bg-sand"
+                          >
+                            <ArrowUp size={16} />
+                          </button>
+                          <button
+                            aria-label={`Descer coluna ${columnLabel(s, cfg)}`}
+                            onClick={() => moveOrder(s, 1)}
+                            className="min-w-9 min-h-9 flex items-center justify-center rounded-md text-ink-soft hover:text-ink hover:bg-sand"
+                          >
+                            <ArrowDown size={16} />
+                          </button>
+                        </div>
+                        <input
+                          key={`${s}-${columnLabel(s, cfg)}`}
+                          aria-label={`Nome da coluna ${STATUS_LABELS[s]}`}
+                          defaultValue={columnLabel(s, cfg)}
+                          placeholder={STATUS_LABELS[s]}
+                          onBlur={(e) => rename(s, e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              rename(s, (e.target as HTMLInputElement).value);
+                              (e.target as HTMLInputElement).blur();
+                            }
+                          }}
+                          className="input-field flex-1 py-2 text-sm"
+                        />
+                        <button
+                          aria-label={hidden ? `Mostrar coluna ${columnLabel(s, cfg)}` : `Ocultar coluna ${columnLabel(s, cfg)}`}
+                          aria-pressed={hidden}
+                          onClick={() => toggleHidden(s)}
+                          className="min-w-11 min-h-11 flex items-center justify-center rounded-lg text-ink-soft hover:text-ink hover:bg-sand transition-colors"
+                        >
+                          {hidden ? <EyeSlash size={18} /> : <Eye size={18} />}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {KANBAN_COLUMNS.filter((s) => !cfg.order.includes(s)).length > 0 && (
+                  <button
+                    onClick={() =>
+                      setCfg((prev) => ({
+                        ...prev,
+                        order: [
+                          ...prev.order,
+                          ...KANBAN_COLUMNS.filter(
+                            (s) => !prev.order.includes(s),
+                          ),
+                        ],
+                      }))
+                    }
+                    className="mt-3 text-sm text-amberink hover:text-ink font-medium"
+                  >
+                    Restaurar colunas ausentes
+                  </button>
+                )}
+                <div className="mt-4">
+                  <button
+                    onClick={() => setCfg({ ...DEFAULT_COLUMN_CONFIG })}
+                    className="px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold bg-paper border border-line text-ink-soft hover:text-ink hover:border-ink transition-colors"
+                  >
+                    Voltar ao padrão (6 colunas)
+                  </button>
+                </div>
+              </aside>
+            )}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
