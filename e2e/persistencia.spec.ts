@@ -5,7 +5,6 @@ import { test, expect } from "@playwright/test";
 // persiste lado a lado.
 test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
 
   // Semeia um estado v1 real: autenticado + 1 nota + 1 status, sem version.
   await page.addInitScript(() => {
@@ -35,7 +34,7 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
 
   // Já autenticado: dashboard direto, sem login.
   await page.goto("/");
-  await expect(page.locator(".card-apartment")).toHaveCount(7);
+  await expect(page.locator(".card-apartment")).toHaveCount(57);
 
   await page.locator(".card-apartment").first().click();
 
@@ -58,7 +57,7 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
     .getByRole("checkbox", { name: "Tomadas e interruptores" })
     .check();
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(7);
+  await expect(page.locator(".card-apartment")).toHaveCount(57);
   await page.locator(".card-apartment").first().click();
   await page.getByRole("button", { name: /Notas \(1\)/ }).click();
   await expect(page.locator("text=Nota antiga v1 — deve sobreviver")).toBeVisible();

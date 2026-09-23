@@ -38,10 +38,15 @@ describe("antiDores", () => {
   });
 
   it("test_whatsapplink_mensagem_codificada_sem_numero_inventado", () => {
-    // Telefones mascarados nos portais: wa.me de compartilhamento (sem número).
-    const url = buildWhatsAppLink("Olá! Disponível?");
+    // Telefones mascarados/vazios nos portais: fallback sem número, mas com mensagem.
+    const url = buildWhatsAppLink("", "Olá! Disponível?");
     expect(url.startsWith("https://wa.me/?text=")).toBe(true);
     expect(decodeURIComponent(url)).toContain("Olá! Disponível?");
+  });
+
+  it("test_whatsapplink_normaliza_fone_celular_com_55", () => {
+    const url = buildWhatsAppLink("41 99123-4567", "Disponível?");
+    expect(url).toBe("https://wa.me/5541991234567?text=Dispon%C3%ADvel%3F");
   });
 
   it("test_movelcusto_3quartos_faixa_1000_1800", () => {

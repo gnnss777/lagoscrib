@@ -77,7 +77,7 @@ export default function VisitChecklist({ apartment }: VisitChecklistProps) {
           Copiar
         </button>
         <a
-          href={buildWhatsAppLink(text)}
+          href={buildWhatsAppLink(apartment.phone ?? "", text)}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-inputbd bg-card text-ink hover:border-ink transition-colors"

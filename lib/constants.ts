@@ -167,6 +167,10 @@ export const FOLLOWUP_STALE_DAYS = 7;
 export const KANBAN_COLS_STORAGE_KEY = "apartamentos-app-kanban-cols";
 export const KANBAN_COLS_STORAGE_VERSION = 2;
 
+// Chave própria para ids de apartamentos removidos (estáticos ou new-*).
+export const REMOVED_IDS_STORAGE_KEY = "apartamentos-app-removed";
+export const REMOVED_IDS_STORAGE_VERSION = 1;
+
 // Rótulos da UI do kanban (AC4: grep acha só aqui + importadores).
 export const KANBAN_ONLY_STALE_LABEL = "Só sem retorno";
 export const KANBAN_SHOW_ALL_LABEL = "Mostrar todos";

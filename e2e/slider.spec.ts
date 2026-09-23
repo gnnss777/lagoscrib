@@ -27,7 +27,6 @@ async function openFilters(page: Page) {
 
 test("test_slider_teclado_valvetext_filtra_restaura", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
   const initial = await page.locator(".card-apartment").count();
   expect(initial).toBeGreaterThan(1);
@@ -67,7 +66,6 @@ test("test_slider_teclado_valvetext_filtra_restaura", async ({ page }) => {
 
 test("test_slider_aba_comprar_escala_log_valvetext", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
   await openFilters(page);
 

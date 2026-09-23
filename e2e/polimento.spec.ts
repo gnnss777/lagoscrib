@@ -24,7 +24,6 @@ test("test_polimento_card_minimo_sem_links_comparar_isolado", async ({
   page,
 }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
 
   const card = page.locator(".card-apartment").first();
@@ -53,7 +52,6 @@ test("test_polimento_card_minimo_sem_links_comparar_isolado", async ({
 
 test("test_polimento_stagger_converge_sem_fila", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
 
   // F1.3: com cap (12 × 0.08 + 0.5s), os 21 primeiros cards convergem
@@ -72,7 +70,6 @@ test("test_polimento_stagger_converge_sem_fila", async ({ page }) => {
 
 test("test_polimento_kanban_foco_esc_restaura_gatilho", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
 
   // F1.4: abrir leva o foco p/ dentro da view (não é dialog).

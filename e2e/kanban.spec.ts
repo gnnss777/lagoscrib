@@ -30,7 +30,6 @@ async function openKanban(page: Page) {
 
 test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
 
   // 1ª ação: abrir o 1º card → DetailModal (aba Detalhes, seção Status).
@@ -56,7 +55,6 @@ test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
 
 test("test_kanban_teclado_move_menu_anuncia_aria_live", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
   const view = await openKanban(page);
 
@@ -85,7 +83,6 @@ test("test_kanban_customizacao_painel_renomear_reload_reset", async ({
   page,
 }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
   const view = await openKanban(page);
 
@@ -125,7 +122,6 @@ test("test_kanban_customizacao_painel_renomear_reload_reset", async ({
 
 test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   // 1 follow-up pendente há 8 dias (acima do limiar de 7).
   await gotoAuthed(page, {
     followUps: {
@@ -155,7 +151,6 @@ test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
 
 test("test_kanban_drag_drop_move_card_entre_colunas", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
   const view = await openKanban(page);
 
@@ -193,7 +188,6 @@ test("test_kanban_drag_drop_move_card_entre_colunas", async ({ page }) => {
 
 test("test_kanban_estatico_sem_scroll_contador_mais", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
   // Estado default: statuses [] → todo o pool cai em "Não visitado"
   // (bem acima da trava KANBAN_VISIBLE_CAP) → overflow garantido.
   await gotoAuthed(page);

@@ -49,11 +49,23 @@ export function buildWhatsAppConfirm(a: ConfirmInput): string {
 }
 
 /**
- * Link de compartilhamento wa.me (sem número — telefones são mascarados
- * nos portais; o usuário escolhe o contato. Nunca inventar número).
+ * Link wa.me com o número do anúncio. Normaliza telefone BR:
+ * - strip não-dígitos; descarta mascarado (*) → fallback sem número
+ * - 10-11 dígitos sem DDI → prefixa 55; já com 55 usa direto
+ * - mensagem sempre incluída (mesmo no fallback sem número)
  */
-export function buildWhatsAppLink(message: string): string {
-  return `https://wa.me/?text=${encodeURIComponent(message)}`;
+export function buildWhatsAppLink(phone: string, message: string): string {
+  const fallback = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  if (!phone || phone.includes("*")) return fallback;
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return fallback;
+  if (/^55\d{10,11}$/.test(digits)) {
+    return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+  }
+  if (digits.length >= 10 && digits.length <= 11) {
+    return `https://wa.me/55${digits}?text=${encodeURIComponent(message)}`;
+  }
+  return fallback;
 }
 
 /** Faixa de custo de mudança por nº de quartos (estimativa — ver constants). */
