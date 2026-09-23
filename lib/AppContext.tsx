@@ -10,14 +10,22 @@ import {
 } from "react";
 import { type Apartment } from "@/lib/data";
 import { CHECKLIST_STORAGE_VERSION } from "@/lib/constants";
+import {
+  KANBAN_COLUMNS,
+  STATUS_LABELS,
+  migrateStoredState,
+  moveCard,
+  markContactFollowUp,
+  markReturnedFollowUp,
+  type ApartmentStatus,
+  type FollowUp,
+  type StatusType,
+} from "@/lib/kanban";
 
-export type StatusType =
-  | "novo"
-  | "agendado"
-  | "feita"
-  | "negociacao"
-  | "aprovado"
-  | "recusado";
+// Re-exports (back-compat): STATUS_LABELS/StatusType moram em lib/kanban.ts
+// (fonte única das colunas, LL-006). Importadores existentes não quebram.
+export { KANBAN_COLUMNS, STATUS_LABELS, type StatusType, type FollowUp };
+export type { ApartmentStatus };
 
 export interface Note {
   id: string;
@@ -26,22 +34,16 @@ export interface Note {
   createdAt: string;
 }
 
-export interface ApartmentStatus {
-  apartmentId: string;
-  status: StatusType;
-  updatedAt: string;
-  scheduledDate?: string;
-}
-
 interface AppState {
   isAuthenticated: boolean;
   username: string | null;
   notes: Note[];
   statuses: ApartmentStatus[];
   // Checklist de visita (S004, ADR-002 decisão 2): mesma chave, schema aditivo.
-  // Estados v1 (sem version/checklist) continuam legíveis — defaults cobrem.
+  // Follow-up do corretor (kanban): idem. Estados v1/v2 continuam legíveis.
   version: number;
   checklist: Record<string, string[]>;
+  followUps: Record<string, FollowUp>;
 }
 
 interface AppContextValue extends AppState {
@@ -51,11 +53,24 @@ interface AppContextValue extends AppState {
   setSessionUser: (username: string | null) => void;
   addApartment: (apartment: Apartment) => void;
   addNote: (apartmentId: string, text: string) => void;
-  updateStatus: (apartmentId: string, status: StatusType, scheduledDate?: string) => void;
+  updateStatus: (
+    apartmentId: string,
+    status: StatusType,
+    scheduledDate?: string | null,
+    toIndex?: number,
+  ) => void;
+  /** Move o card para outra posição (mesma coluna = reordenar). */
+  moveCardTo: (apartmentId: string, toStatus: StatusType, toIndex?: number) => void;
   getStatus: (apartmentId: string) => StatusType;
+  getStatusEntry: (apartmentId: string) => ApartmentStatus | undefined;
   getNotes: (apartmentId: string) => Note[];
   toggleChecklistItem: (apartmentId: string, itemId: string) => void;
   getChecklist: (apartmentId: string) => string[];
+  /** "Contatei o corretor": incrementa tentativas (só se aguardando). */
+  markContact: (apartmentId: string) => void;
+  /** "Retornou ✓": fecha o loop preservando o histórico. */
+  markReturned: (apartmentId: string) => void;
+  getFollowUp: (apartmentId: string) => FollowUp | undefined;
 }
 
 const defaultState: AppState = {
@@ -65,6 +80,7 @@ const defaultState: AppState = {
   statuses: [],
   version: CHECKLIST_STORAGE_VERSION,
   checklist: {},
+  followUps: {},
 };
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -94,18 +110,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Load from localStorage on mount. Hidratação SSR-safe: localStorage só
   // existe no client; ler no initializer causaria hydration mismatch.
-  // Aditivo v2 (S004): estados v1 sem version/checklist ganham os defaults.
+  // Aditivo v3 (kanban): migrateStoredState cobre v1 (sem version/checklist)
+  // e v2 (sem followUps) — mesmos defaults, mesma chave.
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        const parsed = JSON.parse(stored);
+        const migrated = migrateStoredState(JSON.parse(stored));
         // eslint-disable-next-line react-hooks/set-state-in-effect -- ver comentário acima
         setState((prev) => ({
           ...prev,
-          ...parsed,
+          ...migrated,
           version: CHECKLIST_STORAGE_VERSION,
-          checklist: parsed.checklist ?? {},
         }));
       }
     } catch {
@@ -179,28 +195,70 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateStatus = useCallback(
-    (apartmentId: string, status: StatusType, scheduledDate?: string) => {
-      const statusEntry: ApartmentStatus = {
-        apartmentId,
-        status,
-        updatedAt: new Date().toISOString(),
-        scheduledDate,
-      };
-      setState((prev) => {
-        const existing = prev.statuses.filter((s) => s.apartmentId !== apartmentId);
-        return {
-          ...prev,
-          statuses: [...existing, statusEntry],
-        };
-      });
+    (
+      apartmentId: string,
+      status: StatusType,
+      scheduledDate?: string | null,
+      toIndex?: number,
+    ) => {
+      // B1: undefined = preserva a data existente; null = limpeza explícita;
+      // string = nova data. moveCard resolve via lib/kanban.ts (imutável).
+      setState((prev) => ({
+        ...prev,
+        statuses: moveCard(prev.statuses, apartmentId, status, toIndex, {
+          ...(scheduledDate === undefined
+            ? {}
+            : scheduledDate === null
+              ? { clearDate: true }
+              : { scheduledDate }),
+        }),
+      }));
     },
     []
+  );
+
+  const moveCardTo = useCallback(
+    (apartmentId: string, toStatus: StatusType, toIndex?: number) => {
+      setState((prev) => ({
+        ...prev,
+        statuses: moveCard(prev.statuses, apartmentId, toStatus, toIndex),
+      }));
+    },
+    []
+  );
+
+  const markContact = useCallback((apartmentId: string) => {
+    setState((prev) => ({
+      ...prev,
+      followUps: markContactFollowUp(prev.followUps, apartmentId),
+    }));
+  }, []);
+
+  const markReturned = useCallback((apartmentId: string) => {
+    setState((prev) => ({
+      ...prev,
+      followUps: markReturnedFollowUp(prev.followUps, apartmentId),
+    }));
+  }, []);
+
+  const getFollowUp = useCallback(
+    (apartmentId: string): FollowUp | undefined => {
+      return state.followUps[apartmentId];
+    },
+    [state.followUps]
   );
 
   const getStatus = useCallback(
     (apartmentId: string): StatusType => {
       const found = state.statuses.find((s) => s.apartmentId === apartmentId);
       return found?.status ?? "novo";
+    },
+    [state.statuses]
+  );
+
+  const getStatusEntry = useCallback(
+    (apartmentId: string): ApartmentStatus | undefined => {
+      return state.statuses.find((s) => s.apartmentId === apartmentId);
     },
     [state.statuses]
   );
@@ -245,10 +303,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         addApartment,
         addNote,
         updateStatus,
+        moveCardTo,
         getStatus,
+        getStatusEntry,
         getNotes,
         toggleChecklistItem,
         getChecklist,
+        markContact,
+        markReturned,
+        getFollowUp,
       }}
     >
       {children}
@@ -269,11 +332,4 @@ export function useHydrated(): boolean {
   return hydrated;
 }
 
-export const STATUS_LABELS: Record<StatusType, string> = {
-  novo: "Não visitado",
-  agendado: "Visita agendada",
-  feita: "Visita feita",
-  negociacao: "Em negociação",
-  aprovado: "Aprovado",
-  recusado: "Recusado",
-};
+// STATUS_LABELS/KANBAN_COLUMNS re-exportados do topo (fonte única: lib/kanban.ts).

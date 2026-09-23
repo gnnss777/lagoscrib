@@ -19,10 +19,9 @@ import {
   CONDO_MAX_BOUNDS,
   FACILITY_GROUPS,
   PARKING_OPTIONS,
-  RENT_PRICE_BOUNDS,
-  SALE_PRICE_BOUNDS,
 } from "@/lib/constants";
 import type { TransactionTab } from "@/lib/transaction";
+import PriceRangeSlider from "./PriceRangeSlider";
 
 interface FilterPanelProps {
   filters: FilterState;
@@ -37,7 +36,7 @@ const inputCls =
   "input-field w-full min-h-11 cursor-pointer text-sm";
 const labelCls = "block text-xs font-medium text-ink-soft mb-1";
 const chipBase =
-  "inline-flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-lg border text-sm font-medium transition-colors";
+  "inline-flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full border text-sm font-medium transition-colors";
 
 function TriState({
   label,
@@ -64,7 +63,7 @@ function TriState({
         role="group"
         aria-labelledby={`${testid}-label`}
         data-testid={testid}
-        className="flex gap-1 p-1 rounded-xl bg-paper border border-line w-fit"
+        className="flex gap-1 p-1 rounded-full bg-paper border border-line w-fit"
       >
         {opts.map(({ v, label: l }) => (
           <button
@@ -72,7 +71,7 @@ function TriState({
             type="button"
             aria-pressed={value === v}
             onClick={() => onChange(v)}
-            className={`px-4 py-2 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
+            className={`px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors ${
               value === v
                 ? "bg-taxi text-ink shadow-sm"
                 : "text-muted hover:text-ink"
@@ -102,7 +101,6 @@ export default function FilterPanel({
   const firstRef = useRef<HTMLSelectElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const active = countActiveFilters(filters);
-  const priceBounds = tab === "comprar" ? SALE_PRICE_BOUNDS : RENT_PRICE_BOUNDS;
   const priceSectionLabel =
     tab === "comprar" ? "Preço de venda (R$)" : "Aluguel total /mês (R$)";
 
@@ -196,7 +194,7 @@ export default function FilterPanel({
         aria-controls="filter-panel"
         data-testid="filter-toggle"
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-xl border border-inputbd bg-card text-sm font-semibold text-ink shadow-sm hover:border-ink transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-full border border-inputbd bg-card text-sm font-semibold text-ink shadow-sm hover:border-ink transition-colors"
       >
         <FunnelSimple size={16} />
         Mais filtros{active > 0 ? ` (${active})` : ""}
@@ -238,25 +236,17 @@ export default function FilterPanel({
             )}
           </div>
 
-          <div>
-            <span className={labelCls}>{priceSectionLabel}</span>
-            <div className="grid grid-cols-2 gap-4">
-              {num(
-                "f-preco-min",
-                "Mínimo",
-                filters.priceMin,
-                (v) => onChange({ ...filters, priceMin: v }),
-                priceBounds.min
-              )}
-              {num(
-                "f-preco-max",
-                "Máximo",
-                filters.priceMax,
-                (v) => onChange({ ...filters, priceMax: v }),
-                priceBounds.max
-              )}
-            </div>
-          </div>
+          {/* Preço por slider duplo (leva kanban-tela-inteira-ui, AC-U4):
+              linear no aluguel, log na venda. Mesmos campos priceMin/Max. */}
+          <PriceRangeSlider
+            tab={tab}
+            priceMin={filters.priceMin}
+            priceMax={filters.priceMax}
+            sectionLabel={priceSectionLabel}
+            onChange={(priceMin, priceMax) =>
+              onChange({ ...filters, priceMin, priceMax })
+            }
+          />
 
           <div>
             <span className={labelCls}>Área (m²)</span>
@@ -410,7 +400,7 @@ export default function FilterPanel({
                 ref={clearRef}
                 type="button"
                 onClick={onClear}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-inputbd bg-card text-ink hover:border-ink transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold border border-inputbd bg-card text-ink hover:border-ink transition-colors"
               >
                 Limpar filtros
               </button>

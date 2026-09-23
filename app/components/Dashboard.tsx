@@ -9,12 +9,8 @@ import {
   Buildings,
   MapPin,
 } from "@phosphor-icons/react";
-import {
-  apartments as staticApartments,
-  saleApartments as staticSaleApartments,
-  type Apartment,
-} from "@/lib/data";
-import { COMPARE_MAX, COMPARE_MIN } from "@/lib/constants";
+import { type Apartment } from "@/lib/data";
+import { COMPARE_MAX, COMPARE_MIN, KANBAN_TAB_LABEL } from "@/lib/constants";
 import {
   FILTER_DEBOUNCE_MS,
   FILTERS_STORAGE_KEY,
@@ -23,6 +19,7 @@ import {
   SORT_OPTIONS,
 } from "@/lib/constants";
 import { toggleCompareSelection } from "@/lib/compare";
+import { getRegional, REGIONAL_GROUPS } from "@/lib/neighborhoods";
 import {
   applyFilters,
   applySort,
@@ -35,29 +32,14 @@ import {
   filterByTransaction,
   type TransactionTab,
 } from "@/lib/transaction";
+import { getAllApartments } from "@/lib/pool";
 import { useApp, STATUS_LABELS, type StatusType } from "@/lib/AppContext";
 import ApartmentCard from "./ApartmentCard";
 import AddApartmentForm from "./AddApartmentForm";
 import DetailModal from "./DetailModal";
 import CompareModal from "./CompareModal";
 import FilterPanel from "./FilterPanel";
-
-const STATIC_POOL: Apartment[] = [...staticApartments, ...staticSaleApartments];
-
-// Combinar apartamentos estáticos (aluguel + venda) com novos do usuário
-// (sem transaction = aluguel, aditivo S001).
-const getAllApartments = (): Apartment[] => {
-  try {
-    const stored = localStorage.getItem("apartamentos-app-new");
-    if (stored) {
-      const newApts: Apartment[] = JSON.parse(stored);
-      return [...STATIC_POOL, ...newApts];
-    }
-  } catch {
-    // ignore
-  }
-  return STATIC_POOL;
-};
+import ProfileModal from "./ProfileModal";
 
 const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
   { value: "todos", label: "Todos" },
@@ -70,7 +52,7 @@ const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
 ];
 
 export default function Dashboard() {
-  const { username, logout, getStatus } = useApp();
+  const { username, logout, getStatus, moveCardTo } = useApp();
   // Filtros avançados (S009): estado único + persistência aditiva em chave
   // própria (nunca toca "apartamentos-app-state").
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -84,6 +66,8 @@ export default function Dashboard() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareBlocked, setCompareBlocked] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  // Perfil/Prospecção (kanban): "Olá, {username}" vira botão (WS-A §3.1).
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const toggleCompare = (apartment: Apartment) => {
     const result = toggleCompareSelection(compareIds, apartment.id);
@@ -97,6 +81,14 @@ export default function Dashboard() {
     setCompareOpen(false);
   };
 
+  // Prospectar da busca em ≤2 ações (AC-5): joga p/ Não visitado (topo) e
+  // abre o Perfil na aba Prospecção. Reversível (voltar = mover de volta).
+  const handleProspect = (apartment: Apartment) => {
+    moveCardTo(apartment.id, "novo", 0);
+    setSelectedApartment(null);
+    setProfileOpen(true);
+  };
+
   const allApartments = getAllApartments();
 
   // Bairros dinâmicos (fix S009): incluem imóveis novos do usuário.
@@ -105,6 +97,27 @@ export default function Dashboard() {
     NEIGHBORHOOD_ALL,
     ...Array.from(new Set(allApartments.map((a) => a.neighborhood))),
   ];
+
+  // Agrupamento por Regional (lib/neighborhoods.ts) só p/ exibição do
+  // dropdown — o filtro continua por igualdade exata de bairro.
+  // useMemo: estabiliza a identidade p/ o React Compiler (preserve-manual-memoization).
+  const neighborhoodGroups: { label: string | null; items: string[] }[] =
+    useMemo(
+      () => [
+        ...REGIONAL_GROUPS.map((g) => ({
+          label: `Regional ${g.regional}`,
+          items: neighborhoods.filter((n) => getRegional(n) === g.regional),
+        })).filter((g) => g.items.length > 0),
+        {
+          label: null,
+          items: neighborhoods.filter(
+            (n) => n !== NEIGHBORHOOD_ALL && getRegional(n) === null
+          ),
+        },
+      ],
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- neighborhoods deriva de allApartments (identidade estável por render c/ dados estáticos + user add)
+      [allApartments]
+    );
 
   // Hidrata filtros salvos (SSR-safe: localStorage só no client).
   useEffect(() => {
@@ -155,20 +168,6 @@ export default function Dashboard() {
 
   const activeFilterCount = countActiveFilters(filters);
 
-  // Stats refletem a aba ativa (AC-TOGGLE-01).
-  const stats = useMemo(() => {
-    const all = tabApartments.map((a) => ({ ...a, status: getStatus(a.id) }));
-    return {
-      total: all.length,
-      novo: all.filter((a) => a.status === "novo").length,
-      agendado: all.filter((a) => a.status === "agendado").length,
-      feita: all.filter((a) => a.status === "feita").length,
-      negociacao: all.filter((a) => a.status === "negociacao").length,
-      aprovado: all.filter((a) => a.status === "aprovado").length,
-      recusado: all.filter((a) => a.status === "recusado").length,
-    };
-  }, [tabApartments, getStatus]);
-
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -188,13 +187,25 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-ink-soft hidden sm:block">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Kanban tela cheia (leva kanban-tela-inteira-ui): pill visível
+                também no mobile — o "Olá" some em telas pequenas. */}
+            <button
+              onClick={() => setProfileOpen(true)}
+              className="px-4 py-2 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors shadow-sm"
+            >
+              {KANBAN_TAB_LABEL}
+            </button>
+            <button
+              onClick={() => setProfileOpen(true)}
+              aria-haspopup="dialog"
+              className="text-sm text-ink-soft hidden sm:block hover:text-ink transition-colors rounded-lg px-2 py-2 min-h-11"
+            >
               Olá, <span className="text-amberink font-medium">{username}</span>
-            </span>
+            </button>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-3 py-2 text-ink-soft hover:text-ink hover:bg-sand rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 text-ink-soft hover:text-ink hover:bg-sand rounded-full transition-colors text-sm"
             >
               <SignOut size={16} />
               <span className="hidden sm:inline">Sair</span>
@@ -204,30 +215,6 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats bar */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8"
-        >
-          {[
-            { label: "Total", value: stats.total, color: "text-ink" },
-            { label: "Novos", value: stats.novo, color: "text-ink-soft" },
-            { label: "Agendados", value: stats.agendado, color: "text-st-blue" },
-            { label: "Feitas", value: stats.feita, color: "text-st-purple" },
-            { label: "Negociação", value: stats.negociacao, color: "text-amberink" },
-            { label: "Aprovados", value: stats.aprovado, color: "text-st-green" },
-          ].map(({ label, value, color }) => (
-            <div
-              key={label}
-              className="bg-card border border-line rounded-xl p-3 text-center shadow-sm"
-            >
-              <div className={`text-2xl font-bold ${color}`}>{value}</div>
-              <div className="text-xs text-muted mt-0.5">{label}</div>
-            </div>
-          ))}
-        </motion.div>
-
         {/* Filters (S009: labels visíveis AAA + sort; lógica em lib/filters) */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -282,11 +269,26 @@ export default function Dashboard() {
                 }
                 className="input-field pl-10 pr-8 appearance-none cursor-pointer min-w-[160px] min-h-11"
               >
-                {neighborhoods.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
+                {neighborhoods.includes(NEIGHBORHOOD_ALL) && (
+                  <option value={NEIGHBORHOOD_ALL}>{NEIGHBORHOOD_ALL}</option>
+                )}
+                {neighborhoodGroups.map((g) =>
+                  g.label ? (
+                    <optgroup key={g.label} label={g.label}>
+                      {g.items.map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ) : (
+                    g.items.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))
+                  )
+                )}
               </select>
             </div>
           </div>
@@ -354,7 +356,7 @@ export default function Dashboard() {
           data-testid="transaction-toggle"
           role="group"
           aria-label="Tipo de transação"
-          className="flex gap-1 p-1 mb-6 w-fit rounded-xl bg-card border border-line shadow-sm"
+          className="flex gap-1 p-1 mb-6 w-fit rounded-full bg-card border border-line shadow-sm"
         >
           {(
             [
@@ -366,7 +368,7 @@ export default function Dashboard() {
               key={value}
               aria-pressed={tab === value}
               onClick={() => setTab(value)}
-              className={`px-6 py-2.5 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-6 py-2.5 min-h-11 rounded-full text-sm font-semibold transition-colors ${
                 tab === value
                   ? "bg-taxi text-ink shadow-sm"
                   : "text-muted hover:text-ink"
@@ -412,6 +414,7 @@ export default function Dashboard() {
                 onSelect={setSelectedApartment}
                 compareChecked={compareIds.includes(apartment.id)}
                 onToggleCompare={toggleCompare}
+                onProspect={handleProspect}
               />
             ))}
           </div>
@@ -433,7 +436,7 @@ export default function Dashboard() {
             {activeFilterCount > 0 && (
               <button
                 onClick={() => setFilters(DEFAULT_FILTERS)}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
               >
                 Limpar filtros
               </button>
@@ -467,7 +470,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <button
                 onClick={clearCompare}
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-medium border border-inputbd text-ink hover:border-ink transition-colors"
+                className="px-4 py-2.5 min-h-11 rounded-full text-sm font-medium border border-inputbd text-ink hover:border-ink transition-colors"
               >
                 Limpar
               </button>
@@ -480,7 +483,7 @@ export default function Dashboard() {
                     ? `Selecione pelo menos ${COMPARE_MIN} imóveis`
                     : "Abrir comparação"
                 }
-                className="px-4 py-2.5 min-h-11 rounded-lg text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Comparar ({compareIds.length})
               </button>
@@ -495,6 +498,21 @@ export default function Dashboard() {
           key={selectedApartment.id}
           apartment={selectedApartment}
           onClose={() => setSelectedApartment(null)}
+          onProspect={handleProspect}
+        />
+      )}
+
+      {/* Perfil/Prospecção (kanban): superfície única do funil */}
+      {profileOpen && (
+        <ProfileModal
+          open={profileOpen}
+          onClose={() => setProfileOpen(false)}
+          username={username}
+          apartments={tabApartments}
+          onSelect={(a) => {
+            setProfileOpen(false);
+            setSelectedApartment(a);
+          }}
         />
       )}
 

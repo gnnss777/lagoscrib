@@ -2,6 +2,28 @@ import { test, expect, type Page } from "@playwright/test";
 
 // S009 (AC-FILT-01..10): combinação quartos+preço+facilidade, teclado/Esc/foco,
 // persistência no reload, sort, empty state com limpar, zero console errors.
+//
+// Preço é slider duplo (leva kanban-tela-inteira-ui): thumbs são
+// input[type=range] controlados pelo React — setRange usa o setter nativo
+// (único caminho que dispara onChange em input controlado).
+async function setRange(page: Page, name: string, pos: number) {
+  const slider = page.getByRole("slider", { name });
+  await slider.evaluate((el, v) => {
+    const input = el as HTMLInputElement;
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    )!.set!;
+    setter.call(input, String(v));
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }, pos);
+}
+
+// Aluguel linear 0–20k em 400 passos (R$50/passo): pos = preço / 50.
+const RENT_POS_3800 = 76;
+const RENT_POS_1000 = 20;
+
 async function login(page: Page) {
   await page.goto("/");
   await page
@@ -45,7 +67,7 @@ test("test_filtros_combinacao_teclado_persistencia_sort_empty", async ({
 
   // AC-FILT-01: 3+ quartos + máx R$ 3.800 + Elevador → só o Comendador.
   await page.locator("#f-quartos").selectOption("3");
-  await page.locator("#f-preco-max").fill("3800");
+  await setRange(page, "Preço máximo", RENT_POS_3800);
   await expect(page.locator(".card-apartment")).toHaveCount(1);
   await expect(page.getByText("1 de 7 apartamentos")).toBeVisible();
   const main = ((await page.locator("main").textContent()) ?? "").replace(
@@ -68,7 +90,9 @@ test("test_filtros_combinacao_teclado_persistencia_sort_empty", async ({
   await expect(page.locator(".card-apartment")).toHaveCount(1);
   // Painel abre fechado (só os filtros persistem) — reabre p/ conferir.
   await page.getByTestId("filter-toggle").click();
-  await expect(page.locator("#f-preco-max")).toHaveValue("3800");
+  await expect(
+    page.getByRole("slider", { name: "Preço máximo" }),
+  ).toHaveValue(String(RENT_POS_3800));
 
   // Limpar volta aos 7 (painel já está aberto da conferência acima).
   await page.getByRole("button", { name: "Limpar filtros" }).first().click();
@@ -84,7 +108,7 @@ test("test_filtros_combinacao_teclado_persistencia_sort_empty", async ({
 
   // AC-FILT-09: empty state cita os filtros + limpar dentro
   // (painel segue aberto desde o Limpar acima).
-  await page.locator("#f-preco-max").fill("1000");
+  await setRange(page, "Preço máximo", RENT_POS_1000);
   await expect(page.locator(".card-apartment")).toHaveCount(0);
   await expect(page.getByText(/Nenhum imóvel com os .* filtros/)).toBeVisible();
   await page.getByRole("button", { name: "Limpar filtros" }).last().click();

@@ -57,7 +57,8 @@ export const WHATSAPP_QUESTIONS = [
 
 // Checklist de visita (VisitChecklist): itens default, ids estáveis.
 // Persistência versionada em AppContext (ADR-002 decisão 2).
-export const CHECKLIST_STORAGE_VERSION = 2;
+// v3 (leva kanban-prospeccao): + followUps do corretor, mesma chave aditiva.
+export const CHECKLIST_STORAGE_VERSION = 3;
 export const CHECKLIST_ITEMS = [
   { id: "pressao-agua", label: "Pressão da água e aquecedor" },
   { id: "infiltracao", label: "Sinais de mofo e infiltração" },
@@ -76,9 +77,9 @@ export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
 
 // --- Filtros avançados (S008, ADR-003) ---
-// Faixas calibradas com os 12 imóveis reais (22/09/2026):
-// aluguel total 2.350–4.412 · venda 354.010–1.395.000 · área 66–140m² ·
-// condomínio 0–1.778 (alguns "a confirmar"). Limites com folga p/ imóveis novos.
+// Faixas calibradas com 109 imóveis reais (22/09/2026, expansão 5 fontes):
+// aluguel total 1.152–19.300 · venda 150.000–30.000.000 · área 21–874m² ·
+// condomínio 0–4.300 (alguns "a confirmar"). Limites com folga p/ imóveis novos.
 // REGRA (LL-006): UI lê daqui — nenhum literal de faixa em componente.
 
 // Chave própria de persistência (nunca tocar "apartamentos-app-state").
@@ -97,10 +98,26 @@ export const BATHROOM_OPTIONS = [1, 2, 3, 4] as const;
 export const PARKING_OPTIONS = [1, 2, 3] as const;
 
 // Limites dos inputs numéricos (placeholders/validação — filtro aceita null).
-export const RENT_PRICE_BOUNDS = { min: 0, max: 10000 } as const;
-export const SALE_PRICE_BOUNDS = { min: 0, max: 2000000 } as const;
+export const RENT_PRICE_BOUNDS = { min: 0, max: 20000 } as const;
+export const SALE_PRICE_BOUNDS = { min: 0, max: 35000000 } as const;
 export const AREA_BOUNDS = { min: 0, max: 1000 } as const;
 export const CONDO_MAX_BOUNDS = { min: 0, max: 5000 } as const;
+
+// --- Slider de preço (leva kanban-tela-inteira-ui, AC-U4/U5) ---
+// Substitui os inputs numéricos mín/máx por slider duplo. Lógica pura em
+// lib/priceSlider.ts; componente só chama e renderiza (LL-006).
+// Aluguel: linear 0–20k em 400 passos (R$50/passo — granularidade de portal).
+// Venda: log 0–35M em 380 passos (pos 0 = R$0 "tanto faz"; pos ≥1 parte do
+// piso PRICE_SLIDER_SALE_FLOOR — log(0) é indefinido, posição 0 cobre o zero).
+export const PRICE_SLIDER_RENT_STEPS = 400;
+export const PRICE_SLIDER_SALE_STEPS = 380;
+export const PRICE_SLIDER_SALE_FLOOR = 50000;
+export const PRICE_SLIDER_RENT_SCALE = "linear" as const;
+export const PRICE_SLIDER_SALE_SCALE = "log" as const;
+
+// Nomes acessíveis dos thumbs (AC-U6: getByRole("slider") distintos por aba).
+export const PRICE_SLIDER_MIN_LABEL = "Preço mínimo";
+export const PRICE_SLIDER_MAX_LABEL = "Preço máximo";
 
 // Facilidades filtráveis, agrupadas p/ o painel. Calibradas com as features
 // reais dos anúncios Zap (matching normalizado em lib/filters.ts —
@@ -140,6 +157,24 @@ export const SORT_OPTIONS = [
   { value: "menor-preco-m2", label: "Menor preço/m²" },
   { value: "maior-area", label: "Maior área" },
 ] as const;
+
+// --- Kanban de prospecção (leva kanban-prospeccao) ---
+// Limiar do alerta "sem retorno há N+ dias" (dor #4: corretor não responde).
+// Componentes leem daqui — nunca hardcodar (LL-006).
+export const FOLLOWUP_STALE_DAYS = 7;
+
+// Chave própria da customização de colunas (só UI/ordem — nunca estado do imóvel).
+export const KANBAN_COLS_STORAGE_KEY = "apartamentos-app-kanban-cols";
+export const KANBAN_COLS_STORAGE_VERSION = 1;
+
+// Rótulos da UI do kanban (AC4: grep acha só aqui + importadores).
+export const KANBAN_ONLY_STALE_LABEL = "Só sem retorno";
+export const KANBAN_SHOW_ALL_LABEL = "Mostrar todos";
+export const KANBAN_EMPTY_COLUMN_HINT = "Sem imóveis aqui — use ←/→ para mover um card";
+export const KANBAN_CONTACT_LABEL = "Contatei";
+export const KANBAN_RETURNED_LABEL = "Retornou ✓";
+export const KANBAN_PROSPECT_LABEL = "Prospectar";
+export const KANBAN_TAB_LABEL = "Prospecção";
 
 // --- Tema "Lightbox Analógico" (leva lightbox-analogico, DESIGN.md v2 §cores) ---
 // REGRA (LL-006 estendido a design): nenhum hex de cor fora de THEME_PALETTE —
@@ -210,6 +245,9 @@ export const THEME_CONTRAST_TEXT: ThemeContrastPair[] = [
   { fg: "st-purple", bg: "st-purple-bg", floor: 7, label: "badge visita feita" },
   { fg: "st-green", bg: "st-green-bg", floor: 7, label: "badge aprovado" },
   { fg: "st-red", bg: "st-red-bg", floor: 7, label: "badge recusado" },
+  // Kanban (leva kanban-prospeccao): selo de retorno + alerta de coluna.
+  { fg: "ink", bg: "pastel", floor: 7, label: "selo sem retorno no card" },
+  { fg: "amberink", bg: "card", floor: 7, label: "alerta sem retorno na coluna" },
 ];
 
 // UI não-textual: piso WCAG 2.2 de componente gráfico (3:1).
