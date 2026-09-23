@@ -273,3 +273,15 @@ Causa raiz do 404 no deploy d2f932f1: Framework Preset do projeto estava "Other"
 vercel.json legacy). Com preset Other, a Vercel serve public/ como estatico — nenhuma rota Next.
 Fix: PATCH /v9/projects -> framework=nextjs. Redeploy 3pabvax44: / e API 200.
 Alias lagoscrib.vercel.app -> apartamentos-3pabvax44 (master d2f932f1). VALIDADO EM PRODUCAO.
+
+
+--- FIX PAGINA EM BRANCO (2026-09-23) ---
+Sintoma: pagina em branco no browser; console = CSP block de inline scripts + React #412 (Connection closed).
+Causa raiz: proxy.ts injetava CSP com nonce POR REQUEST, mas a home "/" e estaticamente
+prerenderizada (○ no build) -> HTML nao leva o nonce -> todos os scripts inline do Next
+(hidratacao) bloqueados -> React quebra -> branco.
+Fix (commit 6ffa21a): buildCsp() troca nonce por 'unsafe-inline' em script-src (padrao p/
+App Router estatico); demais diretivas mantidas (object-src none, base-uri, form-action,
+origens externas bloqueadas). Teste unitario security-headers.test.ts atualizado (2/2 pass).
+Deploy i9kwv38ur -> alias lagoscrib.vercel.app. Validado: CSP header correto (sem nonce,
+com unsafe-inline), GET / 200 com conteudo, API auth/status 200.
