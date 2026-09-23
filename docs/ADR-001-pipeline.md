@@ -28,3 +28,28 @@ que precisam alimentar o app sem quebrar determinismo nem revisabilidade.
 ## Alternativas rejeitadas
 - Fetch em runtime no client: bloqueado por Cloudflare/rate-limit, quebra o app.
 - Backend + Supabase agora: fora do escopo da leva (decisão do cliente, 22/09/2026).
+
+## Status
+Aceita. Em vigor desde 2026-09-22 (branch `feat/dados-reais`, commit `48da29d`).
+Retrofit formal em 2026-09-22 (F0′ da leva dores-consumidor) — nenhuma decisão alterada.
+
+## ADR Dependencies
+Nenhuma (primeiro ADR do projeto). ADR-002 (UI de confiança da leva dores-consumidor)
+depende deste: estende o schema aqui definido de forma aditiva.
+
+## Engine Compatibility
+Next.js 16 (App Router) · domínio Data/UI · risk LOW — schema é TypeScript estático
+versionado em git; nenhuma API instável do framework envolvida. Regra AGENTS.md:
+`node_modules/next/dist/docs/` consultado antes de qualquer mudança de schema.
+
+## GDD Requirements Addressed
+- `DESIGN.md` §7 (Guidelines): "contato sempre pelo link original", "sem dados inventados
+  (`condoUnknown` + flag)", "valores com fonte em `lib/constants.ts`".
+- Plano `lagoscrib-update-dores-consumidor` F1/F2: coleta curada 2 levas, manifesto de fotos,
+  links validados, sem inventar valores/planta.
+
+## Validation Criteria
+- [x] `lib/data.ts` compila (`tsc --noEmit`) e `npm run build` verdes.
+- [x] 7 imóveis de aluguel com `verifiedAt`, `link` https válido e `image` local.
+- [x] `data/apartamentos.simulados.json` intacto (dados antigos preservados, só append).
+- [x] Suite F0′ verde: `tests/unit/smoke.test.ts` + `e2e/smoke.spec.ts` (login + 7 cards).

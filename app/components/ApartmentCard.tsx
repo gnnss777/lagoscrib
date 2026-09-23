@@ -1,20 +1,26 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { Bed, Car, LinkSimple, MapPin, Ruler, Shower } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
+import { priceSuffix } from "@/lib/transaction";
 import { useApp, STATUS_LABELS } from "@/lib/AppContext";
 
 interface ApartmentCardProps {
   apartment: Apartment;
   index: number;
   onSelect: (apartment: Apartment) => void;
+  compareChecked: boolean;
+  onToggleCompare: (apartment: Apartment) => void;
 }
 
 export default function ApartmentCard({
   apartment,
   index,
   onSelect,
+  compareChecked,
+  onToggleCompare,
 }: ApartmentCardProps) {
   const { getStatus } = useApp();
   const status = getStatus(apartment.id);
@@ -38,12 +44,15 @@ export default function ApartmentCard({
       className="card-apartment cursor-pointer group"
       onClick={() => onSelect(apartment)}
     >
-      {/* Image */}
+      {/* Image (S003: capa default — mini-galeria P2 fora de escopo) */}
       <div className="relative h-48 overflow-hidden">
-        <img
+        <Image
           src={apartment.image}
           alt={apartment.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority={index === 0}
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-transparent" />
@@ -55,13 +64,36 @@ export default function ApartmentCard({
           </span>
         </div>
 
-        {/* Price tag */}
+        {/* Comparar (S005): 44px, fora do clique do card */}
+        <label
+          className={`absolute top-3 right-3 flex items-center gap-1.5 min-w-11 min-h-11 px-2.5 rounded-lg backdrop-blur-sm border text-xs font-medium transition-colors cursor-pointer ${
+            compareChecked
+              ? "bg-gold-400 text-navy-950 border-gold-400"
+              : "bg-navy-950/80 text-surface-50 border-white/10 hover:border-gold-400/50"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <input
+            type="checkbox"
+            checked={compareChecked}
+            onChange={() => onToggleCompare(apartment)}
+            aria-label={`Comparar ${apartment.title}`}
+            className="w-5 h-5 shrink-0 accent-gold-400"
+          />
+          Comparar
+        </label>
+
+        {/* Price tag (S006: "/mês" só no aluguel) */}
         <div className="absolute bottom-3 right-3">
           <div className="bg-navy-950/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-gold-400/20">
             <span className="text-gold-400 font-mono font-bold text-sm">
               {formatCurrency(apartment.total)}
             </span>
-            <span className="text-surface-400 text-xs ml-1">/mês</span>
+            {priceSuffix(apartment) && (
+              <span className="text-surface-400 text-xs ml-1">
+                {priceSuffix(apartment)}
+              </span>
+            )}
           </div>
         </div>
       </div>

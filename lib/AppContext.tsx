@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { type Apartment } from "@/lib/data";
+import { CHECKLIST_STORAGE_VERSION } from "@/lib/constants";
 
 export type StatusType =
   | "novo"
@@ -37,6 +38,10 @@ interface AppState {
   username: string | null;
   notes: Note[];
   statuses: ApartmentStatus[];
+  // Checklist de visita (S004, ADR-002 decisão 2): mesma chave, schema aditivo.
+  // Estados v1 (sem version/checklist) continuam legíveis — defaults cobrem.
+  version: number;
+  checklist: Record<string, string[]>;
 }
 
 interface AppContextValue extends AppState {
@@ -47,6 +52,8 @@ interface AppContextValue extends AppState {
   updateStatus: (apartmentId: string, status: StatusType, scheduledDate?: string) => void;
   getStatus: (apartmentId: string) => StatusType;
   getNotes: (apartmentId: string) => Note[];
+  toggleChecklistItem: (apartmentId: string, itemId: string) => void;
+  getChecklist: (apartmentId: string) => string[];
 }
 
 const defaultState: AppState = {
@@ -54,6 +61,8 @@ const defaultState: AppState = {
   username: null,
   notes: [],
   statuses: [],
+  version: CHECKLIST_STORAGE_VERSION,
+  checklist: {},
 };
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -72,13 +81,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(defaultState);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount. Hidratação SSR-safe: localStorage só
+  // existe no client; ler no initializer causaria hydration mismatch.
+  // Aditivo v2 (S004): estados v1 sem version/checklist ganham os defaults.
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        setState((prev) => ({ ...prev, ...parsed }));
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- ver comentário acima
+        setState((prev) => ({
+          ...prev,
+          ...parsed,
+          version: CHECKLIST_STORAGE_VERSION,
+          checklist: parsed.checklist ?? {},
+        }));
       }
     } catch {
       // ignore
@@ -176,6 +193,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [state.notes]
   );
 
+  const toggleChecklistItem = useCallback(
+    (apartmentId: string, itemId: string) => {
+      setState((prev) => {
+        const current = prev.checklist[apartmentId] ?? [];
+        const next = current.includes(itemId)
+          ? current.filter((id) => id !== itemId)
+          : [...current, itemId];
+        return {
+          ...prev,
+          checklist: { ...prev.checklist, [apartmentId]: next },
+        };
+      });
+    },
+    []
+  );
+
+  const getChecklist = useCallback(
+    (apartmentId: string): string[] => {
+      return state.checklist[apartmentId] ?? [];
+    },
+    [state.checklist]
+  );
+
   return (
     <AppContext.Provider
       value={{
@@ -187,6 +227,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         updateStatus,
         getStatus,
         getNotes,
+        toggleChecklistItem,
+        getChecklist,
       }}
     >
       {children}
@@ -202,6 +244,7 @@ export function useApp(): AppContextValue {
 
 export function useHydrated(): boolean {
   const [hydrated, setHydrated] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- flag SSR-safe padrão: evita mismatch entre HTML do servidor e primeiro render do client.
   useEffect(() => setHydrated(true), []);
   return hydrated;
 }

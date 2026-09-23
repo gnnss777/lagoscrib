@@ -16,9 +16,11 @@ export default function AddApartmentForm() {
     bedrooms: 2,
     bathrooms: 1,
     parking: 1,
+    transaction: "aluguel" as "aluguel" | "venda",
     rent: 2500,
     condo: 500,
     iptu: 150,
+    salePrice: 400000,
     phone: "",
     email: "",
     image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop",
@@ -27,11 +29,16 @@ export default function AddApartmentForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const total = form.rent + form.condo + form.iptu;
+    const isSale = form.transaction === "venda";
+    // Venda: total = preço (sem simular financiamento — S006 out-of-scope).
+    const total = isSale ? form.salePrice : form.rent + form.condo + form.iptu;
     addApartment({
       ...form,
       id: `new-${Date.now()}`,
       total,
+      transaction: form.transaction,
+      salePrice: isSale ? form.salePrice : undefined,
+      rent: isSale ? 0 : form.rent,
       description: "Novo imóvel adicionado pelo usuário.",
       features: form.features,
     });
@@ -65,7 +72,20 @@ export default function AddApartmentForm() {
         <input placeholder="Endereço" value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} className="input-field col-span-2" />
         <input placeholder="Telefone (ex: (41) 99999-9999)" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="input-field" />
         <input placeholder="E-mail" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="input-field" />
-        <input type="number" placeholder="Aluguel (R$)" value={form.rent} onChange={e => setForm({ ...form, rent: Number(e.target.value) })} className="input-field" />
+        <select
+          aria-label="Tipo de transação"
+          value={form.transaction}
+          onChange={e => setForm({ ...form, transaction: e.target.value as "aluguel" | "venda" })}
+          className="input-field col-span-2 cursor-pointer"
+        >
+          <option value="aluguel">Aluguel</option>
+          <option value="venda">Venda</option>
+        </select>
+        {form.transaction === "venda" ? (
+          <input type="number" placeholder="Preço de venda (R$)" value={form.salePrice} onChange={e => setForm({ ...form, salePrice: Number(e.target.value) })} className="input-field" />
+        ) : (
+          <input type="number" placeholder="Aluguel (R$)" value={form.rent} onChange={e => setForm({ ...form, rent: Number(e.target.value) })} className="input-field" />
+        )}
         <input type="number" placeholder="Condomínio (R$)" value={form.condo} onChange={e => setForm({ ...form, condo: Number(e.target.value) })} className="input-field" />
         <input type="number" placeholder="IPTU (R$)" value={form.iptu} onChange={e => setForm({ ...form, iptu: Number(e.target.value) })} className="input-field" />
         <input type="number" placeholder="Área (m²)" value={form.area} onChange={e => setForm({ ...form, area: Number(e.target.value) })} className="input-field" />

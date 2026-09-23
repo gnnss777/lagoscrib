@@ -138,3 +138,17 @@ Criado via `gh repo create lagoscrib --public`.
 Código local (`C:/AI/apartamentos-app/`) inicializado com `.git` e pushado (`git push -u origin master`).
 Build (`.next/`) ignorado pelo `.gitignore` implícito (não commitado — conforme boas práticas).
 Status: REPO PÚBLICO + DEPLOY VERCEL funcionando (`https://lagoscrib.vercel.app/`).
+
+--- LEVA DORES-CONSUMIDOR — DONE (2026-09-22) ---
+Branch feat/dores-consumidor: 48da29d (PR-1 dados-reais) + 3d03567 (F0) + 1adf609 (S001) + 28d5c88 (S002) + 6370bb2 (S003) + 01570c6 (S004) + ecd9211 (S005) + abef995 (S006). Nada pusherado ate o OK do Gabriel.
+Gates F7 (ordem, todos PASS): tsc + lint(0 err/0 warn) + 41 unit + build estatico + 6/6 e2e (smoke, galeria, antidores, persistencia, comparacao, venda).
+Perf: audit-photos PASS (12x10 fotos, maior imovel 591KB << 3,5MB; arquivos 11-120KB << 350KB); priority so na 1a, resto lazy; fill+aspect = zero CLS.
+Security quick: 0 dangerouslySetInnerHTML, 0 segredos em app/lib, .env.local ignorado e nunca commitado, localStorage try/catch + version 2 lendo v1 (provado em e2e/persistencia), wa.me via encodeURIComponent.
+Evidencia por story (test-evidence-review: todas ADEQUATE, nao so existentes): S001 pricing+s001-data; S002 audit+manifesto+s002-galeria; S003 gallery(10)+galeria.spec+screenshots; S004 antidores(7)+antidores.spec+persistencia.spec; S005 compare(8)+comparacao.spec; S006 transaction(5)+venda.spec.
+Regression: docs/regression-suite.md (fluxo aluguel intocado + novos fluxos, 100% verde); workers=1 (flake de imagem sob 4 workers = carga, nao bug).
+Changelog: corpo dos 2 PRs (interno) + README (player-facing).
+Proximo: push + PR-1 feat/dados-reais (48da29d) -> PR-2 feat/dores-consumidor -> upstream gnnss777/lagoscrib, merge em sequencia, CI monitorado. Travado ate OK do Gabriel.
+
+--- PRS ABERTOS (2026-09-22) ---
+PR-1: https://github.com/gnnss777/lagoscrib/pull/1 (feat/dados-reais -> master, MERGEABLE, sem CI no upstream).
+PR-2: https://github.com/gnnss777/lagoscrib/pull/2 (feat/dores-consumidor -> master, merge apos o #1).
