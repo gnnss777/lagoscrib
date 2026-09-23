@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import { Check, Plus, X } from "@phosphor-icons/react";
 import { useApp } from "@/lib/AppContext";
 import { FACILITY_GROUPS } from "@/lib/constants";
@@ -20,6 +21,10 @@ const PETS_OPTIONS = [
 export default function AddApartmentForm() {
   const { addApartment } = useApp();
   const [open, setOpen] = useState(false);
+  const titleRef = useRef<HTMLInputElement>(null);
+  useScrollLock(open);
+
+  // F1.5 modal a11y: Esc fecha + foco no 1º campo ao abrir.
   const [form, setForm] = useState({
     title: "",
     neighborhood: "",
@@ -41,6 +46,16 @@ export default function AddApartmentForm() {
     image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop",
     features: ["Elevador", "Portaria 24h"],
   });
+
+  useEffect(() => {
+    if (!open) return;
+    titleRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,15 +92,26 @@ export default function AddApartmentForm() {
   }
 
   return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto bg-night/60"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Adicionar novo imóvel"
+        className="relative w-full max-w-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
     <form onSubmit={handleSubmit} className="bg-card border border-taxi/40 rounded-xl p-5 space-y-3 shadow-sm">
       <div className="flex items-center justify-between">
         <h4 className="text-amberink font-semibold">Novo Imóvel</h4>
-        <button type="button" onClick={() => setOpen(false)} className="text-muted hover:text-ink">
+        <button type="button" onClick={() => setOpen(false)} aria-label="Fechar formulário" className="text-muted hover:text-ink">
           <X size={18} />
         </button>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <input placeholder="Título" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-field" required />
+        <input ref={titleRef} placeholder="Título" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-field" required />
         <input placeholder="Bairro" value={form.neighborhood} onChange={e => setForm({ ...form, neighborhood: e.target.value })} className="input-field" required />
         <input placeholder="Link do anúncio (OLX/VivaReal)" value={form.link} onChange={e => setForm({ ...form, link: e.target.value })} className="input-field col-span-2" required />
         <input placeholder="Endereço" value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} className="input-field col-span-2" />
@@ -180,5 +206,7 @@ export default function AddApartmentForm() {
         Importar Novo Imóvel
       </button>
     </form>
+      </div>
+    </div>
   );
 }

@@ -22,7 +22,7 @@ async function gotoAuthed(page: Page, state: object = {}) {
 }
 
 async function openKanban(page: Page) {
-  await page.getByRole("button", { name: "Prospecção", exact: true }).click();
+  await page.getByRole("button", { name: "Abrir prospecção (kanban)" }).click();
   const view = page.getByTestId("kanban-view");
   await expect(view).toBeVisible();
   return view;
@@ -33,11 +33,14 @@ test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
   page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
 
-  // 1ª ação: Prospectar no 1º card → 2ª: view tela cheia abre.
-  await page
-    .getByRole("button", { name: /Prospectar .* no kanban/ })
-    .first()
-    .click();
+  // 1ª ação: abrir o 1º card → DetailModal (aba Detalhes, seção Status).
+  // (F3.1: card mínimo — Prospectar vive no modal, não no card.)
+  await page.locator(".card-apartment").first().click();
+  const dialog = page.getByRole("dialog", { name: /Detalhes de/ });
+  await expect(dialog).toBeVisible();
+
+  // 2ª ação: Prospectar na seção Status → fecha o modal e abre a view tela cheia.
+  await dialog.getByRole("button", { name: /Prospectar/ }).click();
   const view = page.getByTestId("kanban-view");
   await expect(view).toBeVisible();
   await expect(
@@ -146,6 +149,44 @@ test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
   // Mostrar todos: volta tudo.
   await view.getByRole("button", { name: /Mostrar todos/ }).click();
   expect(await view.locator("article").count()).toBeGreaterThan(1);
+
+  expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
+});
+
+test("test_kanban_estatico_sem_scroll_contador_mais", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (err) => errors.push(err.message));
+  // Estado default: statuses [] → todo o pool cai em "Não visitado"
+  // (bem acima da trava KANBAN_VISIBLE_CAP) → overflow garantido.
+  await gotoAuthed(page);
+  const view = await openKanban(page);
+
+  const col = view.getByRole("region", { name: /Não visitado/ });
+  const more = col.getByRole("button", { name: /imóveis ocultos em/ });
+  await expect(more).toBeVisible();
+  await expect(more).toContainText(/\+\d+ restantes/);
+
+  // Estático de verdade: a coluna não tem scroll interno.
+  const overflow = await col.evaluate((el) => ({
+    scrollHeight: el.scrollHeight,
+    clientHeight: el.clientHeight,
+  }));
+  expect(overflow.scrollHeight).toBeLessThanOrEqual(overflow.clientHeight + 2);
+
+  // O contador abre a lista; Esc fecha SÓ o dialog (a view continua).
+  // Via teclado (foco + Enter): o badge do dev-overlay do Next cobre o
+  // rodapé da 1ª coluna em dev e interceptaria click de mouse — e o caminho
+  // de teclado ainda prova AC-2 de quebra.
+  await more.focus();
+  await page.keyboard.press("Enter");
+  const dialog = view.getByRole("dialog", { name: /mais \d+ imóveis/ });
+  await expect(dialog).toBeVisible();
+  await expect(
+    dialog.getByRole("button", { name: /Abrir detalhes de/ }).first(),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(view).toBeVisible();
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });

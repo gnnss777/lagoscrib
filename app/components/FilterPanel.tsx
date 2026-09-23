@@ -22,6 +22,7 @@ import {
 } from "@/lib/constants";
 import type { TransactionTab } from "@/lib/transaction";
 import PriceRangeSlider from "./PriceRangeSlider";
+import SelectField from "./SelectField";
 
 interface FilterPanelProps {
   filters: FilterState;
@@ -164,25 +165,22 @@ export default function FilterPanel({
     options: readonly number[],
     group: "bedroomsMin" | "bathroomsMin" | "parkingMin"
   ) => (
-    <div>
-      <label htmlFor={id} className={labelCls}>
-        {label}
-      </label>
-      <select
-        id={id}
-        ref={group === "bedroomsMin" ? firstRef : undefined}
-        value={value}
-        onChange={(e) => set(Number(e.target.value))}
-        className={inputCls}
-      >
-        <option value={0}>Tanto faz</option>
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}+ ({countWith({ [group]: o } as Partial<FilterState>)})
-          </option>
-        ))}
-      </select>
-    </div>
+    <SelectField
+      id={id}
+      label={label}
+      labelClassName={labelCls}
+      selectRef={group === "bedroomsMin" ? firstRef : undefined}
+      value={value}
+      onChange={(e) => set(Number(e.target.value))}
+      className={inputCls}
+    >
+      <option value={0}>Tanto faz</option>
+      {options.map((o) => (
+        <option key={o} value={o}>
+          {o}+ ({countWith({ [group]: o } as Partial<FilterState>)})
+        </option>
+      ))}
+    </SelectField>
   );
 
   return (

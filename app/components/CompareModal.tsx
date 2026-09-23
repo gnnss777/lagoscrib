@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import Image from "next/image";
 import { X, LinkSimple } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
@@ -22,6 +23,7 @@ interface CompareModalProps {
 export default function CompareModal({ apartments, onClose }: CompareModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const ordered = sortCompareByTotalEffective(apartments);
+  useScrollLock();
 
   useEffect(() => {
     closeRef.current?.focus();

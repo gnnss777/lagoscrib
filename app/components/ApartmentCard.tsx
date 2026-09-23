@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Bed, Car, LinkSimple, MapPin, Ruler, Shower } from "@phosphor-icons/react";
+import { Bed, Car, MapPin, Ruler, Shower } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
 import { priceSuffix } from "@/lib/transaction";
-import { KANBAN_PROSPECT_LABEL } from "@/lib/constants";
+import { formatBRL } from "@/lib/antiDores";
+import { cardStaggerDelay, DEFAULT_STAGGER_CAP, DEFAULT_STAGGER_STEP } from "@/lib/motion";
 import { useApp, STATUS_LABELS } from "@/lib/AppContext";
 
 interface ApartmentCardProps {
@@ -14,7 +15,6 @@ interface ApartmentCardProps {
   onSelect: (apartment: Apartment) => void;
   compareChecked: boolean;
   onToggleCompare: (apartment: Apartment) => void;
-  onProspect: (apartment: Apartment) => void;
 }
 
 export default function ApartmentCard({
@@ -23,17 +23,9 @@ export default function ApartmentCard({
   onSelect,
   compareChecked,
   onToggleCompare,
-  onProspect,
 }: ApartmentCardProps) {
   const { getStatus } = useApp();
   const status = getStatus(apartment.id);
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 0,
-    }).format(value);
 
   return (
     <motion.div
@@ -41,7 +33,7 @@ export default function ApartmentCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.5,
-        delay: index * 0.08,
+        delay: cardStaggerDelay(index, DEFAULT_STAGGER_STEP, DEFAULT_STAGGER_CAP),
         ease: [0.4, 0, 0.2, 1],
       }}
       className="card-apartment cursor-pointer group"
@@ -90,7 +82,7 @@ export default function ApartmentCard({
         <div className="absolute bottom-3 right-3">
           <div className="bg-night/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-taxi/40">
             <span className="text-taxi font-mono font-bold text-sm">
-              {formatCurrency(apartment.total)}
+              {formatBRL(apartment.total)}
             </span>
             {priceSuffix(apartment) && (
               <span className="text-paper/70 text-xs ml-1">
@@ -134,56 +126,8 @@ export default function ApartmentCard({
           </div>
         </div>
 
-        {/* Main info: Address + Phone + WhatsApp */}
-        <div className="mt-2 mb-3 text-ink-soft text-xs space-y-0.5">
-          <div className="line-clamp-1">{apartment.address}</div>
-          {apartment.phone ? (
-            <a
-              href={`https://wa.me/55${apartment.phone.replace(/\D/g, '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-amberink hover:text-ink font-medium"
-            >
-              <span>📱</span>
-              <span>{apartment.phone}</span>
-            </a>
-          ) : (
-            <a
-              href={apartment.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-amberink hover:text-ink font-medium"
-            >
-              <LinkSimple size={13} />
-              <span>{apartment.source ?? "Ver anúncio original"}</span>
-            </a>
-          )}
-        </div>
-
-        {/* Features preview */}
-        <div className="flex flex-wrap gap-1.5 mt-4">
-          {apartment.features.slice(0, 3).map((feature) => (
-            <span key={feature} className="tag-pill">
-              {feature}
-            </span>
-          ))}
-          {apartment.features.length > 3 && (
-            <span className="tag-pill">+{apartment.features.length - 3}</span>
-          )}
-        </div>
-
-        {/* Prospectar (kanban, AC-5): 1 ação no card + 1 no Perfil */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onProspect(apartment);
-          }}
-          aria-label={`Prospectar ${apartment.title} no kanban`}
-          className="mt-4 w-full min-h-11 px-4 rounded-full text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
-        >
-          {KANBAN_PROSPECT_LABEL} →
-        </button>
-      </div>
+        {/* Prospectar vive no DetailModal (aba Status) — card sem CTAs (F3.1) */}
+            </div>
     </motion.div>
   );
 }

@@ -101,8 +101,8 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 ## 3. Spacing & shapes
 
 - Base: 4px. Escala: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 — valor fora = erro de review.
-- Raios: inputs/buttons `rounded-lg` (10px), cards/panels `rounded-2xl` (16px), badges/pills `rounded-full`, thumbnails `rounded-xl`.
-- Largura: conteúdo `max-w-6xl` no dashboard; modal `max-w-2xl`; lightbox full screen escuro; shells mobile-first (colunas empilham < 640px).
+- Raios: inputs/buttons `rounded-lg` (8px), cards/panels `rounded-2xl` (16px), badges/pills `rounded-full`, thumbnails `rounded-xl` (12px); kanban full-viewport (`ProfileModal`) ocupa a tela cheia sem raio externo.
+- Largura: conteúdo `max-w-7xl` no dashboard; modal `max-w-2xl`; kanban em tela cheia (`ProfileModal` full-viewport, board estático sem scroll em lg+ com scroll de fallback abaixo de lg); lightbox full screen escuro; shells mobile-first (colunas empilham < 640px).
 
 ## 4. Components (nomes oficiais do Glossário + novos registrados)
 
@@ -115,14 +115,15 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 | Toggle (kit #4) | Alugar\|Comprar | pill 48×28, knob branco, accent quando on, `role="switch"` | checked/unchecked, focus-visible, reduced-motion |
 | StatusBadge (kit #2) | tom ok/warn/accent por status | pill 13px semibold pastel + texto escuro calibrado (todos ≥ 7:1) | estático; acessível via `aria-label` quando só-icone |
 | VerifiedBadge | "Verificado em {data} · {origem}" | texto `amberink` + ícone ✓ | estático; tooltip com data exata |
-| Card (ApartmentCard) | — | `bg-card`, `rounded-2xl`, borda `line`, hover translateY(-4px) + brilho táxi | default, hover (clicável), focus-visible; **loading = skeleton com a MESMA geometria** |
-| Dialog (DetailModal) | Detalhes \| Notas \| Checklist \| Planta (Tabs) | overlay `night/60` + panel `bg-card max-w-2xl` | open/close com spring; focus trap; Esc; rolável |
+| Card (ApartmentCard) | mínimo: foto + badge + preço + bairro + 4 stats + Comparar | `bg-card`, `rounded-2xl`, borda `line`, hover translateY(-4px) + brilho táxi; SEM links/endereço/facilidades/Prospectar (vivem no modal) | default, hover (clicável), focus-visible; **loading = skeleton com a MESMA geometria** |
+| KanbanCard (pílula) | miniatura 40px + título/bairro 1 linha + preço mono + selo; menu Mover…/Contatei/Retornou | `bg-card`, `rounded-xl`, borda `line`; selo `bg-pastel`/`bg-st-green-bg` (pares travados); coluna trava em `KANBAN_VISIBLE_CAP` + rodapé "+N restantes" (dialog jump-list) | default, focus-visible; teclado `,`/`.`/`<`/`>` + Enter/Esc; board estático sem scroll (lg+) |
+| Dialog (DetailModal) | Detalhes \| Notas \| Checklist \| Planta (Tabs) | overlay `night/60` + panel `bg-card max-w-2xl` | `role="dialog"` + `aria-modal` + foco no painel ao abrir (restaura gatilho) + scroll-lock + Esc; open/close com spring; rolável |
 | Gallery (Carousel) | — | principal 4:3 `object-cover` + thumbs (lazy) + setas ◀▶ + contador "3/12" + legenda | 1ª photo priority; thumbs lazy; swipe mobile; ←/→ teclado; empty (0 fotos → capa + aviso) |
 | Lightbox (Dialog) | — | fullscreen escuro (`night/95`); zoom clique/scroll/pinch; pan arrastar | open/close; Esc; contador; reduced-motion desativa zoom animado |
 | AllInPanel | aluguel / venda | painel com linhas aluguel/cond/IPTU + "Entrada estimada" + "Mudança estimada" | rotulado "estimativa — confirmar com a imobiliária"; venda: preço + cond + IPTU + preço/m² |
 | VisitChecklist | — | lista de itens com checkbox + botões "Copiar" / "WhatsApp" | TDD: marca→persiste; copy→toast; lista vazia→empty state |
 | CompareBar + CompareTable (Table) | — | barra sticky com contador (2–4) + tabela comparativa | máx 4 selecionáveis (bloqueio visível); ordem default por custo total efetivo; dado ausente = "—" |
-| AddApartmentForm (Form) | aluguel / venda | campos + Select tipo + validação inline | default, error, submit (loading), sucesso (toast + limpa) |
+| AddApartmentForm (Form) | aluguel / venda | abre em modal (overlay `night/60` + `role="dialog"`, Esc, scroll-lock, foco no 1º campo); campos + Select tipo + validação inline | default, error, submit (loading), sucesso (toast + limpa) |
 | EmptyState | — | ilustração + copy real + CTA | quem não tem dados NUNCA vê tela em branco |
 | Skeleton (kit #3) | shimmer | espelha a geometria final | `role="status"`; estático com reduced-motion |
 | Toast (kit #1) | info/success | pill inferior central, auto-dismiss 3s | entrar/sair 0.3s; `aria-live="polite"` |
@@ -147,7 +148,7 @@ Regras de componentes:
 
 - Física padrão p/ modais/lightbox: `spring(320, 24)` (knob numérico — invariante #4).
 - Easing p/ CSS puro: `cubic-bezier(0.4, 0, 0.2, 1)`; overshoot de mola só em micro-interações.
-- Regras duras: animar SÓ `transform`/`opacity`; listas longas = stagger no container (cards já usam `index * 0.08`); **`prefers-reduced-motion` respeitado em 100% dos efeitos** (kit já cobre; Motion.js `useReducedMotion`).
+- Regras duras: animar SÓ `transform`/`opacity`; listas longas = stagger com cap via `cardStaggerDelay(index)` (`lib/motion.ts`, cap default 12 — sem fila de segundos); `MotionConfig reducedMotion="user"` no `MotionProvider`; **`prefers-reduced-motion` respeitado em 100% dos efeitos** (kit já cobre; Motion.js `useReducedMotion`).
 
 ## 7. Guidelines (do's & don'ts)
 

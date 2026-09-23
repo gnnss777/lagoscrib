@@ -176,6 +176,12 @@ export const KANBAN_RETURNED_LABEL = "Retornou ✓";
 export const KANBAN_PROSPECT_LABEL = "Prospectar";
 export const KANBAN_TAB_LABEL = "Prospecção";
 
+// Trava física do board estático sem scroll (ESTÁTICO-SEM-SCROLL 23/09/2026):
+// pílula ≈60px + gap 6px → 7 cabem em ~470px; + header/rodapé ≈ 590px,
+// dentro dos ~592px úteis em 768p (100vh − header da view − toolbar).
+// O resto vira o rodapé "+N restantes" (LL-006: sem mágica na UI).
+export const KANBAN_VISIBLE_CAP = 7;
+
 // --- Tema "Lightbox Analógico" (leva lightbox-analogico, DESIGN.md v2 §cores) ---
 // REGRA (LL-006 estendido a design): nenhum hex de cor fora de THEME_PALETTE —
 // globals.css (@theme) e componentes Tailwind consomem estes valores. Hex fora

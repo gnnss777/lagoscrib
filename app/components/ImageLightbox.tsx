@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import Image from "next/image";
 import { X, CaretLeft, CaretRight, MagnifyingGlassPlus } from "@phosphor-icons/react";
 import { useReducedMotion } from "motion/react";
@@ -37,6 +38,7 @@ export default function ImageLightbox({
   const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
   const closeRef = useRef<HTMLButtonElement>(null);
   const reduceMotion = useReducedMotion();
+  useScrollLock();
 
   const photo = photos[index];
   const counter = buildPhotoCounter(index, total);

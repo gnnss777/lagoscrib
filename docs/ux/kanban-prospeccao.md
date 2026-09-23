@@ -55,7 +55,7 @@
 
 ## Prospectar (AC-5: ≤2 ações)
 
-- Botão **"Prospectar →"** no `ApartmentCard` e no `DetailModal` (seção Status):
+- Botão **"Prospectar →"** no `DetailModal` (seção Status) — o `ApartmentCard` é mínimo e NÃO tem Prospectar (F3.1):
   joga o imóvel p/ o topo de Não visitado e abre o Perfil na Prospecção.
   Reversível (mover de volta — nunca exclui da base).
 
@@ -137,3 +137,40 @@ Staleness pré-existente, fora deste escopo; prova por stash registrada na evid�
   Descoberta: `syncPushSchema` rejeita `urlOriginal: ""` (`.url()` não aceita
   vazia) → campo **omitido** quando desconhecido; migração futura deve repetir
   o padrão (nunca enviar string vazia).
+
+## Estático sem scroll [ESTÁTICO-SEM-SCROLL 23/09/2026]
+
+> Muda o contrato de scroll: board e colunas **sem nenhum scroll** (lg+);
+> abaixo de lg, scroll horizontal/vertical de fallback (mobile segue usável).
+> SUPERSEDE: AC-U2 (coluna com scroll próprio) e AC-3 (foto h-28 + selo na
+> dobra) — o resto dos ACs continua valendo.
+
+- Card vira **pílula compacta** (`FollowUpSeal` + trava em `lib/kanban.ts`):
+  miniatura 40px + título/bairro numa linha truncada + preço `formatBRL`
+  mono; terceira linha só com selo (`sem retorno ×N`/`retornou`, mesmos pares
+  de cor travados) ou último contato. Sem botões visíveis — mover/contato
+  vivem no menu do card (abrir + escolher = ≤2 ações, AC-1 intacto) e no
+  teclado `,`/`.`/`<`/`>` (AC-2 intacto).
+- **Trava física** `KANBAN_VISIBLE_CAP = 7` (`lib/constants.ts`, fonte única —
+  LL-006): pílula ≈60px + gap 6px → 7 cabem em ~470px; + header/rodapé ≈
+  590px, dentro dos ~592px úteis em 768p. `splitColumnOverflow` (pura,
+  imutável, com unit) divide visíveis/ocultos; contagens e `aria-labels`
+  usam sempre o total (nunca mentem).
+- **Overflow = rodapé "+N restantes"** por coluna
+  (`aria-label "Mostrar N imóveis ocultos em {coluna}"`) → abre dialog
+  (`role="dialog"` + `aria-modal`, foco no painel, restaura gatilho, Esc
+  fecha **só o dialog** — guarda no Esc da view; jump-list: clique abre o
+  detalhe e fecha a lista). Dialog com scroll interno (padrão DetailModal —
+  o "sem scroll" vale para a página do board, não para dialogs transitórios).
+- Layout: board `flex h-full` + linha `flex-1 items-stretch` + colunas
+  `flex-1 min-w-0 overflow-hidden` (lg+); view mantém `kanban-view`,
+  `region` por coluna, `formatBRL`, foco/Esc/scroll-lock.
+
+## ACs (adendo ESTÁTICO-SEM-SCROLL)
+
+- AC-U9: board e colunas sem scroll interno (lg+) — `e2e/kanban.spec.ts`
+  (`test_kanban_estatico_sem_scroll_contador_mais`: coluna
+  `scrollHeight ≤ clientHeight`, contador `+\d+ restantes`, dialog abre,
+  Esc fecha só o dialog).
+- AC-U10: trava `KANBAN_VISIBLE_CAP` com unit (`splitColumnOverflow`:
+  abaixo/acima do cap + cap zerado) e contagens sempre totais.

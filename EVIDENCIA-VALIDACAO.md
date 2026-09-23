@@ -167,12 +167,12 @@ Proximo: push + PR-3 feat/filtros-avancados -> upstream gnnss777/lagoscrib (apos
 --- PR-3 ABERTO (2026-09-22) ---
 PR-3: https://github.com/gnnss777/lagoscrib/pull/3 (feat/filtros-avancados -> master, merge apos #1/#2, MERGEABLE, sem CI no upstream).
 
---- LEVA LIGHTBOX-ANALOGICO � DONE (2026-09-22) ---
+--- LEVA LIGHTBOX-ANALOGICO � DONE (2026-09-22) ---
 Branch feat/lightbox-analogico (base: feat/filtros-avancados local): rebrand completo dark navy+gold -> claro papel-creme + amarelo-taxi (DESIGN.md v1.0 -> v2.0).
 TDD RED->GREEN: tests/unit/lightbox-contrast.test.ts (4 testes) + lib/contrast.ts + THEME_PALETTE em lib/constants.ts (LL-006 estendido a design). Pisos: texto normal >= 7:1 (AAA), UI/borda >= 3:1, pares proibidos (branco-sobre-taxi) documentados e provados falhos.
 Gates (ordem, todos PASS): tsc + lint(0/0) + 67 unit (63 + 4 novos) + build estatico (tokens novos confirmados no CSS compilado, zero residuo navy/gold/surface) + 9/9 e2e. 2 specs atualizados por mudanca intencional (ring-gold-400 -> ring-ink em venda/persistencia); resto intacto, zero erro de console.
 Correcoes de contraste herdadas do dark: placeholder surface-500 (3.89:1, falhava AA) -> muted (7.25:1); foco em ink (taxi-sobre-creme = 1.55:1, proibido); kill-switch prefers-reduced-motion global em globals.css.
-Escopo: 9/9 componentes migrados (s� classes/tokens, zero mudan�a de estrutura); scrim night mantido S� sobre fotos; galeria interna do vault +2 entradas. Proximo: commit nesta branch (push/PR a criterio do Gabriel, apos merges #1/#2/#3).
+Escopo: 9/9 componentes migrados (s� classes/tokens, zero mudan�a de estrutura); scrim night mantido S� sobre fotos; galeria interna do vault +2 entradas. Proximo: commit nesta branch (push/PR a criterio do Gabriel, apos merges #1/#2/#3).
 
 
 --- EXPANSAO-BASE-5-FONTES --- DONE (2026-09-22) ---
@@ -194,4 +194,51 @@ Gates: typecheck + lint 0/0 (13 arquivos) + 107/107 unit (18 arquivos: kanban 13
 
 --- KANBAN-TELA-INTEIRA-UI --- DONE (2026-09-22) ---
 Branch feat/kanban-prospeccao (base: 57ab697). Kanban sai do dialogo e vira view full-viewport (fixed inset-0, header proprio com voltar/engrenagem/fechar, data-testid kanban-view); Configurar quadro vira painel lateral (role complementary). Stats bar da home removida (memo stats + grid 6 cards); header ganha botao pill Prospecao (visivel no mobile) mantendo Ola. Preco vira slider duplo (PriceRangeSlider + lib/priceSlider.ts pura): linear aluguel 0-20k/400 passos, log venda 0-35M/380 passos piso 50k; mesmos campos priceMin/Max (schema intacto); thumbs nativos com aria-valuetext BRL + chips aria-live. Pills: btn-primary/btn-secondary globais + Mais filtros, tabs Alugar/Comprar, Prospectar, Comparar/Limpar, acoes do kanban, tabs do DetailModal (nenhum par novo de cor).
-Gates: typecheck + lint 0/0 (14 arquivos) + 113/113 unit (19 arquivos: priceSlider 6 novos) + build estatico + 6/6 e2e (kanban tela cheia 4/4 migrado + slider 2/2 novos). Nota honesta: filtros.spec teve seletores migrados p/ o slider (setRange via setter nativo, pos 76=3800/20=1000) e segue falhando SO em contagem (Expected 7, Received 57 — staleness da expansao, linha 36 antes do slider); persistencia/smoke/venda inalterados. Descoberta: Intl BRL usa NBSP (R$ 20.000) — asserts e2e com regex \s. UX spec atualizada (secoes [TELA-CHEIA]). Proximo: UAT do Gabriel (LL-017) + push/PR a criterio dele; write-back no vault pendente manual.
+Gates: typecheck + lint 0/0 (14 arquivos) + 113/113 unit (19 arquivos: priceSlider 6 novos) + build estatico + 6/6 e2e (kanban tela cheia 4/4 migrado + slider 2/2 novos). Nota honesta: filtros.spec teve seletores migrados p/ o slider (setRange via setter nativo, pos 76=3800/20=1000) e segue falhando SO em contagem (Expected 7, Received 57 — staleness da expansao, linha 36 antes do slider); persistencia/smoke/venda inalterados. Descoberta: Intl BRL usa NBSP (R$ 20.000) — asserts e2e com regex \s. UX spec atualizada (secoes [TELA-CHEIA]). Proximo: UAT do Gabriel (LL-017) + push/PR a criterio dele; write-back no vault pendente manual.
+
+--- POLIMENTO-UX-V2 --- DONE (2026-09-23) ---
+Branch feat/polimento-ux-v2 (base: d52e09c). F1 bugs+a11y → F2 consistencia → F3 hierarquia → F4 docs → F5 QA.
+F1: cardStaggerDelay(index, step=0.08, cap=12) pura em lib/motion.ts + MotionProvider (MotionConfig reducedMotion="user") no layout; DetailModal role=dialog/aria-modal/foco-no-painel+restaura-gatilho/scroll-lock/Esc; ProfileModal vira view (SEM role=dialog, com foco/scroll-lock); AddApartmentForm vira modal (role=dialog/Esc/foco-1º-campo/scroll-lock, placeholders intactos); scroll-lock via lib/useScrollLock.ts em Detail/Compare/ImageLightbox/Profile/AddForm.
+F2: formatBRL (@/lib/antiDores) em ApartmentCard+DetailModal (defs locais removidas); KanbanBoard 0 text-[11px] + preco font-mono + colunas bg-sand/shadow-sm; SelectField (label visivel AAA) aplicado nos 3 min-selects do FilterPanel (ids f-quartos/f-banheiros/f-vagas preservados); LoginPage Key→Buildings; DetailModal badges inativos sem opacity-60 (contraste); layout metadata completa; globals 0 transition:all (5 pontos per-property).
+F3: card minimo (foto+badge+preco+bairro+4 stats+Comparar; sem endereco/telefone/links/facilidades/Prospectar — Prospectar vive no DetailModal aba Status); header com pill Prospecção (aria-label "Abrir prospecção (kanban)") + Olá + Sair; countline detalhada só com filtro; grain body::before (feTurbulence 4%) + tipografia display (tracking/peso).
+F4: DESIGN.md (max-w-7xl, raios 8/12/16 + kanban full-viewport, Card minimo, Dialog/AddApartmentForm modal, MotionConfig+stagger-cap) + kanban-prospeccao.md (Prospectar só no modal) + galeria-e-confianca.md (card minimo).
+F5: kanban.spec teste 1 migrado (card → DetailModal aba Status → Prospectar → view 100vw); slider.spec já dinâmico (sem change); e2e/polimento.spec.ts novo (card-mínimo+Comparar-isolado, stagger-converge, foco/Esc-restaura-gatilho).
+Gates: typecheck 0 erros (2x) + unit 118/118 (motion 5/5 após fix de contrato: cap omitido = sem cap, call-site passa cap 12 explícito) + lint escopado 0/0 nos 17 arquivos da leva (full-repo eslint trava >10min neste env — documentado) + build OK (compilado 6.6min Turbopack, 15/15 páginas) + e2e 9 passed/9 failed workers=1: passam kanban 4/4 + polimento 3/3 + slider 2/2; as 9 falhas são TODAS staleness pré-existente FORA de escopo (Expected 7, Received 57 — pool expansão-base): antidores.spec.ts:22, comparacao.spec.ts:20, filtros.spec.ts:36 (helper login, testes :39 e :120), form.spec.ts:14, galeria.spec.ts:21, persistencia.spec.ts:38, smoke.spec.ts:17, venda.spec.ts:23. SELECTORES/ACs preservados: data-testid kanban-view, .card-apartment, formatBRL, f-quartos/f-banheiros/f-vagas, placeholders form.spec, Entrar/Digite seu usuário.
+Desvios registrados: selects do Dashboard (dash-bairro/status/sort) mantidos com layout custom (ícones+optgroups) — já com labels, incompatíveis com wrapper genérico sem quebrar e2e.
+Proximo: push + PR-6 feat/polimento-ux-v2 → upstream (após #1-#5), merge a critério do guinnes.
+
+--- KANBAN-ESTATICO-SEM-SCROLL --- DONE (2026-09-23) ---
+Branch feat/polimento-ux-v2 (mesmo PR-6, commit novo sobre 34b9089 — decisão do Gabriel).
+Direção A + miniatura 40px + contador "+N restantes" (decisões travadas em plan-mode).
+Matemática honesta que comandou o desenho: pool 109 (57 aluguel + 52 venda); default statuses []
+→ tudo cai em "Não visitado" (e2e mediu 57, trava 7, rodapé "+50 restantes" exato).
+Orçamento 768p: pílula ≈52–60px + gap 6px → 7 ≈ 470px; + header/rodapé ≈ 590px ≤ ~592px úteis.
+KANBAN_VISIBLE_CAP = 7 (lib/constants.ts, fonte única LL-006) + splitColumnOverflow pura/imutável (lib/kanban.ts).
+Card vira pílula: miniatura 40px + título/bairro 1 linha + preço formatBRL mono + FollowUpSeal
+(texto "sem retorno ×N"/"retornou"/último contato — mesmos pares de cor travados, zero par novo).
+Sem botões visíveis: mover/contato no menu do card (menuitem Contatei/Retornou ✓ + destinos topo/fim;
+abrir + escolher = ≤2 ações, AC-1) + teclado ,/./</>/Enter/Esc (AC-2).
+Board: flex h-full + linha flex-1 items-stretch + colunas flex-1 min-w-0 overflow-hidden (lg+,
+zero scroll de página e de coluna); <lg scroll de fallback documentado. Contagens/aria-labels
+sempre totais. "+N" abre dialog jump-list (role=dialog/aria-modal/foco/restaura-gatilho/scroll-lock;
+Esc fecha SÓ o dialog — guarda no Esc da view; clique abre o detalhe).
+SUPERSEDE na spec docs/ux/kanban-prospeccao.md: AC-U2 (scroll próprio) e AC-3 (foto h-28);
+novos AC-U9 (estático) + AC-U10 (trava com unit). DESIGN.md: linha KanbanCard + largura.
+Gates: typecheck 0 + lint escopado 0/0 (6 arquivos) + unit 121/121 (kanban 16/16, 3 novos split)
++ build 15/15 + e2e kanban 5/5 (4 antigos intactos + estatico novo).
+Falha honesta no caminho: click de mouse no "+50" interceptado pelo <nextjs-portal> do dev-overlay
+(cobre o rodapé da 1ª coluna em dev) → teste usa foco + Enter (caminho de teclado real, prova AC-2).
+ACs/seletores preservados: kanban-view, region por coluna, formatBRL, Esc/foco, Só sem retorno/
+Mostrar todos, selo "sem retorno ×2", alerta "7+ dias", aria-live. Desvio intencional: botões
+←/→ e Contatei/Retornou visíveis saem do card → vivem no menu (≤2 ações, documentado na spec).
+Backdrop do dialog em bg-night/60 (padrão dos modais, zero cor nova).
+Suite e2e completa: (resultado abaixo, em append separado).
+
+--- KANBAN-ESTATICO SUITE COMPLETA (2026-09-23) ---
+19 testes, workers=1: 10 passed / 9 failed.
+Passam: kanban 5/5 (4 antigos + estatico novo) + polimento 3/3 + slider 2/2.
+As 9 falhas são AS MESMAS staleness pré-existentes da leva polimento-ux-v2
+(Expected 7, Received 57 — pool expansão-base, fora de escopo, NÃO consertar):
+antidores.spec.ts:22, comparacao.spec.ts:20, filtros.spec.ts:36 (helper login, :39 e :120),
+form.spec.ts:14, galeria.spec.ts:21, persistencia.spec.ts:38, smoke.spec.ts:17, venda.spec.ts:23.
+Zero regressão da leva (escopo 9/9 → 10/10).
