@@ -10,6 +10,7 @@ import {
   isHanging,
   migrateStoredState,
   parseColumnConfig,
+  splitColumnOverflow,
   toSyncFollowUps,
   type ApartmentStatus,
   type FollowUp,
@@ -271,5 +272,39 @@ describe("kanban núcleo", () => {
       checklist: {},
       followUps: {},
     });
+  });
+
+  it("test_kanban_split_abaixo_do_cap_tudo_visivel", () => {
+    // arrange: 3 ids, cap 7
+    const ids = ["a", "b", "c"];
+
+    // act
+    const { visible, hidden } = splitColumnOverflow(ids, 7);
+
+    // assert: nada oculto, entrada intacta
+    expect(visible).toEqual(["a", "b", "c"]);
+    expect(hidden).toEqual([]);
+    expect(ids).toEqual(["a", "b", "c"]);
+  });
+
+  it("test_kanban_split_acima_do_cap_resto_oculto", () => {
+    // arrange: 10 ids, cap 7 (trava do board estático)
+    const ids = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+
+    // act
+    const { visible, hidden } = splitColumnOverflow(ids, 7);
+
+    // assert: ordem preservada, resto vira "+N"
+    expect(visible).toEqual(["a", "b", "c", "d", "e", "f", "g"]);
+    expect(hidden).toEqual(["h", "i", "j"]);
+  });
+
+  it("test_kanban_split_cap_zerado_tudo_oculto", () => {
+    // arrange/act: cap 0 ou negativo → nada visível
+    expect(splitColumnOverflow(["a", "b"], 0)).toEqual({
+      visible: [],
+      hidden: ["a", "b"],
+    });
+    expect(splitColumnOverflow(["a"], -3).visible).toEqual([]);
   });
 });

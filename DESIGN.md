@@ -102,7 +102,7 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 
 - Base: 4px. Escala: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 — valor fora = erro de review.
 - Raios: inputs/buttons `rounded-lg` (8px), cards/panels `rounded-2xl` (16px), badges/pills `rounded-full`, thumbnails `rounded-xl` (12px); kanban full-viewport (`ProfileModal`) ocupa a tela cheia sem raio externo.
-- Largura: conteúdo `max-w-7xl` no dashboard; modal `max-w-2xl`; kanban em tela cheia (`ProfileModal` full-viewport); lightbox full screen escuro; shells mobile-first (colunas empilham < 640px).
+- Largura: conteúdo `max-w-7xl` no dashboard; modal `max-w-2xl`; kanban em tela cheia (`ProfileModal` full-viewport, board estático sem scroll em lg+ com scroll de fallback abaixo de lg); lightbox full screen escuro; shells mobile-first (colunas empilham < 640px).
 
 ## 4. Components (nomes oficiais do Glossário + novos registrados)
 
@@ -116,6 +116,7 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 | StatusBadge (kit #2) | tom ok/warn/accent por status | pill 13px semibold pastel + texto escuro calibrado (todos ≥ 7:1) | estático; acessível via `aria-label` quando só-icone |
 | VerifiedBadge | "Verificado em {data} · {origem}" | texto `amberink` + ícone ✓ | estático; tooltip com data exata |
 | Card (ApartmentCard) | mínimo: foto + badge + preço + bairro + 4 stats + Comparar | `bg-card`, `rounded-2xl`, borda `line`, hover translateY(-4px) + brilho táxi; SEM links/endereço/facilidades/Prospectar (vivem no modal) | default, hover (clicável), focus-visible; **loading = skeleton com a MESMA geometria** |
+| KanbanCard (pílula) | miniatura 40px + título/bairro 1 linha + preço mono + selo; menu Mover…/Contatei/Retornou | `bg-card`, `rounded-xl`, borda `line`; selo `bg-pastel`/`bg-st-green-bg` (pares travados); coluna trava em `KANBAN_VISIBLE_CAP` + rodapé "+N restantes" (dialog jump-list) | default, focus-visible; teclado `,`/`.`/`<`/`>` + Enter/Esc; board estático sem scroll (lg+) |
 | Dialog (DetailModal) | Detalhes \| Notas \| Checklist \| Planta (Tabs) | overlay `night/60` + panel `bg-card max-w-2xl` | `role="dialog"` + `aria-modal` + foco no painel ao abrir (restaura gatilho) + scroll-lock + Esc; open/close com spring; rolável |
 | Gallery (Carousel) | — | principal 4:3 `object-cover` + thumbs (lazy) + setas ◀▶ + contador "3/12" + legenda | 1ª photo priority; thumbs lazy; swipe mobile; ←/→ teclado; empty (0 fotos → capa + aviso) |
 | Lightbox (Dialog) | — | fullscreen escuro (`night/95`); zoom clique/scroll/pinch; pan arrastar | open/close; Esc; contador; reduced-motion desativa zoom animado |

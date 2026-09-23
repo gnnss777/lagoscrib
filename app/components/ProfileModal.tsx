@@ -97,6 +97,13 @@ export default function ProfileModal({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        // Dialog "+N restantes" trata o próprio Esc (não fecha a view).
+        if (
+          (document.activeElement as HTMLElement | null)?.closest?.(
+            "[data-kanban-overflow]",
+          )
+        )
+          return;
         if (configOpen) setConfigOpen(false);
         else onClose();
       }
@@ -196,8 +203,9 @@ export default function ProfileModal({
           </div>
 
           <div className="flex flex-1 min-h-0">
-            {/* Board: scroll horizontal em 100vw */}
-            <div className="flex-1 min-w-0 overflow-x-auto px-4 sm:px-6 py-4">
+            {/* Board estático sem scroll (lg+); abaixo de lg, scroll de
+                fallback (horizontal + vertical) — ver spec ESTÁTICO. */}
+            <div className="flex-1 min-w-0 overflow-x-auto overflow-y-auto px-4 sm:px-6 py-4 lg:overflow-hidden">
               <KanbanBoard
                 apartments={apartments}
                 colConfig={cfg}

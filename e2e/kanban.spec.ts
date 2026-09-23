@@ -152,3 +152,41 @@ test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
+
+test("test_kanban_estatico_sem_scroll_contador_mais", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (err) => errors.push(err.message));
+  // Estado default: statuses [] → todo o pool cai em "Não visitado"
+  // (bem acima da trava KANBAN_VISIBLE_CAP) → overflow garantido.
+  await gotoAuthed(page);
+  const view = await openKanban(page);
+
+  const col = view.getByRole("region", { name: /Não visitado/ });
+  const more = col.getByRole("button", { name: /imóveis ocultos em/ });
+  await expect(more).toBeVisible();
+  await expect(more).toContainText(/\+\d+ restantes/);
+
+  // Estático de verdade: a coluna não tem scroll interno.
+  const overflow = await col.evaluate((el) => ({
+    scrollHeight: el.scrollHeight,
+    clientHeight: el.clientHeight,
+  }));
+  expect(overflow.scrollHeight).toBeLessThanOrEqual(overflow.clientHeight + 2);
+
+  // O contador abre a lista; Esc fecha SÓ o dialog (a view continua).
+  // Via teclado (foco + Enter): o badge do dev-overlay do Next cobre o
+  // rodapé da 1ª coluna em dev e interceptaria click de mouse — e o caminho
+  // de teclado ainda prova AC-2 de quebra.
+  await more.focus();
+  await page.keyboard.press("Enter");
+  const dialog = view.getByRole("dialog", { name: /mais \d+ imóveis/ });
+  await expect(dialog).toBeVisible();
+  await expect(
+    dialog.getByRole("button", { name: /Abrir detalhes de/ }).first(),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(view).toBeVisible();
+
+  expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
+});

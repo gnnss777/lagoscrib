@@ -139,6 +139,22 @@ export function buildColumns(
     }));
 }
 
+/**
+ * Trava física do board estático sem scroll (ESTÁTICO-SEM-SCROLL):
+ * divide os ids da coluna em visíveis (até `cap`) + ocultos (resto vira
+ * o rodapé "+N restantes"). Pura e imutável como o resto do núcleo.
+ */
+export function splitColumnOverflow(
+  ids: string[],
+  cap: number,
+): { visible: string[]; hidden: string[] } {
+  const n =
+    typeof cap === "number" && Number.isFinite(cap)
+      ? Math.max(0, Math.floor(cap))
+      : 0;
+  return { visible: ids.slice(0, n), hidden: ids.slice(n) };
+}
+
 function reindexColumn(
   entries: ApartmentStatus[],
   status: StatusType,

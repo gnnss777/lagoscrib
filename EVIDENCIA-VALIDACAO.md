@@ -206,3 +206,39 @@ F5: kanban.spec teste 1 migrado (card → DetailModal aba Status → Prospectar 
 Gates: typecheck 0 erros (2x) + unit 118/118 (motion 5/5 após fix de contrato: cap omitido = sem cap, call-site passa cap 12 explícito) + lint escopado 0/0 nos 17 arquivos da leva (full-repo eslint trava >10min neste env — documentado) + build OK (compilado 6.6min Turbopack, 15/15 páginas) + e2e 9 passed/9 failed workers=1: passam kanban 4/4 + polimento 3/3 + slider 2/2; as 9 falhas são TODAS staleness pré-existente FORA de escopo (Expected 7, Received 57 — pool expansão-base): antidores.spec.ts:22, comparacao.spec.ts:20, filtros.spec.ts:36 (helper login, testes :39 e :120), form.spec.ts:14, galeria.spec.ts:21, persistencia.spec.ts:38, smoke.spec.ts:17, venda.spec.ts:23. SELECTORES/ACs preservados: data-testid kanban-view, .card-apartment, formatBRL, f-quartos/f-banheiros/f-vagas, placeholders form.spec, Entrar/Digite seu usuário.
 Desvios registrados: selects do Dashboard (dash-bairro/status/sort) mantidos com layout custom (ícones+optgroups) — já com labels, incompatíveis com wrapper genérico sem quebrar e2e.
 Proximo: push + PR-6 feat/polimento-ux-v2 → upstream (após #1-#5), merge a critério do guinnes.
+
+--- KANBAN-ESTATICO-SEM-SCROLL --- DONE (2026-09-23) ---
+Branch feat/polimento-ux-v2 (mesmo PR-6, commit novo sobre 34b9089 — decisão do Gabriel).
+Direção A + miniatura 40px + contador "+N restantes" (decisões travadas em plan-mode).
+Matemática honesta que comandou o desenho: pool 109 (57 aluguel + 52 venda); default statuses []
+→ tudo cai em "Não visitado" (e2e mediu 57, trava 7, rodapé "+50 restantes" exato).
+Orçamento 768p: pílula ≈52–60px + gap 6px → 7 ≈ 470px; + header/rodapé ≈ 590px ≤ ~592px úteis.
+KANBAN_VISIBLE_CAP = 7 (lib/constants.ts, fonte única LL-006) + splitColumnOverflow pura/imutável (lib/kanban.ts).
+Card vira pílula: miniatura 40px + título/bairro 1 linha + preço formatBRL mono + FollowUpSeal
+(texto "sem retorno ×N"/"retornou"/último contato — mesmos pares de cor travados, zero par novo).
+Sem botões visíveis: mover/contato no menu do card (menuitem Contatei/Retornou ✓ + destinos topo/fim;
+abrir + escolher = ≤2 ações, AC-1) + teclado ,/./</>/Enter/Esc (AC-2).
+Board: flex h-full + linha flex-1 items-stretch + colunas flex-1 min-w-0 overflow-hidden (lg+,
+zero scroll de página e de coluna); <lg scroll de fallback documentado. Contagens/aria-labels
+sempre totais. "+N" abre dialog jump-list (role=dialog/aria-modal/foco/restaura-gatilho/scroll-lock;
+Esc fecha SÓ o dialog — guarda no Esc da view; clique abre o detalhe).
+SUPERSEDE na spec docs/ux/kanban-prospeccao.md: AC-U2 (scroll próprio) e AC-3 (foto h-28);
+novos AC-U9 (estático) + AC-U10 (trava com unit). DESIGN.md: linha KanbanCard + largura.
+Gates: typecheck 0 + lint escopado 0/0 (6 arquivos) + unit 121/121 (kanban 16/16, 3 novos split)
++ build 15/15 + e2e kanban 5/5 (4 antigos intactos + estatico novo).
+Falha honesta no caminho: click de mouse no "+50" interceptado pelo <nextjs-portal> do dev-overlay
+(cobre o rodapé da 1ª coluna em dev) → teste usa foco + Enter (caminho de teclado real, prova AC-2).
+ACs/seletores preservados: kanban-view, region por coluna, formatBRL, Esc/foco, Só sem retorno/
+Mostrar todos, selo "sem retorno ×2", alerta "7+ dias", aria-live. Desvio intencional: botões
+←/→ e Contatei/Retornou visíveis saem do card → vivem no menu (≤2 ações, documentado na spec).
+Backdrop do dialog em bg-night/60 (padrão dos modais, zero cor nova).
+Suite e2e completa: (resultado abaixo, em append separado).
+
+--- KANBAN-ESTATICO SUITE COMPLETA (2026-09-23) ---
+19 testes, workers=1: 10 passed / 9 failed.
+Passam: kanban 5/5 (4 antigos + estatico novo) + polimento 3/3 + slider 2/2.
+As 9 falhas são AS MESMAS staleness pré-existentes da leva polimento-ux-v2
+(Expected 7, Received 57 — pool expansão-base, fora de escopo, NÃO consertar):
+antidores.spec.ts:22, comparacao.spec.ts:20, filtros.spec.ts:36 (helper login, :39 e :120),
+form.spec.ts:14, galeria.spec.ts:21, persistencia.spec.ts:38, smoke.spec.ts:17, venda.spec.ts:23.
+Zero regressão da leva (escopo 9/9 → 10/10).
