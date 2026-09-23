@@ -216,7 +216,7 @@ describe("kanban núcleo", () => {
   it("test_kanban_colunas_customizadas_reload_preserva_reset_default", () => {
     // arrange: config customizada serializada (reload = parse do JSON)
     const raw = JSON.stringify({
-      version: 1,
+      version: 2,
       order: ["feita", "novo"],
       hidden: ["recusado"],
       labels: { novo: "Quero visitar" },
@@ -233,9 +233,11 @@ describe("kanban núcleo", () => {
     // act: lixo volta ao default exato (6 colunas, sem hidden)
     expect(parseColumnConfig("lixo{{{")).toEqual(DEFAULT_COLUMN_CONFIG);
 
-    // assert: default tem as 6 colunas na ordem do pipeline
+    // assert: default tem as 8 colunas na ordem do pipeline
     expect(KANBAN_COLUMNS).toEqual([
       "novo",
+      "contactado",
+      "respondido",
       "agendado",
       "feita",
       "negociacao",
@@ -258,7 +260,8 @@ describe("kanban núcleo", () => {
     // assert: agrupa por status e ordena por index
     expect(cols.find((c) => c.status === "novo")?.ids).toEqual(["a", "b"]);
     expect(cols.find((c) => c.status === "feita")?.ids).toEqual(["c"]);
-    expect(cols).toHaveLength(6);
+    expect(cols.find((c) => c.status === "contactado")?.ids).toEqual([]);
+    expect(cols).toHaveLength(8);
   });
 
   it("test_kanban_migrateStoredState_estado_inexistente_vazio", () => {

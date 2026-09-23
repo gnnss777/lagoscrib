@@ -297,7 +297,7 @@ export default function ProfileModal({
                     onClick={() => setCfg({ ...DEFAULT_COLUMN_CONFIG })}
                     className="px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold bg-paper border border-line text-ink-soft hover:text-ink hover:border-ink transition-colors"
                   >
-                    Voltar ao padrão (6 colunas)
+                    Voltar ao padrão (8 colunas)
                   </button>
                 </div>
               </aside>

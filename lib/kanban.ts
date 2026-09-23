@@ -5,6 +5,8 @@
 
 export type StatusType =
   | "novo"
+  | "contactado"
+  | "respondido"
   | "agendado"
   | "feita"
   | "negociacao"
@@ -31,6 +33,8 @@ export interface FollowUp {
 /** Ordem do pipeline — fonte única das colunas (LL-006: nada hardcoded na UI). */
 export const KANBAN_COLUMNS: StatusType[] = [
   "novo",
+  "contactado",
+  "respondido",
   "agendado",
   "feita",
   "negociacao",
@@ -40,6 +44,8 @@ export const KANBAN_COLUMNS: StatusType[] = [
 
 export const STATUS_LABELS: Record<StatusType, string> = {
   novo: "Não visitado",
+  contactado: "Contactado",
+  respondido: "Respondido",
   agendado: "Visita agendada",
   feita: "Visita feita",
   negociacao: "Em negociação",
@@ -57,7 +63,7 @@ export interface ColumnConfig {
   labels: Partial<Record<StatusType, string>>;
 }
 
-export const KANBAN_COLUMNS_VERSION = 1;
+export const KANBAN_COLUMNS_VERSION = 2;
 
 export const DEFAULT_COLUMN_CONFIG: ColumnConfig = {
   version: KANBAN_COLUMNS_VERSION,

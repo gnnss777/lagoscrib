@@ -68,12 +68,12 @@ test("test_kanban_teclado_move_menu_anuncia_aria_live", async ({ page }) => {
 
   // aria-live policial anuncia destino + posição (fecha B6).
   const live = view.locator('[aria-live="polite"]');
-  await expect(live).toContainText(/movido para Visita agendada \(posição \d+ de \d+\)/);
+  await expect(live).toContainText(/movido para Contactado \(posição \d+ de \d+\)/);
 
   // Card saiu da coluna de origem.
   await expect(
     view
-      .getByRole("region", { name: /Visita agendada/ })
+      .getByRole("region", { name: /Contactado/ })
       .locator("article")
       .first(),
   ).toBeVisible();
@@ -110,11 +110,11 @@ test("test_kanban_customizacao_painel_renomear_reload_reset", async ({
     view2.getByRole("region", { name: /Quero visitar/ }),
   ).toBeVisible();
 
-  // Reset: volta exatamente aos 6 padrão.
+  // Reset: volta exatamente aos 8 padrão.
   await view2.getByRole("button", { name: "Configurar quadro" }).click();
   const panel2 = view2.getByRole("complementary", { name: "Configurar quadro" });
   await panel2
-    .getByRole("button", { name: "Voltar ao padrão (6 colunas)" })
+    .getByRole("button", { name: "Voltar ao padrão (8 colunas)" })
     .click();
   await expect(
     view2.getByRole("region", { name: /Não visitado/ }),

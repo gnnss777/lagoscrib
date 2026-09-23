@@ -64,6 +64,8 @@ interface DetailModalProps {
 
 const STATUSES: StatusType[] = [
   "novo",
+  "contactado",
+  "respondido",
   "agendado",
   "feita",
   "negociacao",
@@ -662,7 +664,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
                   <div className="space-y-2">
                     <a
                       data-testid="confirm-button"
-                      href={buildWhatsAppLink(buildWhatsAppConfirm(apartment))}
+                      href={buildWhatsAppLink(apartment.phone, buildWhatsAppConfirm(apartment))}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full px-4 py-2.5 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors"

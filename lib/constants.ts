@@ -165,7 +165,7 @@ export const FOLLOWUP_STALE_DAYS = 7;
 
 // Chave própria da customização de colunas (só UI/ordem — nunca estado do imóvel).
 export const KANBAN_COLS_STORAGE_KEY = "apartamentos-app-kanban-cols";
-export const KANBAN_COLS_STORAGE_VERSION = 1;
+export const KANBAN_COLS_STORAGE_VERSION = 2;
 
 // Rótulos da UI do kanban (AC4: grep acha só aqui + importadores).
 export const KANBAN_ONLY_STALE_LABEL = "Só sem retorno";

@@ -44,6 +44,8 @@ import ProfileModal from "./ProfileModal";
 const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
   { value: "todos", label: "Todos" },
   { value: "novo", label: "Não visitado" },
+  { value: "contactado", label: "Contactado" },
+  { value: "respondido", label: "Respondido" },
   { value: "agendado", label: "Agendado" },
   { value: "feita", label: "Visita feita" },
   { value: "negociacao", label: "Negociação" },
