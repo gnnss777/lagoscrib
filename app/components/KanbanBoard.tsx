@@ -149,7 +149,7 @@ export default function KanbanBoard({
             <section
               key={col.status}
               aria-label={`${col.label}, ${ids.length} imóveis`}
-              className="shrink-0 w-72 sm:w-80 bg-paper border border-line rounded-xl p-3 flex flex-col max-h-[calc(100vh-230px)]"
+              className="shrink-0 w-72 sm:w-80 bg-sand border border-line rounded-xl p-3 flex flex-col max-h-[calc(100vh-230px)] shadow-sm"
             >
               <header className="mb-3">
                 <div className="flex items-center justify-between">
@@ -215,13 +215,13 @@ export default function KanbanBoard({
                           />
                           {/* Selo de retorno na dobra superior (AC-3) */}
                           {hangingCard && (
-                            <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-pastel text-ink text-[11px] font-bold px-2 py-1 rounded-md">
+                            <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-pastel text-ink text-xs font-bold px-2 py-1 rounded-md">
                               <Phone size={12} weight="bold" />
                               sem retorno ×{fu!.attempts}
                             </span>
                           )}
                           {fu?.status === "retornou" && (
-                            <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-st-green-bg text-st-green text-[11px] font-bold px-2 py-1 rounded-md">
+                            <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-st-green-bg text-st-green text-xs font-bold px-2 py-1 rounded-md">
                               <Check size={12} weight="bold" />
                               retornou
                             </span>
@@ -232,10 +232,11 @@ export default function KanbanBoard({
                             {a.title}
                           </p>
                           <p className="text-xs text-ink-soft mt-0.5">
-                            {a.neighborhood} · {formatBRL(a.total)}
+                            {a.neighborhood} ·{" "}
+                            <span className="font-mono">{formatBRL(a.total)}</span>
                           </p>
                           {fu?.lastContactAt && (
-                            <p className="text-[11px] text-muted mt-1">
+                            <p className="text-xs text-muted mt-1">
                               último contato{" "}
                               {new Intl.DateTimeFormat("pt-BR", {
                                 day: "2-digit",

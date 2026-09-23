@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Key, Lock, User, X } from "@phosphor-icons/react";
+import { Buildings, Lock, User, X } from "@phosphor-icons/react";
 import { signIn } from "next-auth/react";
 import { useApp } from "@/lib/AppContext";
 import { sanitizeNext } from "@/lib/sanitize";
@@ -110,7 +110,7 @@ export default function LoginPage() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-taxi to-taxi-strong mb-4 shadow-lg"
           >
-            <Key size={28} weight="bold" className="text-ink" />
+            <Buildings size={28} weight="bold" className="text-ink" />
           </motion.div>
           <h1 className="text-2xl font-bold text-ink tracking-tight">
             Curitiba Apartamentos

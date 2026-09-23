@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
@@ -85,6 +86,17 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
+  useScrollLock(!!apartment);
+
+  // F1.2 dialog a11y: foco no painel ao abrir + restaura o gatilho ao fechar.
+  useEffect(() => {
+    if (!apartment) return;
+    const trigger = document.activeElement as HTMLElement | null;
+    panelRef.current?.focus();
+    return () => {
+      trigger?.focus();
+    };
+  }, [apartment]);
   // Troca de imóvel = remount via key={apartment.id} no Dashboard:
   // índice/lightbox/falhas sempre começam zerados, sem effect.
 
@@ -118,13 +130,6 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
 
   const status = getStatus(apartment.id);
   const notes = getNotes(apartment.id);
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 0,
-    }).format(value);
 
   const formatDate = (dateString: string) =>
     new Intl.DateTimeFormat("pt-BR", {
@@ -173,6 +178,10 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
         {/* Modal content */}
         <motion.div
           ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Detalhes de ${apartment.title}`}
+          tabIndex={-1}
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -483,7 +492,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
                         <div className="flex justify-between text-sm">
                           <span className="text-ink-soft">Aluguel</span>
                           <span className="text-ink font-mono">
-                            {formatCurrency(apartment.rent)}
+                            {formatBRL(apartment.rent)}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
@@ -491,14 +500,14 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
                           <span className="text-ink font-mono">
                             {apartment.condoUnknown
                               ? "A confirmar"
-                              : formatCurrency(apartment.condo)}
+                              : formatBRL(apartment.condo)}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-ink-soft">IPTU</span>
                           <span className="text-ink font-mono">
                             {apartment.iptu > 0
-                              ? formatCurrency(apartment.iptu)
+                              ? formatBRL(apartment.iptu)
                               : "—"}
                           </span>
                         </div>
@@ -507,7 +516,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
                             Total
                           </span>
                           <span className="text-amberink font-mono font-bold text-lg">
-                            {formatCurrency(apartment.total)}
+                            {formatBRL(apartment.total)}
                           </span>
                         </div>
                         {(() => {
@@ -592,7 +601,7 @@ export default function DetailModal({ apartment, onClose, onProspect }: DetailMo
                         className={`status-badge ${
                           status === s
                             ? `status-${s} ring-2 ring-offset-1 ring-offset-card ring-ink`
-                            : `status-${s} opacity-60 hover:opacity-100`
+                            : `status-${s}`
                         }`}
                       >
                         {status === s && <Check size={12} weight="bold" />}

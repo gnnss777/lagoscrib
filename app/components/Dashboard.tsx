@@ -192,6 +192,7 @@ export default function Dashboard() {
                 também no mobile — o "Olá" some em telas pequenas. */}
             <button
               onClick={() => setProfileOpen(true)}
+              aria-label="Abrir prospecção (kanban)"
               className="px-4 py-2 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors shadow-sm"
             >
               {KANBAN_TAB_LABEL}
@@ -414,7 +415,6 @@ export default function Dashboard() {
                 onSelect={setSelectedApartment}
                 compareChecked={compareIds.includes(apartment.id)}
                 onToggleCompare={toggleCompare}
-                onProspect={handleProspect}
               />
             ))}
           </div>

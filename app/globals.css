@@ -68,6 +68,31 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* F3.7 Grain — textura fina feita em SVG (feTurbulence), útil por cima
+     de superfícies planas; pointer-events none e 4% de opacidade, sem
+     depender de imagem externa. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* F3.8 Tipografia display — títulos mais "tipo" (tracking + peso). */
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  h1,
+  h2 {
+    font-weight: 700;
+  }
+
   ::selection {
     background-color: color-mix(in srgb, var(--color-taxi) 45%, transparent);
     color: var(--color-ink);
@@ -86,7 +111,12 @@
     border: 1px solid var(--color-line);
     border-radius: 16px;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* F2.13: anima SÓ o que muda (border/transform/shadow) — sem `all`.
+       Grain/tipografia do corpo também não animam (F3.7). */
+    transition:
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     box-shadow: 0 1px 2px rgba(26, 26, 26, 0.05);
   }
@@ -117,7 +147,10 @@
     font-weight: 600;
     padding: 12px 24px;
     border-radius: 9999px;
-    transition: all 0.2s ease;
+    /* F2.13: anima só o que muda no hover (transform + shadow). */
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .btn-primary:hover {
@@ -136,7 +169,8 @@
     padding: 10px 20px;
     border-radius: 9999px;
     border: 1px solid var(--color-inputbd);
-    transition: all 0.2s ease;
+    /* F2.13: no hover só o border-color muda. */
+    transition: border-color 0.2s ease;
   }
 
   .btn-secondary:hover {
@@ -153,7 +187,10 @@
     font-weight: 600;
     letter-spacing: 0.025em;
     text-transform: uppercase;
-    transition: all 0.2s ease;
+    /* F2.13: status muda cor de fundo/texto; badge não translada. */
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   /* Badges pastel + texto escuro calibrado (todos ≥ 7:1 — ver THEME_CONTRAST_TEXT).
@@ -195,7 +232,10 @@
     padding: 14px 16px;
     color: var(--color-ink);
     font-size: 15px;
-    transition: all 0.2s ease;
+    /* F2.13: foco muda border + box-shadow (nunca all). */
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
     width: 100%;
   }
 

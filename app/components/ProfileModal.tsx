@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowDown,
@@ -58,6 +59,19 @@ export default function ProfileModal({
   const [configOpen, setConfigOpen] = useState(false);
   const [cfg, setCfg] = useState<ColumnConfig>(DEFAULT_COLUMN_CONFIG);
   const [hydrated, setHydrated] = useState(false);
+  const viewRef = useRef<HTMLDivElement>(null);
+  useScrollLock(open);
+
+  // F1.4 view em tela cheia (não é dialog): foco na view ao abrir +
+  // restaura o gatilho ao fechar.
+  useEffect(() => {
+    if (!open) return;
+    const trigger = document.activeElement as HTMLElement | null;
+    viewRef.current?.focus();
+    return () => {
+      trigger?.focus();
+    };
+  }, [open]);
 
   useEffect(() => {
     if (open && !hydrated) {
@@ -129,12 +143,12 @@ export default function ProfileModal({
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={viewRef}
+          tabIndex={-1}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          role="dialog"
-          aria-modal="true"
           aria-label={`${KANBAN_TAB_LABEL} de ${username ?? "usuário"}`}
           data-testid="kanban-view"
           className="fixed inset-0 z-50 bg-paper flex flex-col"

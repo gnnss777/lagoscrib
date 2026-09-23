@@ -22,7 +22,7 @@ async function gotoAuthed(page: Page, state: object = {}) {
 }
 
 async function openKanban(page: Page) {
-  await page.getByRole("button", { name: "Prospecção", exact: true }).click();
+  await page.getByRole("button", { name: "Abrir prospecção (kanban)" }).click();
   const view = page.getByTestId("kanban-view");
   await expect(view).toBeVisible();
   return view;
@@ -33,11 +33,14 @@ test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
   page.on("pageerror", (err) => errors.push(err.message));
   await gotoAuthed(page);
 
-  // 1ª ação: Prospectar no 1º card → 2ª: view tela cheia abre.
-  await page
-    .getByRole("button", { name: /Prospectar .* no kanban/ })
-    .first()
-    .click();
+  // 1ª ação: abrir o 1º card → DetailModal (aba Detalhes, seção Status).
+  // (F3.1: card mínimo — Prospectar vive no modal, não no card.)
+  await page.locator(".card-apartment").first().click();
+  const dialog = page.getByRole("dialog", { name: /Detalhes de/ });
+  await expect(dialog).toBeVisible();
+
+  // 2ª ação: Prospectar na seção Status → fecha o modal e abre a view tela cheia.
+  await dialog.getByRole("button", { name: /Prospectar/ }).click();
   const view = page.getByTestId("kanban-view");
   await expect(view).toBeVisible();
   await expect(

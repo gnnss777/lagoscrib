@@ -27,7 +27,7 @@ PWA/offline.
 2. Aba Planta: renderiza `floorPlan` quando existe; caso contrário, aviso "Planta não divulgada no anúncio" (nunca imagem quebrada).
 
 ### F4 — Comparar e alternar compra
-1. Checkbox "comparar" no card (máx 4) → CompareBar sticky com contador → CompareModal (tabela, ordem default por custo total efetivo, ausente = "—", links originais clicáveis).
+1. Checkbox "comparar" no card mínimo (máx 4; card sem links/endereço — contato e Prospectar vivem no modal) → CompareBar sticky com contador → CompareModal (tabela, ordem default por custo total efetivo, ausente = "—", links originais clicáveis).
 2. Toggle Alugar|Comprar filtra lista, stats e busca; card de venda sem sufixo "/mês".
 
 ## 3. Estados obrigatórios (DESIGN.md §0.4)

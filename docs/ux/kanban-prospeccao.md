@@ -55,7 +55,7 @@
 
 ## Prospectar (AC-5: ≤2 ações)
 
-- Botão **"Prospectar →"** no `ApartmentCard` e no `DetailModal` (seção Status):
+- Botão **"Prospectar →"** no `DetailModal` (seção Status) — o `ApartmentCard` é mínimo e NÃO tem Prospectar (F3.1):
   joga o imóvel p/ o topo de Não visitado e abre o Perfil na Prospecção.
   Reversível (mover de volta — nunca exclui da base).
 
