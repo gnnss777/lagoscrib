@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Bed, Car, MapPin, Ruler, Shower } from "@phosphor-icons/react";
+import { Bed, Car, LinkSimple, MapPin, Ruler, Shower } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
 import { useApp, STATUS_LABELS } from "@/lib/AppContext";
 
@@ -102,15 +102,27 @@ export default function ApartmentCard({
         {/* Main info: Address + Phone + WhatsApp */}
         <div className="mt-2 mb-3 text-surface-300 text-xs space-y-0.5">
           <div className="line-clamp-1">{apartment.address}</div>
-          <a
-            href={`https://wa.me/55${apartment.phone.replace(/\D/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-gold-400 hover:text-gold-300 font-medium"
-          >
-            <span>📱</span>
-            <span>{apartment.phone}</span>
-          </a>
+          {apartment.phone ? (
+            <a
+              href={`https://wa.me/55${apartment.phone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-gold-400 hover:text-gold-300 font-medium"
+            >
+              <span>📱</span>
+              <span>{apartment.phone}</span>
+            </a>
+          ) : (
+            <a
+              href={apartment.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-gold-400 hover:text-gold-300 font-medium"
+            >
+              <LinkSimple size={13} />
+              <span>{apartment.source ?? "Ver anúncio original"}</span>
+            </a>
+          )}
         </div>
 
         {/* Features preview */}

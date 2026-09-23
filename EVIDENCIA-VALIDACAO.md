@@ -31,6 +31,19 @@ Status: PARCIAL — código entregue, build OK, site funcionando (localhost:3000
 ## Decisão
 Manter card `t_2c00831f` em `Review`. O código é funcional, o design está conforme a spec, mas a validação funcional completa (login, status, notas) exige execução interativa — que não foi feita devido ao timeout do subagente. Se o usuário aceita como MVP parcial, pode ser marcado `PARCIAL-DONE` com esta evidência.
 
+--- ATUALIZAÇÃO FORK feat/dados-reais (2026-09-22, Gabriel/OpenCode) ---
+
+Verificação interativa via Playwright (localhost:3000, trusted clicks), tudo verde:
+1. Login `guinness/curitiba2026` OK (dashboard "Olá, guinness", contadores 7 Total / 7 Novos).
+2. 7 cards reais (Zap, validados 22/09) renderizados; imagens locais `public/imoveis/*.webp`
+   (CDN do Zap retorna 403 hotlink — baixadas com Referer, magic bytes RIFF/WEBP conferidos).
+3. Modal abre no clique, mostra total correto (ex.: R$ 3.220 no Água Verde Raul Carneiro).
+4. Status "Visita agendada" persiste em localStorage; nota adicionada ("Notas (1)") persiste.
+5. Contato: botões tel/mailto/WhatsApp só renderizam com dado presente; "Ver anúncio original"
+   sempre presente (banco de links). Credenciais removidas do README (via `.env.local`).
+6. `tsc --noEmit` limpo, `npm run build` verde, único erro de console era favicon (corrigido com `app/icon.svg`).
+Evidência visual: `docs/evidencia-dashboard-7-reais.png`.
+
 --- ATUALIZAÇÃO QA (2026-09-22) ---
 
 Verificação interativa via curl (localhost:3000, HTTP 200, 14993 bytes):

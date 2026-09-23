@@ -25,10 +25,8 @@ Acesse: **http://localhost:3000**
 
 ## Credenciais de Login
 
-| Usuário | Senha |
-|---------|-------|
-| guinness | curitiba2026 |
-| admin | admin123 |
+Configuradas via ambiente — copie `.env.example` para `.env.local` (nunca commitado).
+Padrões de dev local: usuário `guinness` / admin `admin`.
 
 ## Funcionalidades (MVP)
 

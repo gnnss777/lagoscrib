@@ -61,8 +61,11 @@ const AppContext = createContext<AppContextValue | null>(null);
 const STORAGE_KEY = "apartamentos-app-state";
 
 const USERS: Record<string, string> = {
-  guinness: "curitiba2026",
-  admin: "admin123",
+  // Credenciais via ambiente (.env.local) — fallbacks só para dev local.
+  // Auth é client-side (não é barreira real); ver docs/ADR-001-pipeline.md.
+  [(process.env.NEXT_PUBLIC_APP_USER ?? "guinness").toLowerCase()]:
+    process.env.NEXT_PUBLIC_APP_PASS ?? "curitiba2026",
+  admin: process.env.NEXT_PUBLIC_ADMIN_PASS ?? "admin123",
 };
 
 export function AppProvider({ children }: { children: ReactNode }) {
