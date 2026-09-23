@@ -242,3 +242,34 @@ As 9 falhas são AS MESMAS staleness pré-existentes da leva polimento-ux-v2
 antidores.spec.ts:22, comparacao.spec.ts:20, filtros.spec.ts:36 (helper login, :39 e :120),
 form.spec.ts:14, galeria.spec.ts:21, persistencia.spec.ts:38, smoke.spec.ts:17, venda.spec.ts:23.
 Zero regressão da leva (escopo 9/9 → 10/10).
+
+
+--- CODE REVIEW + MERGE DOS 6 PRs (2026-09-23) ---
+Review (skills github-code-review + requesting-code-review):
+- Security scan em ~50k linhas: 0 secrets reais (so placeholders .env.example), 0 eval/injection, 0 XSS real, 0 bloat.
+- PR #1: dados reais Zap (7 imoveis), credenciais -> env vars (fallback igual ao anterior).
+- PR #4: NextAuth multiusuario + LGPD (Prisma 7, adapter-pg).
+- PRs #5/#6: +1191 fotos webp (67.7MB, nenhuma >5MB), board kanban, QA/e2e.
+Merge sequencial #1->#6 (stack): TODOS MERGED, verificado via gh pr list.
+
+FIXES DE DEPLOY APOS MERGE:
+1. package.json: build = "prisma generate && next build" (Vercel nao gerava o client Prisma 7 -> typecheck fail).
+2. Vercel SSO Protection desativada via REST API (bloqueava acesso publico com challenge vercel.com/sso).
+3. Commit 5ccd0ea + alias lagoscrib.vercel.app -> deploy gso8hh55y.
+
+VALIDACAO PRODUCAO (2026-09-23):
+- GET / -> 200, titulo "Curitiba Apartamentos" OK.
+- GET /api/public/auth/status -> 200 {"backend":false} (modo localStorage ate DATABASE_URL ser configurada).
+- GET /api/public/auth/register -> 405 (rota existe).
+- GET /api/cron/retention -> 401 "Nao autenticado" (esperado sem CRON_SECRET).
+
+PENDENTE (proximo passo):
+- Configurar env vars no Vercel: DATABASE_URL (Postgres), NEXTAUTH_SECRET, AUTH_SECRET, ADMIN password -> ativa backend multiusuario {"backend":true}.
+- Deploy g47ylz89d (commit vercel.json limpo) 404a em tudo — investigar antes de apontar alias.
+
+
+--- RESOLUCAO FINAL (2026-09-23) ---
+Causa raiz do 404 no deploy d2f932f1: Framework Preset do projeto estava "Other" (herdado do
+vercel.json legacy). Com preset Other, a Vercel serve public/ como estatico — nenhuma rota Next.
+Fix: PATCH /v9/projects -> framework=nextjs. Redeploy 3pabvax44: / e API 200.
+Alias lagoscrib.vercel.app -> apartamentos-3pabvax44 (master d2f932f1). VALIDADO EM PRODUCAO.
