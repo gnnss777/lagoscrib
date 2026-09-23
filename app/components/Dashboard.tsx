@@ -9,11 +9,7 @@ import {
   Buildings,
   MapPin,
 } from "@phosphor-icons/react";
-import {
-  apartments as staticApartments,
-  saleApartments as staticSaleApartments,
-  type Apartment,
-} from "@/lib/data";
+import { type Apartment } from "@/lib/data";
 import { COMPARE_MAX, COMPARE_MIN } from "@/lib/constants";
 import {
   FILTER_DEBOUNCE_MS,
@@ -36,29 +32,14 @@ import {
   filterByTransaction,
   type TransactionTab,
 } from "@/lib/transaction";
+import { getAllApartments } from "@/lib/pool";
 import { useApp, STATUS_LABELS, type StatusType } from "@/lib/AppContext";
 import ApartmentCard from "./ApartmentCard";
 import AddApartmentForm from "./AddApartmentForm";
 import DetailModal from "./DetailModal";
 import CompareModal from "./CompareModal";
 import FilterPanel from "./FilterPanel";
-
-const STATIC_POOL: Apartment[] = [...staticApartments, ...staticSaleApartments];
-
-// Combinar apartamentos estáticos (aluguel + venda) com novos do usuário
-// (sem transaction = aluguel, aditivo S001).
-const getAllApartments = (): Apartment[] => {
-  try {
-    const stored = localStorage.getItem("apartamentos-app-new");
-    if (stored) {
-      const newApts: Apartment[] = JSON.parse(stored);
-      return [...STATIC_POOL, ...newApts];
-    }
-  } catch {
-    // ignore
-  }
-  return STATIC_POOL;
-};
+import ProfileModal from "./ProfileModal";
 
 const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
   { value: "todos", label: "Todos" },
@@ -71,7 +52,7 @@ const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
 ];
 
 export default function Dashboard() {
-  const { username, logout, getStatus } = useApp();
+  const { username, logout, getStatus, moveCardTo } = useApp();
   // Filtros avançados (S009): estado único + persistência aditiva em chave
   // própria (nunca toca "apartamentos-app-state").
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -85,6 +66,8 @@ export default function Dashboard() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareBlocked, setCompareBlocked] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  // Perfil/Prospecção (kanban): "Olá, {username}" vira botão (WS-A §3.1).
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const toggleCompare = (apartment: Apartment) => {
     const result = toggleCompareSelection(compareIds, apartment.id);
@@ -96,6 +79,14 @@ export default function Dashboard() {
     setCompareIds([]);
     setCompareBlocked(false);
     setCompareOpen(false);
+  };
+
+  // Prospectar da busca em ≤2 ações (AC-5): joga p/ Não visitado (topo) e
+  // abre o Perfil na aba Prospecção. Reversível (voltar = mover de volta).
+  const handleProspect = (apartment: Apartment) => {
+    moveCardTo(apartment.id, "novo", 0);
+    setSelectedApartment(null);
+    setProfileOpen(true);
   };
 
   const allApartments = getAllApartments();
@@ -211,9 +202,13 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-sm text-ink-soft hidden sm:block">
+            <button
+              onClick={() => setProfileOpen(true)}
+              aria-haspopup="dialog"
+              className="text-sm text-ink-soft hidden sm:block hover:text-ink transition-colors rounded-lg px-2 py-2 min-h-11"
+            >
               Olá, <span className="text-amberink font-medium">{username}</span>
-            </span>
+            </button>
             <button
               onClick={logout}
               className="flex items-center gap-2 px-3 py-2 text-ink-soft hover:text-ink hover:bg-sand rounded-lg transition-colors text-sm"
@@ -449,6 +444,7 @@ export default function Dashboard() {
                 onSelect={setSelectedApartment}
                 compareChecked={compareIds.includes(apartment.id)}
                 onToggleCompare={toggleCompare}
+                onProspect={handleProspect}
               />
             ))}
           </div>
@@ -532,6 +528,21 @@ export default function Dashboard() {
           key={selectedApartment.id}
           apartment={selectedApartment}
           onClose={() => setSelectedApartment(null)}
+          onProspect={handleProspect}
+        />
+      )}
+
+      {/* Perfil/Prospecção (kanban): superfície única do funil */}
+      {profileOpen && (
+        <ProfileModal
+          open={profileOpen}
+          onClose={() => setProfileOpen(false)}
+          username={username}
+          apartments={tabApartments}
+          onSelect={(a) => {
+            setProfileOpen(false);
+            setSelectedApartment(a);
+          }}
         />
       )}
 

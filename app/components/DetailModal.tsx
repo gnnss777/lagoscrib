@@ -44,6 +44,7 @@ import {
   ENTRY_ESTIMATE_LABEL,
   ESTIMATE_DISCLAIMER,
   GOLDEN_RULE,
+  KANBAN_PROSPECT_LABEL,
   MOVING_ESTIMATE_LABEL,
 } from "@/lib/constants";
 import ImageLightbox from "./ImageLightbox";
@@ -57,6 +58,7 @@ import {
 interface DetailModalProps {
   apartment: Apartment | null;
   onClose: () => void;
+  onProspect: (apartment: Apartment) => void;
 }
 
 const STATUSES: StatusType[] = [
@@ -68,11 +70,14 @@ const STATUSES: StatusType[] = [
   "recusado",
 ];
 
-export default function DetailModal({ apartment, onClose }: DetailModalProps) {
-  const { getStatus, updateStatus, addNote, getNotes } = useApp();
+export default function DetailModal({ apartment, onClose, onProspect }: DetailModalProps) {
+  const { getStatus, getStatusEntry, updateStatus, addNote, getNotes } = useApp();
   const [activeTab, setActiveTab] = useState<"details" | "checklist" | "planta" | "notes">("details");
   const [newNote, setNewNote] = useState("");
-  const [scheduledDate, setScheduledDate] = useState("");
+  // B1: inicializa com a data salva (remount por imóvel via key — sem effect).
+  const [scheduledDate, setScheduledDate] = useState(
+    () => getStatusEntry(apartment?.id ?? "")?.scheduledDate ?? ""
+  );
   // Galeria viewer-first (S003): índice, lightbox, falhas de carga (pula slide).
   const [photoIndex, setPhotoIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -567,9 +572,18 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
 
                 {/* Status workflow */}
                 <div>
-                  <h4 className="text-xs font-semibold text-ink-soft uppercase tracking-wider mb-3">
-                    Status do Contato
-                  </h4>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-semibold text-ink-soft uppercase tracking-wider">
+                      Status do Contato
+                    </h4>
+                    {/* Prospectar (kanban, AC-5): entra no funil em 1 ação */}
+                    <button
+                      onClick={() => onProspect(apartment)}
+                      className="text-xs font-semibold text-amberink hover:text-ink transition-colors min-h-9 px-2"
+                    >
+                      {KANBAN_PROSPECT_LABEL} →
+                    </button>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {STATUSES.map((s) => (
                       <button
@@ -587,19 +601,38 @@ export default function DetailModal({ apartment, onClose }: DetailModalProps) {
                     ))}
                   </div>
 
-                  {status === "agendado" && (
-                    <div className="mt-3 flex items-center gap-2">
+                  {/* B1: data editável em agendado; histórico visível em feita.
+                      updateStatus preserva a data ao trocar de status — limpar
+                      só pela ação explícita abaixo. */}
+                  {(status === "agendado" || scheduledDate) && (
+                    <div className="mt-3 flex items-center gap-2 flex-wrap">
                       <Calendar size={16} className="text-amberink" />
                       <input
                         type="date"
+                        aria-label="Data da visita"
                         value={scheduledDate}
                         onChange={(e) => {
                           const val = e.target.value;
                           setScheduledDate(val);
-                          updateStatus(apartment.id, "agendado", val || undefined);
+                          updateStatus(
+                            apartment.id,
+                            status === "agendado" ? "agendado" : status,
+                            val || null,
+                          );
                         }}
                         className="input-field max-w-[200px] py-2 text-sm"
                       />
+                      {scheduledDate && (
+                        <button
+                          onClick={() => {
+                            setScheduledDate("");
+                            updateStatus(apartment.id, status, null);
+                          }}
+                          className="text-xs text-ink-soft hover:text-ink underline underline-offset-2 min-h-9 px-2"
+                        >
+                          limpar data
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

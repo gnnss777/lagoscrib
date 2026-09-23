@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { Bed, Car, LinkSimple, MapPin, Ruler, Shower } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
 import { priceSuffix } from "@/lib/transaction";
+import { KANBAN_PROSPECT_LABEL } from "@/lib/constants";
 import { useApp, STATUS_LABELS } from "@/lib/AppContext";
 
 interface ApartmentCardProps {
@@ -13,6 +14,7 @@ interface ApartmentCardProps {
   onSelect: (apartment: Apartment) => void;
   compareChecked: boolean;
   onToggleCompare: (apartment: Apartment) => void;
+  onProspect: (apartment: Apartment) => void;
 }
 
 export default function ApartmentCard({
@@ -21,6 +23,7 @@ export default function ApartmentCard({
   onSelect,
   compareChecked,
   onToggleCompare,
+  onProspect,
 }: ApartmentCardProps) {
   const { getStatus } = useApp();
   const status = getStatus(apartment.id);
@@ -168,6 +171,18 @@ export default function ApartmentCard({
             <span className="tag-pill">+{apartment.features.length - 3}</span>
           )}
         </div>
+
+        {/* Prospectar (kanban, AC-5): 1 ação no card + 1 no Perfil */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onProspect(apartment);
+          }}
+          aria-label={`Prospectar ${apartment.title} no kanban`}
+          className="mt-4 w-full min-h-11 px-4 rounded-lg text-sm font-semibold border border-inputbd text-ink bg-card hover:border-ink transition-colors"
+        >
+          {KANBAN_PROSPECT_LABEL} →
+        </button>
       </div>
     </motion.div>
   );

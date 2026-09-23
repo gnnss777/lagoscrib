@@ -57,7 +57,8 @@ export const WHATSAPP_QUESTIONS = [
 
 // Checklist de visita (VisitChecklist): itens default, ids estáveis.
 // Persistência versionada em AppContext (ADR-002 decisão 2).
-export const CHECKLIST_STORAGE_VERSION = 2;
+// v3 (leva kanban-prospeccao): + followUps do corretor, mesma chave aditiva.
+export const CHECKLIST_STORAGE_VERSION = 3;
 export const CHECKLIST_ITEMS = [
   { id: "pressao-agua", label: "Pressão da água e aquecedor" },
   { id: "infiltracao", label: "Sinais de mofo e infiltração" },
@@ -141,6 +142,24 @@ export const SORT_OPTIONS = [
   { value: "maior-area", label: "Maior área" },
 ] as const;
 
+// --- Kanban de prospecção (leva kanban-prospeccao) ---
+// Limiar do alerta "sem retorno há N+ dias" (dor #4: corretor não responde).
+// Componentes leem daqui — nunca hardcodar (LL-006).
+export const FOLLOWUP_STALE_DAYS = 7;
+
+// Chave própria da customização de colunas (só UI/ordem — nunca estado do imóvel).
+export const KANBAN_COLS_STORAGE_KEY = "apartamentos-app-kanban-cols";
+export const KANBAN_COLS_STORAGE_VERSION = 1;
+
+// Rótulos da UI do kanban (AC4: grep acha só aqui + importadores).
+export const KANBAN_ONLY_STALE_LABEL = "Só sem retorno";
+export const KANBAN_SHOW_ALL_LABEL = "Mostrar todos";
+export const KANBAN_EMPTY_COLUMN_HINT = "Sem imóveis aqui — use ←/→ para mover um card";
+export const KANBAN_CONTACT_LABEL = "Contatei";
+export const KANBAN_RETURNED_LABEL = "Retornou ✓";
+export const KANBAN_PROSPECT_LABEL = "Prospectar";
+export const KANBAN_TAB_LABEL = "Prospecção";
+
 // --- Tema "Lightbox Analógico" (leva lightbox-analogico, DESIGN.md v2 §cores) ---
 // REGRA (LL-006 estendido a design): nenhum hex de cor fora de THEME_PALETTE —
 // globals.css (@theme) e componentes Tailwind consomem estes valores. Hex fora
@@ -210,6 +229,9 @@ export const THEME_CONTRAST_TEXT: ThemeContrastPair[] = [
   { fg: "st-purple", bg: "st-purple-bg", floor: 7, label: "badge visita feita" },
   { fg: "st-green", bg: "st-green-bg", floor: 7, label: "badge aprovado" },
   { fg: "st-red", bg: "st-red-bg", floor: 7, label: "badge recusado" },
+  // Kanban (leva kanban-prospeccao): selo de retorno + alerta de coluna.
+  { fg: "ink", bg: "pastel", floor: 7, label: "selo sem retorno no card" },
+  { fg: "amberink", bg: "card", floor: 7, label: "alerta sem retorno na coluna" },
 ];
 
 // UI não-textual: piso WCAG 2.2 de componente gráfico (3:1).
