@@ -50,7 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         await prisma.$disconnect();
 
-        if (!user || user.anonymizedAt) {
+        if (!user || !user.password || user.anonymizedAt) {
           recordLoginFailure(ip, email);
           return null;
         }

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Conta já anonimizada" }, { status: 400 });
     }
     const currentPassword = typeof json?.currentPassword === "string" ? json.currentPassword : "";
-    const valid = await compare(currentPassword, full.password);
+    const valid = full.password ? await compare(currentPassword, full.password) : false;
     if (!valid) {
       return NextResponse.json({ error: "Senha atual incorreta" }, { status: 400 });
     }
