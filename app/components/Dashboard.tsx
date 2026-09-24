@@ -171,7 +171,8 @@ export default function Dashboard() {
 
   // Pool da aba ativa — busca, bairro, status e stats operam sobre ele.
   const tabApartments = filterByTransaction(allApartments, tab);
-  const kanbanApartments = tabApartments.filter(
+  // Kanban mostra o pool COMPLETO (aluguel+venda), não só a aba ativa.
+  const kanbanApartments = allApartments.filter(
     (apartment) => !isKanbanExcludedStatus(getStatus(apartment.id)),
   );
 
