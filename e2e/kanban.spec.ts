@@ -1,4 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
+import {
+  REMOVED_IDS_STORAGE_KEY,
+  REMOVED_IDS_STORAGE_VERSION,
+} from "@/lib/constants";
+import { USER_ADDED_KEY } from "@/lib/pool";
 
 // Kanban de prospecção em TELA CHEIA (leva kanban-tela-inteira-ui): board
 // full-viewport, mover por teclado, prospectar da busca, painel lateral de
@@ -27,6 +32,108 @@ async function openKanban(page: Page) {
   await expect(view).toBeVisible();
   return view;
 }
+
+test("test_delete_universal_some_dashboard_e_kanban", async ({ page }) => {
+  await gotoAuthed(page);
+
+  const initialView = await openKanban(page);
+  const initialSummary = initialView
+    .getByRole("status")
+    .filter({ hasText: "no funil" });
+  const initialPoolSize = Number(
+    (await initialSummary.textContent())?.match(/\d+/)?.[0],
+  );
+  expect(initialPoolSize).toBeGreaterThan(0);
+  await initialView
+    .getByRole("button", { name: "Voltar para a busca (Esc)" })
+    .click();
+  await expect(initialView).toHaveCount(0);
+
+  const cards = page.locator(".card-apartment");
+  const cardCount = await cards.count();
+  await expect(
+    cards.getByRole("button", { name: /^Excluir / }),
+  ).toHaveCount(cardCount);
+
+  let dialogMessage: string | null = null;
+  page.once("dialog", (dialog) => {
+    dialogMessage = dialog.message();
+    void dialog.accept();
+  });
+  await cards.first().getByRole("button", { name: /^Excluir / }).click();
+  expect(dialogMessage).toBe(
+    "Remover da visualização? Poderá ser restaurado limpando dados do site.",
+  );
+
+  await expect(cards).toHaveCount(cardCount - 1);
+  const removed = await page.evaluate((key) => {
+    const raw = localStorage.getItem(key);
+    return raw
+      ? (JSON.parse(raw) as { version: number; ids: string[] })
+      : null;
+  }, REMOVED_IDS_STORAGE_KEY);
+  expect(removed?.version).toBe(REMOVED_IDS_STORAGE_VERSION);
+  expect(removed?.ids).toHaveLength(1);
+  expect(typeof removed?.ids[0]).toBe("string");
+
+  const view = await openKanban(page);
+  await expect(
+    view.getByRole("status").filter({ hasText: "no funil" }),
+  ).toContainText(`${initialPoolSize - 1} no funil`);
+});
+
+test("test_delete_new_remove_fisico_sem_removed_ids", async ({ page }) => {
+  const apartment = {
+    id: "new-universal-delete",
+    title: "Imóvel removível do usuário",
+    neighborhood: "Batel",
+    address: "Rua de teste, Curitiba",
+    area: 70,
+    bedrooms: 2,
+    bathrooms: 1,
+    parking: 1,
+    rent: 2500,
+    condo: 0,
+    iptu: 0,
+    total: 2500,
+    phone: "41999999999",
+    email: "",
+    link: "https://example.com/imovel",
+    image: "/imoveis/zap-ahu-eca-78.webp",
+    features: [],
+    description: "Imóvel removível do usuário.",
+  };
+  await page.addInitScript(
+    ({ key, value }) => localStorage.setItem(key, JSON.stringify([value])),
+    { key: USER_ADDED_KEY, value: apartment },
+  );
+  await gotoAuthed(page);
+
+  const card = page
+    .locator(".card-apartment")
+    .filter({ hasText: apartment.title });
+  await expect(card).toHaveCount(1);
+  page.once("dialog", (dialog) => {
+    void dialog.accept();
+  });
+  await card.getByRole("button", { name: /^Excluir / }).click();
+  await expect(card).toHaveCount(0);
+
+  const stored = await page.evaluate(
+    ({ userKey, removedKey }) => ({
+      user: JSON.parse(localStorage.getItem(userKey) ?? "[]") as {
+        id: string;
+      }[],
+      removed: localStorage.getItem(removedKey),
+    }),
+    {
+      userKey: USER_ADDED_KEY,
+      removedKey: REMOVED_IDS_STORAGE_KEY,
+    },
+  );
+  expect(stored.user.some((item) => item.id === apartment.id)).toBe(false);
+  expect(stored.removed).toBeNull();
+});
 
 test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
   const errors: string[] = [];

@@ -7,8 +7,9 @@ import {
 /**
  * Testes de remoção de apartamento (estático ou new-*).
  *
- * O AppContext persiste ids excluídos em chave própria
- * (`apartamentos-app-removed` v1). Estes testes validam:
+ * O AppContext persiste ids estáticos excluídos em chave própria
+ * (`apartamentos-app-removed` v1). Imóveis `new-*` são removidos fisicamente.
+ * Estes testes validam:
  * - Hidratção do storage no mount
  * - Persistência do id após removeApartment
  * - Filtragem da lista exibida
@@ -110,18 +111,6 @@ describe("removed ids persistence", () => {
     // assert: estado do imóvel removido não existe mais
     expect(statusesAfter.find((s) => s.apartmentId === staticId)).toBeUndefined();
     expect(statusesAfter).toHaveLength(1);
-  });
-
-  it("test_remove_new_igual_funciona", () => {
-    // arrange: imóvel adicionado pelo usuário
-    const newId = "new-1234567890";
-    writeRemovedIds([newId]);
-
-    // act
-    const ids = readRemovedIds();
-
-    // assert: também persiste normalmente
-    expect(ids).toContain(newId);
   });
 
   it("test_remove_multiplos_ids_persiste_sem_duplicar", () => {

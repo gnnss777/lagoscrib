@@ -26,8 +26,6 @@ export default function ApartmentCard({
 }: ApartmentCardProps) {
   const { getStatus, removeApartment } = useApp();
   const status = getStatus(apartment.id);
-  // Só imóveis adicionados manualmente (ids new-*) podem ser excluídos.
-  const isUserAdded = apartment.id.startsWith("new-");
 
   return (
     <motion.div
@@ -82,22 +80,24 @@ export default function ApartmentCard({
 
         {/* Price tag (S006: "/mês" só no aluguel) */}
         <div className="absolute bottom-3 left-3">
-          {isUserAdded && (
-            <button
-              type="button"
-              aria-label={`Excluir ${apartment.title}`}
-              title="Excluir imóvel"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (window.confirm(`Excluir "${apartment.title}"? Isso não pode ser desfeito.`)) {
-                  removeApartment(apartment.id);
-                }
-              }}
-              className="flex items-center gap-1 bg-night/80 backdrop-blur-sm px-2.5 py-1.5 rounded-lg border border-paper/20 text-paper/80 hover:text-red-400 hover:border-red-400/60 transition-colors text-xs font-medium cursor-pointer"
-            >
-              <Trash size={13} /> Excluir
-            </button>
-          )}
+          <button
+            type="button"
+            aria-label={`Excluir ${apartment.title}`}
+            title="Excluir imóvel"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (
+                window.confirm(
+                  "Remover da visualização? Poderá ser restaurado limpando dados do site.",
+                )
+              ) {
+                removeApartment(apartment.id);
+              }
+            }}
+            className="flex items-center gap-1 bg-night/80 backdrop-blur-sm px-2.5 py-1.5 rounded-lg border border-paper/20 text-paper/80 hover:text-red-400 hover:border-red-400/60 transition-colors text-xs font-medium cursor-pointer"
+          >
+            <Trash size={13} /> Excluir
+          </button>
         </div>
         <div className="absolute bottom-3 right-3">
           <div className="bg-night/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-taxi/40">

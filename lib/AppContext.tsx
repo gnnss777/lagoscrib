@@ -9,7 +9,11 @@ import {
   type ReactNode,
 } from "react";
 import { type Apartment } from "@/lib/data";
-import { CHECKLIST_STORAGE_VERSION } from "@/lib/constants";
+import {
+  CHECKLIST_STORAGE_VERSION,
+  REMOVED_IDS_STORAGE_KEY,
+  REMOVED_IDS_STORAGE_VERSION,
+} from "@/lib/constants";
 import {
   KANBAN_COLUMNS,
   STATUS_LABELS,
@@ -52,7 +56,7 @@ interface AppContextValue extends AppState {
   /** Sincroniza sessão do NextAuth (backend) com o estado local. */
   setSessionUser: (username: string | null) => void;
   addApartment: (apartment: Apartment) => void;
-  /** Remove imóvel adicionado pelo usuário (ids `new-...`); estáticos não. */
+  /** Remove imóvel da visualização local. */
   removeApartment: (apartmentId: string) => void;
   addNote: (apartmentId: string, text: string) => void;
   updateStatus: (
@@ -197,18 +201,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeApartment = useCallback((apartmentId: string) => {
-    // Só imóveis do usuário vivem em USER_ADDED_KEY; estáticos (data.ts)
-    // não podem ser removidos — filtro por prefixo do id (new-).
-    if (!apartmentId.startsWith("new-")) return;
-    try {
-      const stored = localStorage.getItem("apartamentos-app-new");
-      const list: import("@/lib/data").Apartment[] = stored ? JSON.parse(stored) : [];
-      localStorage.setItem(
-        "apartamentos-app-new",
-        JSON.stringify(list.filter((a) => a.id !== apartmentId)),
-      );
-    } catch {
-      // ignore
+    if (apartmentId.startsWith("new-")) {
+      try {
+        const stored = localStorage.getItem("apartamentos-app-new");
+        const list: import("@/lib/data").Apartment[] = stored ? JSON.parse(stored) : [];
+        localStorage.setItem(
+          "apartamentos-app-new",
+          JSON.stringify(list.filter((a) => a.id !== apartmentId)),
+        );
+      } catch {
+        // ignore
+      }
+    } else {
+      try {
+        const stored = localStorage.getItem(REMOVED_IDS_STORAGE_KEY);
+        const parsed = stored
+          ? (JSON.parse(stored) as { version?: unknown; ids?: unknown })
+          : null;
+        const ids =
+          parsed &&
+          typeof parsed === "object" &&
+          parsed.version === REMOVED_IDS_STORAGE_VERSION &&
+          Array.isArray(parsed.ids)
+            ? parsed.ids.filter((id: unknown): id is string => typeof id === "string")
+            : [];
+        localStorage.setItem(
+          REMOVED_IDS_STORAGE_KEY,
+          JSON.stringify({
+            version: REMOVED_IDS_STORAGE_VERSION,
+            ids: ids.includes(apartmentId) ? ids : [...ids, apartmentId],
+          }),
+        );
+      } catch {
+        // ignore
+      }
     }
     // Limpa também estado órfão (status/notas/checklist/follow-up).
     setState((prev) => ({
