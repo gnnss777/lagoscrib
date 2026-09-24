@@ -1,6 +1,10 @@
 import { describe, expect, it, afterEach } from "vitest";
 import { getAllApartments, USER_ADDED_KEY } from "@/lib/pool";
 import { apartments, saleApartments } from "@/lib/data";
+import {
+  REMOVED_IDS_STORAGE_KEY,
+  REMOVED_IDS_STORAGE_VERSION,
+} from "@/lib/constants";
 
 // Pool único de imóveis (fecha B2): estáticos + adicionados pelo usuário.
 // Dashboard e Kanban consomem a mesma função — sem duplicação.
@@ -78,5 +82,37 @@ describe("pool único", () => {
     expect(
       all.find((a) => a.id === "user-2")?.transaction,
     ).toBe("aluguel");
+  });
+
+  it("test_pool_remove_ids_some_estaticos_e_user_added", () => {
+    const removedStaticId = apartments[0].id;
+    stubLocalStorage({
+      [USER_ADDED_KEY]: JSON.stringify([
+        { id: "user-visible", title: "Visível" },
+        { id: "user-removed", title: "Removido" },
+      ]),
+      [REMOVED_IDS_STORAGE_KEY]: JSON.stringify({
+        version: REMOVED_IDS_STORAGE_VERSION,
+        ids: [removedStaticId, "user-removed"],
+      }),
+    });
+
+    const all = getAllApartments();
+
+    expect(all.some((apartment) => apartment.id === removedStaticId)).toBe(false);
+    expect(all.some((apartment) => apartment.id === "user-removed")).toBe(false);
+    expect(all.some((apartment) => apartment.id === "user-visible")).toBe(true);
+  });
+
+  it.each([
+    "invalid{{{json",
+    JSON.stringify({ version: 99, ids: [apartments[0].id] }),
+    JSON.stringify({ version: REMOVED_IDS_STORAGE_VERSION, ids: "invalid" }),
+  ])("test_pool_removed_ids_parse_defensivo", (stored) => {
+    stubLocalStorage({ [REMOVED_IDS_STORAGE_KEY]: stored });
+
+    const all = getAllApartments();
+
+    expect(all).toHaveLength(apartments.length + saleApartments.length);
   });
 });
