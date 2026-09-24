@@ -6,7 +6,7 @@
 
 ## AC
 1. `tsc --noEmit`, `eslint .` (0 erros) e `build` verdes.
-2. 7 aluguel + 4–6 venda em `lib/data.ts` com `transaction`, `verifiedAt`, `photos` (capa), `salePrice?`/`floorPlan?`; simulados intactos.
+2. 57 aluguel + 52 venda (109 total) em `lib/data.ts` com `transaction`, `verifiedAt`, `photos` (capa), `salePrice?`/`floorPlan?`; simulados intactos.
 3. `tests/unit/pricing.test.ts` verde (TDD RED→GREEN antes de tocar `data.ts`): `pricePerM2` (1 decimal), `totalAllIn` (aluguel = aluguel+cond+iptu; venda = `salePrice`; `condoUnknown` nunca soma cond fictício).
 4. Coleta venda via browser real (LL-045/046): links validados, delay 2–4s, ≥ 8 fotos/imóvel validadas antes de salvar (ver S002); sem inventar taxa de financiamento; mínimo 4 (com 3, avançar documentando).
 
