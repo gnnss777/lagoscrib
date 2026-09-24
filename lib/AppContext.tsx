@@ -175,9 +175,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // Como o contexto atual não armazena apartamentos (usa data.ts estático), vamos usar localStorage para persistir novos
     try {
       const stored = localStorage.getItem("apartamentos-app-new");
-      const list = stored ? JSON.parse(stored) : [];
-      list.push({ ...apartment, createdAt: new Date().toISOString() });
-      localStorage.setItem("apartamentos-app-new", JSON.stringify(list));
+      const list: (Apartment & { createdAt?: string })[] = stored
+        ? JSON.parse(stored)
+        : [];
+      const byApartmentId = new Map<
+        string,
+        Apartment & { createdAt?: string }
+      >();
+      for (const item of list) byApartmentId.set(item.id, item);
+      byApartmentId.set(apartment.id, {
+        ...apartment,
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem(
+        "apartamentos-app-new",
+        JSON.stringify([...byApartmentId.values()]),
+      );
     } catch {
       // ignore
     }

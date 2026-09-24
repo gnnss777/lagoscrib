@@ -41,6 +41,19 @@ describe("pool único", () => {
     expect(all.some((a) => a.id === "user-1")).toBe(true);
   });
 
+  it("test_kanban_pool_dedupe_apartment_id", () => {
+    stubLocalStorage({
+      [USER_ADDED_KEY]: JSON.stringify([
+        { id: "user-1", title: "Apê do usuário" },
+        { id: "user-1", title: "Apê do usuário" },
+      ]),
+    });
+
+    const all = getAllApartments();
+
+    expect(all.filter((apartment) => apartment.id === "user-1")).toHaveLength(1);
+  });
+
   it("test_kanban_pool_sem_storage_so_estaticos", () => {
     // arrange: sem localStorage (SSR/node) — act/assert: só estáticos
     const all = getAllApartments();
