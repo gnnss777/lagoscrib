@@ -1,0 +1,11 @@
+{
+  "workspace": {
+    "root": "C:/AI/apartamentos-app",
+    "name": "lagoscrib"
+  },
+  "permissions": {
+    "external_directory": {
+      "allow": ["C:/AI/apartamentos-app"]
+    }
+  }
+}
