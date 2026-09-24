@@ -33,7 +33,8 @@ import {
   type TransactionTab,
 } from "@/lib/transaction";
 import { getAllApartments } from "@/lib/pool";
-import { useApp, STATUS_LABELS, type StatusType } from "@/lib/AppContext";
+import { isKanbanExcludedStatus, type StatusType } from "@/lib/kanban";
+import { useApp } from "@/lib/AppContext";
 import ApartmentCard from "./ApartmentCard";
 import AddApartmentForm from "./AddApartmentForm";
 import DetailModal from "./DetailModal";
@@ -53,8 +54,18 @@ const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
   { value: "recusado", label: "Recusado" },
 ];
 
+const DASHBOARD_STATUS_OPTIONS: { value: StatusType; label: string }[] = [
+  { value: "novo", label: "novo" },
+  { value: "contactado", label: "contatado" },
+  { value: "visita", label: "visita" },
+  { value: "agendado", label: "agendado" },
+  { value: "visitado", label: "visitado" },
+  { value: "descartado", label: "descartado" },
+  { value: "inativo", label: "inativo" },
+];
+
 export default function Dashboard() {
-  const { username, logout, getStatus, moveCardTo } = useApp();
+  const { username, logout, getStatus, moveCardTo, updateStatus } = useApp();
   // Filtros avançados (S009): estado único + persistência aditiva em chave
   // própria (nunca toca "apartamentos-app-state").
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -160,6 +171,9 @@ export default function Dashboard() {
 
   // Pool da aba ativa — busca, bairro, status e stats operam sobre ele.
   const tabApartments = filterByTransaction(allApartments, tab);
+  const kanbanApartments = tabApartments.filter(
+    (apartment) => !isKanbanExcludedStatus(getStatus(apartment.id)),
+  );
 
   const filteredApartments = useMemo(() => {
     return applySort(
@@ -409,16 +423,45 @@ export default function Dashboard() {
         {/* Grid */}
         {filteredApartments.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredApartments.map((apartment, index) => (
-              <ApartmentCard
-                key={apartment.id}
-                apartment={apartment}
-                index={index}
-                onSelect={setSelectedApartment}
-                compareChecked={compareIds.includes(apartment.id)}
-                onToggleCompare={toggleCompare}
-              />
-            ))}
+            {filteredApartments.map((apartment, index) => {
+              const status = getStatus(apartment.id);
+
+              return (
+                <div key={apartment.id} className="space-y-2">
+                  <ApartmentCard
+                    apartment={apartment}
+                    index={index}
+                    onSelect={setSelectedApartment}
+                    compareChecked={compareIds.includes(apartment.id)}
+                    onToggleCompare={toggleCompare}
+                  />
+                  <div
+                    role="tablist"
+                    aria-label={`Status de ${apartment.title}`}
+                    className="flex flex-wrap gap-1 rounded-xl border border-line bg-card p-2"
+                  >
+                    {DASHBOARD_STATUS_OPTIONS.map(({ value, label }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        role="tab"
+                        aria-label={label}
+                        aria-selected={status === value}
+                        data-status={value}
+                        onClick={() => updateStatus(apartment.id, value)}
+                        className={`min-h-11 rounded-lg px-2.5 text-xs font-medium transition-colors ${
+                          status === value
+                            ? "bg-taxi text-ink shadow-sm"
+                            : "text-ink-soft hover:bg-sand hover:text-ink"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <motion.div
@@ -510,7 +553,7 @@ export default function Dashboard() {
           open={profileOpen}
           onClose={() => setProfileOpen(false)}
           username={username}
-          apartments={tabApartments}
+          apartments={kanbanApartments}
           onSelect={(a) => {
             setProfileOpen(false);
             setSelectedApartment(a);

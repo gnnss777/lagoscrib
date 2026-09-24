@@ -7,7 +7,11 @@ export type StatusType =
   | "novo"
   | "contactado"
   | "respondido"
+  | "visita"
   | "agendado"
+  | "visitado"
+  | "descartado"
+  | "inativo"
   | "feita"
   | "negociacao"
   | "aprovado"
@@ -42,11 +46,27 @@ export const KANBAN_COLUMNS: StatusType[] = [
   "recusado",
 ];
 
+export const KANBAN_EXCLUDED_STATUSES: StatusType[] = [
+  "descartado",
+  "inativo",
+];
+
+export const ALL_STATUSES: StatusType[] = [
+  ...KANBAN_COLUMNS,
+  "visita",
+  "visitado",
+  ...KANBAN_EXCLUDED_STATUSES,
+];
+
 export const STATUS_LABELS: Record<StatusType, string> = {
   novo: "Não visitado",
   contactado: "Contactado",
   respondido: "Respondido",
+  visita: "Visita",
   agendado: "Visita agendada",
+  visitado: "Visitado",
+  descartado: "Descartado",
+  inativo: "Inativo",
   feita: "Visita feita",
   negociacao: "Em negociação",
   aprovado: "Aprovado",
@@ -73,10 +93,25 @@ export const DEFAULT_COLUMN_CONFIG: ColumnConfig = {
 };
 
 function isStatus(s: unknown): s is StatusType {
+  return typeof s === "string" && ALL_STATUSES.includes(s as StatusType);
+}
+
+function isKanbanColumn(s: unknown): s is StatusType {
   return (
     typeof s === "string" &&
     (KANBAN_COLUMNS as string[]).includes(s)
   );
+}
+
+export function isKanbanExcludedStatus(status: StatusType): boolean {
+  return KANBAN_EXCLUDED_STATUSES.includes(status);
+}
+
+export function toKanbanStatus(status: StatusType): StatusType | null {
+  if (isKanbanExcludedStatus(status)) return null;
+  if (status === "visita") return "agendado";
+  if (status === "visitado") return "feita";
+  return status;
 }
 
 /**
@@ -89,15 +124,15 @@ export function parseColumnConfig(raw: unknown): ColumnConfig {
     const p = JSON.parse(raw) as Partial<ColumnConfig>;
     if (p?.version !== KANBAN_COLUMNS_VERSION) return { ...DEFAULT_COLUMN_CONFIG };
     const order = Array.isArray(p.order)
-      ? p.order.filter(isStatus)
+      ? p.order.filter(isKanbanColumn)
       : [...KANBAN_COLUMNS];
     const hidden = Array.isArray(p.hidden)
-      ? p.hidden.filter(isStatus)
+      ? p.hidden.filter(isKanbanColumn)
       : [];
     const labels: Partial<Record<StatusType, string>> = {};
     if (p.labels && typeof p.labels === "object") {
       for (const [k, v] of Object.entries(p.labels)) {
-        if (isStatus(k) && typeof v === "string" && v.trim().length > 0) {
+        if (isKanbanColumn(k) && typeof v === "string" && v.trim().length > 0) {
           labels[k] = v.trim().slice(0, 40);
         }
       }
