@@ -180,11 +180,9 @@ export const KANBAN_RETURNED_LABEL = "Retornou ✓";
 export const KANBAN_PROSPECT_LABEL = "Prospectar";
 export const KANBAN_TAB_LABEL = "Prospecção";
 
-// Trava física do board estático sem scroll (ESTÁTICO-SEM-SCROLL 23/09/2026):
-// pílula ≈60px + gap 6px → 7 cabem em ~470px; + header/rodapé ≈ 590px,
-// dentro dos ~592px úteis em 768p (100vh − header da view − toolbar).
-// O resto vira o rodapé "+N restantes" (LL-006: sem mágica na UI).
-export const KANBAN_VISIBLE_CAP = 7;
+// Fallback do board gerenciável: o excedente vira o rodapé "+N restantes".
+// O cap cobre o pool padrão inteiro sem perder o fallback (LL-006).
+export const KANBAN_VISIBLE_CAP = 200;
 
 // --- Tema "Lightbox Analógico" (leva lightbox-analogico, DESIGN.md v2 §cores) ---
 // REGRA (LL-006 estendido a design): nenhum hex de cor fora de THEME_PALETTE —

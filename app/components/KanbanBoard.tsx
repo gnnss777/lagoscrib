@@ -134,7 +134,7 @@ export default function KanbanBoard({
   );
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [announce, setAnnounce] = useState("");
-  // Overflow do board estático: qual coluna abriu o "+N restantes".
+  // Fallback do cap: qual coluna abriu o "+N restantes".
   const [overflowFor, setOverflowFor] = useState<StatusType | null>(null);
   const overflowTrigger = useRef<HTMLElement | null>(null);
   const overflowPanelRef = useRef<HTMLDivElement>(null);
@@ -340,7 +340,7 @@ export default function KanbanBoard({
         {announce}
       </div>
 
-      {/* Board estático sem scroll (lg+): colunas flex-1 preenchem 100vw.
+      {/* Board gerenciável (lg+): colunas flex-1 preenchem 100vw.
           Abaixo de lg, scroll horizontal de fallback (documentado na spec). */}
       <div className="flex w-max min-w-full flex-1 items-stretch gap-3 lg:w-full">
         {visibleColumns.map((col) => {
@@ -352,7 +352,7 @@ export default function KanbanBoard({
           const hanging = col.ids.filter((id) =>
             isHanging(followUps[id], FOLLOWUP_STALE_DAYS),
           ).length;
-          // Trava física: até KANBAN_VISIBLE_CAP pílulas; resto vira "+N".
+          // Fallback: até KANBAN_VISIBLE_CAP pílulas; resto vira "+N".
           const { visible, hidden } = splitColumnOverflow(
             ids,
             KANBAN_VISIBLE_CAP,
@@ -376,7 +376,7 @@ export default function KanbanBoard({
                 e.preventDefault();
                 commitDrop();
               }}
-              className="flex min-h-0 w-72 shrink-0 flex-col overflow-hidden rounded-xl border border-line bg-sand p-2 shadow-sm sm:w-80 lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink"
+              className="flex max-h-[70vh] min-h-0 w-72 shrink-0 flex-col overflow-y-auto rounded-xl border border-line bg-sand p-2 shadow-sm sm:w-80 lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink"
             >
               <header className="mb-2 shrink-0">
                 <div className="flex items-center justify-between">
@@ -395,7 +395,7 @@ export default function KanbanBoard({
                 )}
               </header>
 
-              <div className="min-h-0 flex-1 space-y-1.5 overflow-hidden">
+              <div className="space-y-1.5">
                 {ids.length === 0 && (
                   <p className="text-xs text-muted bg-card border border-dashed border-line rounded-lg p-2">
                     {KANBAN_EMPTY_COLUMN_HINT}
@@ -452,8 +452,8 @@ export default function KanbanBoard({
                         dragId === id ? "opacity-50" : ""
                       }`}
                     >
-                      {/* Pílula compacta (ESTÁTICO-SEM-SCROLL): miniatura 40px +
-                          título/bairro/preço + selo; mover/contato no menu. */}
+                      {/* Pílula compacta: miniatura 40px + título/bairro/preço +
+                          selo; mover/contato no menu. */}
                       <div className="flex items-center gap-2 p-1.5">
                         <button
                           onClick={() => onSelect(a)}

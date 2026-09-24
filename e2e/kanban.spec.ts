@@ -293,39 +293,25 @@ test("test_kanban_drag_drop_move_card_entre_colunas", async ({ page }) => {
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
 
-test("test_kanban_estatico_sem_scroll_contador_mais", async ({ page }) => {
+test("test_kanban_scroll_interno_todos_cards", async ({ page }) => {
   const errors: string[] = [];
-  // Estado default: statuses [] → todo o pool cai em "Não visitado"
-  // (bem acima da trava KANBAN_VISIBLE_CAP) → overflow garantido.
   await gotoAuthed(page);
   const view = await openKanban(page);
 
   const col = view.getByRole("region", { name: /Não visitado/ });
-  const more = col.getByRole("button", { name: /imóveis ocultos em/ });
-  await expect(more).toBeVisible();
-  await expect(more).toContainText(/\+\d+ restantes/);
+  await expect(col.locator("article")).toHaveCount(109);
+  await expect(
+    col.getByRole("button", { name: /imóveis ocultos em/ }),
+  ).toHaveCount(0);
 
-  // Estático de verdade: a coluna não tem scroll interno.
-  const overflow = await col.evaluate((el) => ({
+  const scroll = await col.evaluate((el) => ({
     scrollHeight: el.scrollHeight,
     clientHeight: el.clientHeight,
+    overflowY: getComputedStyle(el).overflowY,
   }));
-  expect(overflow.scrollHeight).toBeLessThanOrEqual(overflow.clientHeight + 2);
-
-  // O contador abre a lista; Esc fecha SÓ o dialog (a view continua).
-  // Via teclado (foco + Enter): o badge do dev-overlay do Next cobre o
-  // rodapé da 1ª coluna em dev e interceptaria click de mouse — e o caminho
-  // de teclado ainda prova AC-2 de quebra.
-  await more.focus();
-  await page.keyboard.press("Enter");
-  const dialog = view.getByRole("dialog", { name: /mais \d+ imóveis/ });
-  await expect(dialog).toBeVisible();
-  await expect(
-    dialog.getByRole("button", { name: /Abrir detalhes de/ }).first(),
-  ).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(dialog).toHaveCount(0);
-  await expect(view).toBeVisible();
+  expect(scroll.scrollHeight).toBeGreaterThanOrEqual(scroll.clientHeight);
+  expect(scroll.scrollHeight).toBeGreaterThan(scroll.clientHeight);
+  expect(scroll.overflowY).toBe("auto");
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
