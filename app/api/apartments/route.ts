@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   }
   const userId = await getUserId(session.user.email);
   const apartments = await prisma.savedProperty.findMany({
-    where: { userId },
+    where: { userId, deletedAt: null },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json(apartments);
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const userId = await getUserId(session.user.email);
   const data = await req.json();
   const apartment = await prisma.savedProperty.create({
-    data: { ...data, userId },
+    data: { ...data, userId, deletedAt: null },
   });
   return NextResponse.json(apartment, { status: 201 });
 }
