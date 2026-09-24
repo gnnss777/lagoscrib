@@ -80,12 +80,14 @@ model SavedProperty {
   status      String   @default("novo")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
 
   followUps FollowUp[]
   notes     Note[]
 
   @@unique([userId, externalId, portal])
   @@index([userId])
+  @@index([userId, deletedAt])
 }
 
 model FollowUp {
