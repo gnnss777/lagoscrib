@@ -200,6 +200,26 @@
     color: var(--color-ink);
   }
 
+  .status-visita {
+    background: var(--color-st-blue-bg);
+    color: var(--color-st-blue);
+  }
+
+  .status-visitado {
+    background: var(--color-st-green-bg);
+    color: var(--color-st-green);
+  }
+
+  .status-descartado {
+    background: var(--color-st-red-bg);
+    color: var(--color-st-red);
+  }
+
+  .status-inativo {
+    background: var(--color-sand);
+    color: var(--color-ink-soft);
+  }
+
   .status-agendado {
     background: var(--color-st-blue-bg);
     color: var(--color-st-blue);

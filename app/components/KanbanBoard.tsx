@@ -19,7 +19,10 @@ import {
   columnLabel,
   countHanging,
   isHanging,
+  isKanbanExcludedStatus,
   splitColumnOverflow,
+  toKanbanStatus,
+  type ApartmentStatus,
   type ColumnConfig,
   type FollowUp,
   type StatusType,
@@ -142,23 +145,35 @@ export default function KanbanBoard({
   };
 
 
-  const byId = useMemo(() => new Map(apartments.map((a) => [a.id, a])), [apartments]);
+  const byId = useMemo(() => {
+    const unique = new Map<string, Apartment>();
+    for (const apartment of apartments) {
+      const status = statuses.find((s) => s.apartmentId === apartment.id)?.status;
+      if (status && isKanbanExcludedStatus(status)) continue;
+      unique.set(apartment.id, apartment);
+    }
+    return unique;
+  }, [apartments, statuses]);
 
   // Entradas sintetizadas: todo imóvel do pool tem posição (default = novo/fim).
   const columns = useMemo(() => {
-    const entries = apartments.map((a) => {
-      const found = statuses.find((s) => s.apartmentId === a.id);
-      return found
-        ? { ...found }
-        : {
-            apartmentId: a.id,
-            status: "novo" as const,
-            updatedAt: "",
-            index: Number.MAX_SAFE_INTEGER,
-          };
-    });
+    const entries: ApartmentStatus[] = [];
+    for (const apartment of byId.values()) {
+      const found = statuses.find((s) => s.apartmentId === apartment.id);
+      if (!found) {
+        entries.push({
+          apartmentId: apartment.id,
+          status: "novo",
+          updatedAt: "",
+          index: Number.MAX_SAFE_INTEGER,
+        });
+        continue;
+      }
+      const status = toKanbanStatus(found.status);
+      if (status) entries.push({ ...found, status });
+    }
     return buildColumns(entries, followUps, colConfig);
-  }, [apartments, statuses, followUps, colConfig]);
+  }, [byId, statuses, followUps, colConfig]);
 
   const visibleOrder = useMemo(
     () => columns.map((c) => c.status),
