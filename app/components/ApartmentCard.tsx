@@ -122,20 +122,21 @@ export default function ApartmentCard({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 justify-items-center gap-2 border-y border-line bg-tinted px-4 py-2 text-center font-sans text-[14pt] font-bold text-ink">
+      <div className="grid grid-cols-1 justify-items-center gap-2 border-y border-line bg-sand px-4 py-3">
         {apartment.phone ? (
           <a
             href={`tel:${apartment.phone}`}
             onClick={(event) => event.stopPropagation()}
-            className="flex max-w-full items-center justify-center gap-2 font-[Arial] font-normal hover:text-amberink"
+            className="flex items-center justify-center gap-1.5 text-amberink hover:text-amberink/80 transition-colors"
+            aria-label={`Ligar para ${apartment.phone}`}
           >
-            <Phone size={18} weight="fill" className="shrink-0" />
-            <span>{apartment.phone}</span>
+            <Phone size={16} weight="fill" className="shrink-0" />
+            <span className="font-mono text-sm font-medium">{apartment.phone}</span>
           </a>
         ) : (
-          <span className="flex items-center justify-center gap-2 font-[Arial] font-normal">
-            <Phone size={18} weight="fill" className="shrink-0" />
-            Telefone não informado
+          <span className="flex items-center justify-center gap-1.5 text-muted">
+            <Phone size={16} weight="fill" className="shrink-0" />
+            <span className="font-mono text-sm">Telefone não informado</span>
           </span>
         )}
         <a
@@ -143,10 +144,13 @@ export default function ApartmentCard({
           target="_blank"
           rel="noopener noreferrer"
           onClick={(event) => event.stopPropagation()}
-          className="flex max-w-full items-center justify-center gap-2 font-mono font-normal hover:text-amberink"
+          className="flex items-center justify-center gap-1.5 text-amberink hover:text-amberink/80 transition-colors"
+          aria-label={`Ver anúncio original em ${apartment.link}`}
         >
-          <ArrowSquareOutIcon size={18} weight="bold" className="shrink-0" />
-          <span className="break-all">{apartment.link}</span>
+          <ArrowSquareOutIcon size={16} weight="bold" className="shrink-0" />
+          <span className="font-mono text-sm font-medium break-all">
+            {apartment.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+          </span>
         </a>
       </div>
 
