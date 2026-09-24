@@ -538,7 +538,8 @@ export default function KanbanBoard({
                           selo; mover/contato no menu. */}
                       <div className="flex items-center gap-2 p-1.5">
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setMenuFor(null);
                             setExpandedCardId((current) =>
                               current === id ? null : id,
@@ -566,7 +567,7 @@ export default function KanbanBoard({
                                 {formatBRL(a.total)}
                               </span>
                             </span>
-                            <FollowUpSeal fu={fu} />
+                            <FollowUpSeal fu={followUps[id]} />
                           </span>
                         </button>
                         <a
