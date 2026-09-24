@@ -530,6 +530,7 @@ export default function KanbanBoard({
                           current === id ? null : id,
                         );
                       }}
+                      className={`bg-card border border-line rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ink ${
                         dragId === id ? "opacity-50" : ""
                       }`}
                     >
