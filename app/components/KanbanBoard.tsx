@@ -38,6 +38,7 @@ import {
   type StatusType,
 } from "@/lib/kanban";
 import { useApp } from "@/lib/AppContext";
+import ApartmentCard from "./ApartmentCard";
 
 interface KanbanBoardProps {
   apartments: Apartment[];
@@ -116,6 +117,60 @@ function FollowUpSeal({ fu }: { fu: FollowUp | undefined }) {
   return null;
 }
 
+function KanbanCardDetail({
+  apartment,
+  onClose,
+}: {
+  apartment: Apartment;
+  onClose: () => void;
+}) {
+  const [compareChecked, setCompareChecked] = useState(false);
+
+  return (
+    <div data-kanban-card-detail className="p-1.5">
+      <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-line px-1 pb-1.5">
+        <span className="truncate text-xs font-semibold text-ink">
+          {apartment.title}
+        </span>
+        <div className="flex shrink-0 items-center gap-1">
+          <a
+            href={buildWhatsAppLink(
+              apartment.phone,
+              buildWhatsAppConfirm(apartment),
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Abrir WhatsApp sobre ${apartment.title}`}
+            data-kanban-whatsapp
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sand hover:text-ink"
+          >
+            <WhatsappLogo
+              size={18}
+              weight="fill"
+              className="text-st-green"
+            />
+          </a>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={`Fechar detalhes de ${apartment.title} (Esc)`}
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sand hover:text-ink"
+          >
+            <X size={18} weight="bold" />
+          </button>
+        </div>
+      </div>
+      <ApartmentCard
+        apartment={apartment}
+        index={0}
+        onSelect={onClose}
+        compareChecked={compareChecked}
+        onToggleCompare={() => setCompareChecked((value) => !value)}
+      />
+    </div>
+  );
+}
+
 export default function KanbanBoard({
   apartments,
   colConfig,
@@ -133,6 +188,7 @@ export default function KanbanBoard({
     "todas",
   );
   const [menuFor, setMenuFor] = useState<string | null>(null);
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const [announce, setAnnounce] = useState("");
   // Fallback do cap: qual coluna abriu o "+N restantes".
   const [overflowFor, setOverflowFor] = useState<StatusType | null>(null);
@@ -157,6 +213,20 @@ export default function KanbanBoard({
     setDropSlot(slot);
   };
 
+  useEffect(() => {
+    if (!expandedCardId) return;
+    const closeExpandedCard = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      setMenuFor(null);
+      setExpandedCardId(null);
+    };
+    window.addEventListener("keydown", closeExpandedCard, true);
+    return () =>
+      window.removeEventListener("keydown", closeExpandedCard, true);
+  }, [expandedCardId]);
 
   const byId = useMemo(() => {
     const unique = new Map<string, Apartment>();
@@ -405,6 +475,7 @@ export default function KanbanBoard({
                   const a = byId.get(id);
                   if (!a) return null;
                   const fu = followUps[id];
+                  const isExpanded = expandedCardId === id;
                   const showIndicator =
                     dragId !== null &&
                     dropSlot !== null &&
@@ -422,7 +493,7 @@ export default function KanbanBoard({
                     <article
                       tabIndex={0}
                       aria-label={`${a.title}, ${col.label}`}
-                      draggable
+                      draggable={!isExpanded}
                       data-kanban-card
                       onDragStart={(e) => {
                         // HTML5 DnD: data obrigatória pro Firefox pegar o drag.
@@ -436,9 +507,13 @@ export default function KanbanBoard({
                         setSlot(null);
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && menuFor !== id) {
+                        if (e.target !== e.currentTarget) return;
+                        if (e.key === "Enter") {
                           e.preventDefault();
-                          setMenuFor(id);
+                          setMenuFor(null);
+                          setExpandedCardId((current) =>
+                            current === id ? null : id,
+                          );
                           return;
                         }
                         const m = moveShortcut(e.key, col.status, visibleOrder);
@@ -452,11 +527,23 @@ export default function KanbanBoard({
                         dragId === id ? "opacity-50" : ""
                       }`}
                     >
+                      {isExpanded ? (
+                        <KanbanCardDetail
+                          apartment={a}
+                          onClose={() => setExpandedCardId(null)}
+                        />
+                      ) : (
+                        <>
                       {/* Pílula compacta: miniatura 40px + título/bairro/preço +
                           selo; mover/contato no menu. */}
                       <div className="flex items-center gap-2 p-1.5">
                         <button
-                          onClick={() => onSelect(a)}
+                          onClick={() => {
+                            setMenuFor(null);
+                            setExpandedCardId((current) =>
+                              current === id ? null : id,
+                            );
+                          }}
                           aria-label={`Abrir detalhes de ${a.title}`}
                           className="flex min-w-0 flex-1 items-center gap-2 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ink"
                         >
@@ -573,6 +660,8 @@ export default function KanbanBoard({
                               </div>
                             ))}
                         </div>
+                      )}
+                        </>
                       )}
                     </article>
                     </Fragment>

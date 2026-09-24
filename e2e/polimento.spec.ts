@@ -20,7 +20,7 @@ async function gotoAuthed(page: Page, state: object = {}) {
   await expect(page.locator(".card-apartment").first()).toBeVisible();
 }
 
-test("test_polimento_card_minimo_sem_links_comparar_isolado", async ({
+test("test_polimento_card_com_origem_comparar_isolado", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -28,8 +28,9 @@ test("test_polimento_card_minimo_sem_links_comparar_isolado", async ({
 
   const card = page.locator(".card-apartment").first();
 
-  // F3.1: card mínimo — sem links e sem Prospectar (vive no DetailModal).
-  await expect(card.locator("a")).toHaveCount(0);
+  // F3.1: card mínimo — só o link de origem, sem Prospectar (vive no DetailModal).
+  await expect(card.locator("a")).toHaveCount(1);
+  await expect(card.locator("a")).toHaveAttribute("href", /^https:\/\//);
   await expect(
     card.getByRole("button", { name: /Prospectar/ }),
   ).toHaveCount(0);
@@ -43,7 +44,7 @@ test("test_polimento_card_minimo_sem_links_comparar_isolado", async ({
   ).toHaveCount(0);
 
   // Clicar no card abre o DetailModal com dialog a11y (F1.2).
-  await card.click();
+  await card.locator("h3").click();
   const dialog = page.getByRole("dialog", { name: /Detalhes de/ });
   await expect(dialog).toBeVisible();
 

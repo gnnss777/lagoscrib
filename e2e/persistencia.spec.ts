@@ -36,7 +36,7 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".card-apartment")).toHaveCount(57);
 
-  await page.locator(".card-apartment").first().click();
+  await page.locator(".card-apartment").first().locator("h3").click();
 
   // Nota v1 visível na aba Notas.
   await page.getByRole("button", { name: /Notas \(1\)/ }).click();
@@ -58,7 +58,7 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
     .check();
   await page.reload();
   await expect(page.locator(".card-apartment")).toHaveCount(57);
-  await page.locator(".card-apartment").first().click();
+  await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: /Notas \(1\)/ }).click();
   await expect(page.locator("text=Nota antiga v1 — deve sobreviver")).toBeVisible();
 

@@ -27,7 +27,7 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   await expect(page.locator(".card-apartment")).toHaveCount(57);
 
   // Primeiro imóvel: Água Verde Castro 123 (condomínio a confirmar, total 2350).
-  await page.locator(".card-apartment").first().click();
+  await page.locator(".card-apartment").first().locator("h3").click();
 
   // AllInPanel: total + faixas de entrada/mudança com o rótulo de estimativa.
   const allin = page.getByTestId("allin-panel");
@@ -66,7 +66,7 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   await expect(page.getByRole("status")).toHaveText("Checklist copiado!");
   await page.reload();
   await expect(page.locator(".card-apartment")).toHaveCount(57);
-  await page.locator(".card-apartment").first().click();
+  await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: "Checklist" }).click();
   await expect(
     page

@@ -65,7 +65,7 @@ test("test_venda_toggle_abas_valores_modal", async ({ page }) => {
   await expect(page.getByText(/de \d+ apartamentos/)).toBeVisible();
 
   // Modal de venda: bloco de compra, sem entrada de locação, selo com data.
-  await page.locator(".card-apartment").first().click();
+  await page.locator(".card-apartment").first().locator("h3").click();
   const allin = page.getByTestId("allin-panel");
   await expect(allin).toContainText("Valores de Compra");
   await expect(allin).toContainText("Preço/m²");

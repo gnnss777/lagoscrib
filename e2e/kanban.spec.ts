@@ -141,7 +141,7 @@ test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
 
   // 1ª ação: abrir o 1º card → DetailModal (aba Detalhes, seção Status).
   // (F3.1: card mínimo — Prospectar vive no modal, não no card.)
-  await page.locator(".card-apartment").first().click();
+  await page.locator(".card-apartment").first().locator("h3").click();
   const dialog = page.getByRole("dialog", { name: /Detalhes de/ });
   await expect(dialog).toBeVisible();
 
@@ -184,6 +184,39 @@ test("test_kanban_teclado_move_menu_anuncia_aria_live", async ({ page }) => {
   ).toBeVisible();
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
+});
+
+test("test_kanban_detalhe_inline_x_esc_mantem_board", async ({ page }) => {
+  await gotoAuthed(page);
+  const view = await openKanban(page);
+  const card = view
+    .getByRole("region", { name: /Não visitado/ })
+    .locator("article")
+    .first();
+  const openDetails = card.getByRole("button", {
+    name: /Abrir detalhes de/,
+  });
+
+  await openDetails.click();
+  let detail = card.locator("[data-kanban-card-detail]");
+  await expect(detail).toBeVisible();
+  await expect(detail.locator(".card-apartment")).toBeVisible();
+  await expect(page.getByRole("dialog", { name: /Detalhes de/ })).toHaveCount(0);
+
+  await detail
+    .getByRole("button", { name: /Fechar detalhes de/ })
+    .click();
+  await expect(detail).toHaveCount(0);
+  await expect(openDetails).toBeVisible();
+
+  await openDetails.click();
+  detail = card.locator("[data-kanban-card-detail]");
+  await expect(detail).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(detail).toHaveCount(0);
+  await expect(view).toBeVisible();
+  await expect(card).toBeVisible();
+  await expect(openDetails).toBeVisible();
 });
 
 test("test_kanban_customizacao_painel_renomear_reload_reset", async ({

@@ -26,7 +26,7 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
   await expect(page.locator(".card-apartment")).toHaveCount(57);
 
   // Abrir o primeiro imóvel → galeria viewer-first.
-  await page.locator(".card-apartment").first().click();
+  await page.locator(".card-apartment").first().locator("h3").click();
   const gallery = page.getByTestId("gallery");
   await expect(gallery).toBeVisible();
   await expect(page.getByTestId("gallery-counter")).toHaveText("1/11");

@@ -2,7 +2,16 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Bed, Car, MapPin, Ruler, Shower, Trash } from "@phosphor-icons/react";
+import {
+  ArrowSquareOutIcon,
+  Bed,
+  Car,
+  MapPin,
+  Phone,
+  Ruler,
+  Shower,
+  Trash,
+} from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
 import { priceSuffix } from "@/lib/transaction";
 import { formatBRL } from "@/lib/antiDores";
@@ -111,6 +120,34 @@ export default function ApartmentCard({
             )}
           </div>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 justify-items-center gap-2 border-y border-line bg-tinted px-4 py-2 text-center font-sans text-[14pt] font-bold text-ink">
+        {apartment.phone ? (
+          <a
+            href={`tel:${apartment.phone}`}
+            onClick={(event) => event.stopPropagation()}
+            className="flex max-w-full items-center justify-center gap-2 font-[Arial] font-normal hover:text-amberink"
+          >
+            <Phone size={18} weight="fill" className="shrink-0" />
+            <span>{apartment.phone}</span>
+          </a>
+        ) : (
+          <span className="flex items-center justify-center gap-2 font-[Arial] font-normal">
+            <Phone size={18} weight="fill" className="shrink-0" />
+            Telefone não informado
+          </span>
+        )}
+        <a
+          href={apartment.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(event) => event.stopPropagation()}
+          className="flex max-w-full items-center justify-center gap-2 font-mono font-normal hover:text-amberink"
+        >
+          <ArrowSquareOutIcon size={18} weight="bold" className="shrink-0" />
+          <span className="break-all">{apartment.link}</span>
+        </a>
       </div>
 
       {/* Content */}
