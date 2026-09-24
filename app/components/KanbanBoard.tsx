@@ -2,9 +2,19 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { Check, DotsThree, Phone, X } from "@phosphor-icons/react";
+import {
+  Check,
+  DotsThree,
+  Phone,
+  WhatsappLogo,
+  X,
+} from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
-import { formatBRL } from "@/lib/antiDores";
+import {
+  buildWhatsAppConfirm,
+  buildWhatsAppLink,
+  formatBRL,
+} from "@/lib/antiDores";
 import {
   FOLLOWUP_STALE_DAYS,
   KANBAN_CONTACT_LABEL,
@@ -20,6 +30,7 @@ import {
   countHanging,
   isHanging,
   splitColumnOverflow,
+  type ApartmentStatus,
   type ColumnConfig,
   type FollowUp,
   type StatusType,
@@ -116,6 +127,9 @@ export default function KanbanBoard({
     markReturned,
   } = useApp();
   const [staleOnly, setStaleOnly] = useState(false);
+  const [columnFilter, setColumnFilter] = useState<StatusType | "todas">(
+    "todas",
+  );
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [announce, setAnnounce] = useState("");
   // Overflow do board estático: qual coluna abriu o "+N restantes".
@@ -142,27 +156,51 @@ export default function KanbanBoard({
   };
 
 
-  const byId = useMemo(() => new Map(apartments.map((a) => [a.id, a])), [apartments]);
+  const byId = useMemo(() => {
+    const unique = new Map<string, Apartment>();
+    for (const apartment of apartments) {
+      unique.set(apartment.id, apartment);
+    }
+    return unique;
+  }, [apartments]);
 
   // Entradas sintetizadas: todo imóvel do pool tem posição (default = novo/fim).
   const columns = useMemo(() => {
-    const entries = apartments.map((a) => {
-      const found = statuses.find((s) => s.apartmentId === a.id);
-      return found
-        ? { ...found }
-        : {
-            apartmentId: a.id,
-            status: "novo" as const,
-            updatedAt: "",
-            index: Number.MAX_SAFE_INTEGER,
-          };
-    });
-    return buildColumns(entries, followUps, colConfig);
-  }, [apartments, statuses, followUps, colConfig]);
+    const entriesByApartmentId = new Map<string, ApartmentStatus>();
+    for (const apartment of byId.values()) {
+      const found = statuses.find(
+        (status) => status.apartmentId === apartment.id,
+      );
+      entriesByApartmentId.set(
+        apartment.id,
+        found
+          ? { ...found }
+          : {
+              apartmentId: apartment.id,
+              status: "novo" as const,
+              updatedAt: "",
+              index: Number.MAX_SAFE_INTEGER,
+            },
+      );
+    }
+    return buildColumns(
+      [...entriesByApartmentId.values()],
+      followUps,
+      colConfig,
+    );
+  }, [byId, statuses, followUps, colConfig]);
+
+  const visibleColumns = useMemo(
+    () =>
+      columnFilter === "todas"
+        ? columns
+        : columns.filter((column) => column.status === columnFilter),
+    [columnFilter, columns],
+  );
 
   const visibleOrder = useMemo(
-    () => columns.map((c) => c.status),
-    [columns],
+    () => visibleColumns.map((column) => column.status),
+    [visibleColumns],
   );
 
   const move = (
@@ -243,6 +281,37 @@ export default function KanbanBoard({
     <div className="flex h-full min-h-0 flex-col">
       {/* Barra do board: filtro + resumo */}
       <div className="mb-3 flex shrink-0 flex-wrap items-center gap-3">
+        <div
+          role="group"
+          aria-label="Filtrar por coluna"
+          className="flex flex-wrap items-center gap-1"
+        >
+          <button
+            onClick={() => setColumnFilter("todas")}
+            aria-pressed={columnFilter === "todas"}
+            className={`min-h-11 rounded-full border px-3 text-xs font-medium transition-colors ${
+              columnFilter === "todas"
+                ? "border-taxi bg-taxi text-ink"
+                : "border-line bg-card text-ink-soft hover:text-ink"
+            }`}
+          >
+            Todas
+          </button>
+          {columns.map((column) => (
+            <button
+              key={column.status}
+              onClick={() => setColumnFilter(column.status)}
+              aria-pressed={columnFilter === column.status}
+              className={`min-h-11 rounded-full border px-3 text-xs font-medium transition-colors ${
+                columnFilter === column.status
+                  ? "border-taxi bg-taxi text-ink"
+                  : "border-line bg-card text-ink-soft hover:text-ink"
+              }`}
+            >
+              {column.label}
+            </button>
+          ))}
+        </div>
         <button
           onClick={() => setStaleOnly((v) => !v)}
           aria-pressed={staleOnly}
@@ -256,7 +325,7 @@ export default function KanbanBoard({
           {staleTotal > 0 && ` (${staleTotal})`}
         </button>
         <p className="text-xs text-muted" role="status">
-          {apartments.length} no funil · {staleTotal} sem retorno há {FOLLOWUP_STALE_DAYS}+ dias
+          {byId.size} no funil · {staleTotal} sem retorno há {FOLLOWUP_STALE_DAYS}+ dias
         </p>
       </div>
 
@@ -268,7 +337,7 @@ export default function KanbanBoard({
       {/* Board estático sem scroll (lg+): colunas flex-1 preenchem 100vw.
           Abaixo de lg, scroll horizontal de fallback (documentado na spec). */}
       <div className="flex w-max min-w-full flex-1 items-stretch gap-3 lg:w-full">
-        {columns.map((col) => {
+        {visibleColumns.map((col) => {
           const ids = staleOnly
             ? col.ids.filter((id) =>
                 isHanging(followUps[id], FOLLOWUP_STALE_DAYS),
@@ -407,6 +476,23 @@ export default function KanbanBoard({
                             <FollowUpSeal fu={fu} />
                           </span>
                         </button>
+                        <a
+                          href={buildWhatsAppLink(
+                            a.phone,
+                            buildWhatsAppConfirm(a),
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Abrir WhatsApp sobre ${a.title}`}
+                          data-kanban-whatsapp
+                          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sand hover:text-ink"
+                        >
+                          <WhatsappLogo
+                            size={18}
+                            weight="fill"
+                            className="text-st-green"
+                          />
+                        </a>
                         <button
                           aria-label={`Mover ${a.title}, abrir menu de destinos`}
                           aria-expanded={menuFor === id}

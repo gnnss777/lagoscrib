@@ -27,8 +27,11 @@ export function getAllApartments(): Apartment[] {
         const mine = parsed
           .filter((a) => a && typeof a.id === "string")
           .map((a) => ({ transaction: "aluguel" as const, ...a }));
-        const seen = new Set(mine.map((a) => a.id));
-        return [...STATIC_POOL.filter((a) => !seen.has(a.id)), ...mine];
+        const byApartmentId = new Map<string, Apartment>();
+        for (const apartment of [...STATIC_POOL, ...mine]) {
+          byApartmentId.set(apartment.id, apartment);
+        }
+        return [...byApartmentId.values()];
       }
     }
   } catch {

@@ -222,3 +222,62 @@ test("test_kanban_estatico_sem_scroll_contador_mais", async ({ page }) => {
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
+
+test("test_kanban_dedupe_filtro_coluna_e_whatsapp", async ({ page }) => {
+  const apartment = {
+    id: "dup-kanban",
+    title: "Imóvel duplicado",
+    neighborhood: "Batel",
+    address: "Rua de teste, Curitiba",
+    area: 70,
+    bedrooms: 2,
+    bathrooms: 1,
+    parking: 1,
+    rent: 2500,
+    condo: 0,
+    iptu: 0,
+    total: 2500,
+    phone: "41999999999",
+    email: "",
+    link: "https://example.com/imovel",
+    image: "/imoveis/zap-ahu-eca-78.webp",
+    features: [],
+    description: "Imóvel usado para validar o Kanban.",
+  };
+  await page.addInitScript((entries) => {
+    localStorage.setItem("apartamentos-app-new", JSON.stringify(entries));
+  }, [apartment, { ...apartment }]);
+  await gotoAuthed(page, {
+    statuses: [
+      {
+        apartmentId: apartment.id,
+        status: "novo",
+        updatedAt: "2026-09-24T00:00:00.000Z",
+        index: 0,
+      },
+    ],
+    followUps: {},
+  });
+
+  const view = await openKanban(page);
+  const card = view.getByRole("article", { name: /Imóvel duplicado/ });
+  await expect(card).toHaveCount(1);
+
+  for (const key of [".", ",", "."]) {
+    await card.focus();
+    await page.keyboard.press(key);
+    await expect(card).toHaveCount(1);
+  }
+
+  const filters = view.getByRole("group", { name: "Filtrar por coluna" });
+  await filters.getByRole("button", { name: "Contactado", exact: true }).click();
+  await expect(view.getByRole("region", { name: /Contactado/ })).toHaveCount(1);
+  await expect(view.getByRole("region", { name: /Não visitado/ })).toHaveCount(0);
+  await filters.getByRole("button", { name: "Todas", exact: true }).click();
+  await expect(view.getByRole("region", { name: /Contactado/ })).toBeVisible();
+
+  await expect(card.getByRole("link", { name: /Abrir WhatsApp/ })).toHaveAttribute(
+    "href",
+    /^https:\/\/wa\.me\/5541999999999\?text=/,
+  );
+});
