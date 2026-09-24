@@ -1,0 +1,8 @@
+{
+  "permission": {
+    "edit": "allow",
+    "bash": "allow",
+    "webfetch": "allow"
+  },
+  "instructions": "NUNCA acesse diretorios fora do repositorio atual. Ignore skills que mencionam Obsidian, GNNSS_VAULT ou vault. Va direto a implementacao."
+}
