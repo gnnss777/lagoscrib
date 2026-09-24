@@ -523,7 +523,13 @@ export default function KanbanBoard({
                         }
                         if (e.key === "Escape") setMenuFor(null);
                       }}
-                      className={`bg-card border border-line rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ink ${
+                      onClick={(e) => {
+                        // Clique no article abre o inline
+                        setMenuFor(null);
+                        setExpandedCardId((current) =>
+                          current === id ? null : id,
+                        );
+                      }}
                         dragId === id ? "opacity-50" : ""
                       }`}
                     >
