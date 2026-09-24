@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json(
     {
-      properties: properties.map((p) => ({
+      properties: properties.map((p: { externalId: string; portal: string; urlOriginal: string; status: string; updatedAt: Date; followUps: Array<{ attempts: number; status: string; lastContactAt?: Date | null }>; notes: Array<{ text: string; createdAt: Date }> }) => ({
         externalId: p.externalId,
         portal: p.portal,
         urlOriginal: p.urlOriginal,
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
               lastContactAt: p.followUps[0].lastContactAt?.toISOString() ?? null,
             }
           : null,
-        notes: p.notes.map((n) => ({ text: n.text, createdAt: n.createdAt.toISOString() })),
+        notes: p.notes.map((n: { text: string; createdAt: Date }) => ({ text: n.text, createdAt: n.createdAt.toISOString() })),
       })),
     },
     { headers: { "Cache-Control": "no-store" } },
