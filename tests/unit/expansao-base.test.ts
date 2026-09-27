@@ -62,17 +62,23 @@ describe("expansao base", () => {
   });
 
   it("test_expansao_combos_cobertos", () => {
-    // Leva 4 (27/09/2026): a coleta foi dirigida para 2-3 quartos
-    // (--quartos=2,3), com 4+ só para a faixa existir. A faixa de 1 quarto
-    // ficou vazia por decisão — o filtro mostra "1 quarto · 0".
-    // A base de venda também está vazia (só aluguel).
+    // Leva 4 (27/09/2026): coleta dirigida para 2-3 quartos (--quartos=2,3) com
+    // teto de R$ 3.000 (--preco-max=3000). As faixas de 1 e 4+ ficam vazias por
+    // decisão — o filtro mostra "1 quarto · 0". A base de venda está vazia.
     const pool = all.filter((a) => a.transaction !== "venda");
-    for (const b of [2, 3, 4]) {
-      const n =
-        b === 4
-          ? pool.filter((a) => a.bedrooms >= 4).length
-          : pool.filter((a) => a.bedrooms === b).length;
+    for (const b of [2, 3]) {
+      const n = pool.filter((a) => a.bedrooms === b).length;
       expect(n, `faixa ${b} quartos`).toBeGreaterThan(0);
+    }
+  });
+
+  it("test_expansao_dentro_do_escopo_da_leva", () => {
+    // Trava o critério da coleta: 2-3 quartos e aluguel até R$ 3.000. Sem isso
+    // uma leva futura com outro filtro passa o build e muda o produto em
+    // silêncio. Ver docs/stories/S008-coleta-4-portais.md.
+    for (const a of all) {
+      expect([2, 3], `${a.id} quartos`).toContain(a.bedrooms);
+      expect(a.rent, `${a.id} aluguel`).toBeLessThanOrEqual(3000);
     }
   });
 });

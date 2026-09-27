@@ -189,12 +189,25 @@ function coletarUrls(no) {
 // Zap: /aluguel/apartamentos/pr+curitiba/  ·  VivaReal: /aluguel/parana/curitiba/
 // --quartos=2,3: preenche ?quartos= na busca do Zap/VivaReal e filtra no
 // cliente a lista da API do Apolar (o filtro bedrooms dela é inconsistente:
-// pede 4,5,6 e devolve 2 e 3 quartos). A leva 4 mira 2-3 quartos.
+// pede 4,5,6 e devolve 2 e 3 quartos).
 const QTS_BUSCA = (process.argv.find((a) => a.startsWith("--quartos=")) || "").split("=")[1] || "";
 const QTS_SET = QTS_BUSCA ? new Set(QTS_BUSCA.split(",").map(Number).filter(Boolean)) : null;
-const SUFIXO_BUSCA = QTS_BUSCA ? `?quartos=${QTS_BUSCA}` : "";
-const prox = (u) => (QTS_BUSCA ? `${u}${SUFIXO_BUSCA}` : u);
+// --preco-max=3000: teto de aluguel. Vira ?precoMaximo= na busca e price_max na
+// API do Apolar, e é reaplicado no cliente — o portal não respeita o parâmetro
+// de forma confiável, então o corte final é nosso.
+const PRECO_MAX = Number(
+  (process.argv.find((a) => a.startsWith("--preco-max=")) || "").split("=")[1] || 0,
+);
+const paramBusca = (qts, preco) =>
+  [qts ? `quartos=${qts}` : "", preco ? `precoMaximo=${preco}` : ""].filter(Boolean).join("&");
+const SUFIXO_BUSCA = (() => {
+  const q = paramBusca(QTS_BUSCA, PRECO_MAX);
+  return q ? `?${q}` : "";
+})();
+const prox = (u) => (SUFIXO_BUSCA ? `${u}${SUFIXO_BUSCA}` : u);
 const sufixoQts = QTS_BUSCA ? `-${QTS_BUSCA.replace(/,/g, "")}q` : "";
+const sufixoPreco = PRECO_MAX ? `-ate${PRECO_MAX}` : "";
+const sufixoPorPortal = `${sufixoQts}${sufixoPreco}`;
 
 const BUSCAS = {
   zap: [
@@ -272,6 +285,10 @@ async function coletarZap(portal) {
       fora(portal, pid, `bairro fora da lista (${bairroSlug || (prod.name || "").slice(0, 40)})`);
       continue;
     }
+    if (PRECO_MAX && rent > PRECO_MAX) {
+      fora(portal, pid, `aluguel R$${rent} acima do teto de R$${PRECO_MAX}`);
+      continue;
+    }
     if (!rent || !area || !quartos) {
       fora(portal, pid, `incompleto (rent=${rent} area=${area} qtos=${quartos})`);
       continue;
@@ -322,7 +339,7 @@ async function coletarZap(portal) {
     );
     if (!condo) saida[saida.length - 1].condoUnknown = true;
   }
-  return { itens: saida, sufixo: sufixoQts };
+  return { itens: saida, sufixo: sufixoPorPortal };
 }
 
 // ---------------------------------------------------------------- OLX
@@ -420,7 +437,7 @@ const APOLAR_FIELDS = [
 ];
 
 async function coletarApolar() {
-  const sufixo = sufixoQts;
+  const sufixo = sufixoPorPortal;
   // 1. URLs reais de anúncio: a listagem paginada traz
   // /alugar/curitiba/<bairro>/alugar-residencial-apartamento-curitiba-<bairro>-<ref>?
   // (a API devolve só ?ref=, que abre a home — inútil como banco de links).
@@ -440,7 +457,8 @@ async function coletarApolar() {
   // 2. Dados ricos via API
   await abrir(listagem, 5000);
   const bruto = await page.evaluate(
-    async ([api, fields, qtos]) => {
+    async ([api, fields, qtos, teto]) => {
+      const milhar = new Intl.NumberFormat("pt-BR");
       const r = await fetch(api, {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=UTF-8" },
@@ -449,7 +467,8 @@ async function coletarApolar() {
           city: "Curitiba", country: "Brasil", district: [],
           property_type: ["Apartamento"], property_type_combo: [],
           bedrooms: qtos, garage: [], bathrooms: [],
-          price_max: "R$ 0,00", price_min: "R$ 0,00",
+          price_max: teto ? `R$ ${milhar.format(teto)},00` : "R$ 0,00",
+          price_min: "R$ 0,00",
           area_max: "0,00 m²", area_min: "0,00 m²",
           address: null, address_number: null, open_search: "",
           in_condominium: false, include_condominium_price: false,
@@ -461,7 +480,7 @@ async function coletarApolar() {
       });
       return await r.json();
     },
-    [APOLAR_API, APOLAR_FIELDS, QTS_BUSCA ? [...QTS_SET].map(String) : []],
+    [APOLAR_API, APOLAR_FIELDS, QTS_BUSCA ? [...QTS_SET].map(String) : [], PRECO_MAX],
   );
   const brutos = bruto?.data ?? [];
   // Filtro de quartos no cliente: o campo bedrooms da API não é confiável.
@@ -511,6 +530,10 @@ async function coletarApolar() {
 
     if (!bairro) {
       fora("apolar", ref, `bairro fora da lista (${x.bairro})`);
+      continue;
+    }
+    if (PRECO_MAX && rent > PRECO_MAX) {
+      fora("apolar", ref, `aluguel R$${rent} acima do teto de R$${PRECO_MAX}`);
       continue;
     }
     if (!rent || !area || !quartos) {

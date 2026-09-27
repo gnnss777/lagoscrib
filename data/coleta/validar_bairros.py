@@ -4,14 +4,13 @@ O valor quebrado entrou quando o zap-4q-l4.json foi reescrito por PowerShell
 (Set-Content le como cp1252). O scraper escreve utf-8 limpo; este script é a
 rede de segurança e roda como gate depois do generate.py.
 """
+import glob
 import json
 import re
 import sys
 
 BASE = "data/coleta"
-ARQUIVOS = ["lib/data.ts"] + [
-    f"{BASE}/{n}.json" for n in ("zap-23q-l4", "viva-23q-l4", "apolar-23q-l4", "zap-4q-l4")
-]
+ARQUIVOS = ["lib/data.ts"] + sorted(glob.glob(f"{BASE}/*l4.json"))
 
 spec = open("lib/neighborhoods.ts", encoding="utf-8").read()
 conhecidos = set()
@@ -36,8 +35,11 @@ for p in ARQUIVOS:
     if not p.endswith(".json"):
         continue
     bruto = json.load(open(p, encoding="utf-8"))
-    itens = bruto["imoveis"] if isinstance(bruto, dict) else bruto
-    for x in itens:
+    # Só entram listas de imóveis (chave imoveis). O log de descartados e a
+    # lista pura de uma rodada antiga não têm a chave e são ignorados.
+    if not isinstance(bruto, dict) or "imoveis" not in bruto:
+        continue
+    for x in bruto["imoveis"]:
         n = x.get("neighborhood", "")
         if n not in conhecidos:
             problemas.append(f"{p}: {x['id']} -> {n!r}")

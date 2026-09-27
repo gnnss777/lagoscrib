@@ -39,10 +39,14 @@ Padrões de dev local: usuário `guinness` / admin `admin`.
 
 ## Dados
 
-**52 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (leva S008) de
-3 portais: **Zap** (20), **VivaReal** (16) e **Apolar** (16). 33 de 2 quartos,
-15 de 3 e 4 de 4+. Telefone/e-mail não são coletados (portais mascaram): o contato
-é sempre pelo link do anúncio original.
+**51 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (leva S008) de
+3 portais: **Zap** (18), **VivaReal** (18) e **Apolar** (15). Escopo: **2–3 quartos,
+aluguel até R$ 3.000** — 37 de 2 quartos e 14 de 3, de R$ 1.400 a R$ 3.000 de
+aluguel (R$ 5.900 all-in com condomínio e IPTU), em 32 bairros. O critério está
+travado em teste, então uma leva futura não muda o produto em silêncio.
+
+Telefone/e-mail não são coletados (portais mascaram): o contato é sempre pelo link
+do anúncio original.
 
 O scraper é determinístico (sem LLM no loop) e versionado em
 `scripts/coleta/coleta.mjs`; o histórico do pipeline em `docs/stories/S008-coleta-4-portais.md`.
@@ -91,14 +95,15 @@ lib/
 ## Coleta de imóveis (leva)
 
 ```bash
-# 1. coletar (Edge real + perfil persistente; 8s por navegação, ~20 min)
-node scripts/coleta/coleta.mjs --quartos=2,3 --qtd-zap=16 --qtd-viva=16 --qtd-apolar=18
+# 1. coletar (Edge real + perfil persistente; 8s por navegação, ~25 min)
+node scripts/coleta/coleta.mjs --quartos=2,3 --preco-max=3000 \
+  --qtd-zap=18 --qtd-viva=18 --qtd-apolar=16
 
 # 2. normalizar, deduplicar e validar
-python data/coleta/merge.py zap-23q-l4 viva-23q-l4 apolar-23q-l4
+python data/coleta/merge.py zap-23q-ate3000-l4 viva-23q-ate3000-l4 apolar-23q-ate3000-l4
 python data/coleta/validar_bairros.py
 
-# 3. fotos (~15 min) e gate
+# 3. fotos (~15 min na primeira vez) e gate
 python data/coleta/download.py
 node scripts/audit-photos.mjs
 

@@ -107,7 +107,6 @@ def corrigir_arquivo(caminho):
         if os.path.getsize(caminho) <= MAX_BYTES:
             break
     return len(buf), os.path.getsize(caminho)
-    return os.path.getsize(caminho)
 
 
 def main():
@@ -130,19 +129,25 @@ def main():
         return
     items = json.load(open("data/coleta/merge-normalizado.json", encoding="utf-8"))
     manifest = {}
+    pulados = 0
     for x in items:
         iid = x["id"]
         got = []
         for i, url in enumerate(x["photoUrls"][:11]):
+            if i == 0:
+                path = f"{BASE}/{iid}.webp"
+            else:
+                os.makedirs(f"{BASE}/{iid}", exist_ok=True)
+                path = f"{BASE}/{iid}/{i:02d}.webp"
+            # Já existe e tem peso plausível: não refaz request. O
+            # `download.py --corrigir` normaliza px/bytes do que já está no disco.
+            if os.path.exists(path) and os.path.getsize(path) > 5000:
+                got.append("/" + path.replace("\\", "/"))
+                pulados += 1
+                continue
             for attempt in range(1, RETRIES + 1):
                 try:
-                    final = upscale(url)
-                    if i == 0:
-                        path = f"{BASE}/{iid}.webp"
-                    else:
-                        os.makedirs(f"{BASE}/{iid}", exist_ok=True)
-                        path = f"{BASE}/{iid}/{i:02d}.webp"
-                    raw = fetch(final)
+                    raw = fetch(upscale(url))
                     # Valida pelo Pillow, não por magic bytes: o Apolar serve JPEG
                     # e o Zap/VivaReal servem WebP, e o Pillow abre HTML/403 como
                     # erro do mesmo jeito (o check de RIFF pegava só o Zap).
@@ -159,7 +164,7 @@ def main():
         print(f"{iid}: {len(got)}/{min(11, len(x['photoUrls']))}")
     json.dump(manifest, open("data/coleta/download-manifest.json", "w"))
     ok = sum(1 for v in manifest.values() if v)
-    print(f"com-capa: {ok}/{len(manifest)}")
+    print(f"com-capa: {ok}/{len(manifest)} | reusados do disco: {pulados}")
 
 
 main()
