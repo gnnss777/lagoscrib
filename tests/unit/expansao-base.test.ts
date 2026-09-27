@@ -16,18 +16,13 @@ describe("expansao base", () => {
   });
 
   it("test_expansao_links_verbatim_por_fonte", () => {
+    // Portais ativos na leva 4. Apolar entra com a URL do anúncio
+    // (/alugar/apartamento/...), não mais com ?ref= da home.
     const domains = [
       "zapimoveis.com.br/imovel/",
       "vivareal.com.br/imovel/",
       "olx.com.br",
       "apolar.com.br/",
-      "imobiliariasillos.com.br/imovel/",
-      "mafiimoveis.com.br/imovel/",
-      "cadenaimoveis.com.br/imovel/",
-      "jbaimoveis.com.br/imovel/",
-      "casaaolado.imb.br/imovel/",
-      "hapenimoveis.com.br/imovel/",
-      "imobiliariaconfianza.com.br/imovel/",
     ];
     for (const a of all) {
       expect(domains.some((d) => a.link.includes(d))).toBe(true);
@@ -67,19 +62,17 @@ describe("expansao base", () => {
   });
 
   it("test_expansao_combos_cobertos", () => {
-    const bands = [1, 2, 3, 4];
-    for (const tab of ["alugar", "comprar"] as const) {
-      const pool =
-        tab === "comprar"
-          ? all.filter((a) => a.transaction === "venda")
-          : all.filter((a) => a.transaction !== "venda");
-      for (const b of bands) {
-        const n =
-          b === 4
-            ? pool.filter((a) => a.bedrooms >= 4).length
-            : pool.filter((a) => a.bedrooms === b).length;
-        expect(n).toBeGreaterThan(0);
-      }
+    // Leva 4 (27/09/2026): a coleta foi dirigida para 2-3 quartos
+    // (--quartos=2,3), com 4+ só para a faixa existir. A faixa de 1 quarto
+    // ficou vazia por decisão — o filtro mostra "1 quarto · 0".
+    // A base de venda também está vazia (só aluguel).
+    const pool = all.filter((a) => a.transaction !== "venda");
+    for (const b of [2, 3, 4]) {
+      const n =
+        b === 4
+          ? pool.filter((a) => a.bedrooms >= 4).length
+          : pool.filter((a) => a.bedrooms === b).length;
+      expect(n, `faixa ${b} quartos`).toBeGreaterThan(0);
     }
   });
 });

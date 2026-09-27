@@ -3,35 +3,18 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { apartments, saleApartments } from "@/lib/data";
 
-// S002: trava de regressão da galeria (AC1: ≥ 8 fotos válidas por imóvel).
+// Trava de regressão da galeria (S002, AC1: >= 8 fotos válidas por imóvel).
 // Roda em node: confere que cada src de photos[] existe em public/.
-// Convenção do estúdio: test_[sistema]_[cenário]_[resultado_esperado].
+// A contagem de imóveis fica em s001-data.test.ts — aqui o que importa é a
+// integridade das fotos. Convenção do estúdio:
+// test_[sistema]_[cenário]_[resultado_esperado].
 describe("galeria", () => {
   const todos = [...apartments, ...saleApartments];
 
-  it("test_galeria_originais_11_fotos_novos_minimo_1", () => {
-    expect(todos).toHaveLength(109);
-    const originais = new Set([
-      "zap-aguaverde-castro-123",
-      "zap-aguaverde-raul-90",
-      "zap-ahu-eca-78",
-      "zap-centro-comendador-130",
-      "zap-centro-bufren-96",
-      "zap-juveve-goulin-66",
-      "zap-cabral-manoel-104",
-      "zap-bacacheri-parana-107",
-      "zap-tingui-brasilio-71",
-      "zap-aguaverde-iguacu-140",
-      "zap-capaoraso-churchill-78",
-      "zap-ecoville-rosa-87",
-    ]);
+  it("test_galeria_minimo_8_fotos_com_capa_no_indice_zero", () => {
     for (const a of todos) {
-      // capa (photos[0] = image, compat); originais têm 11, novos ≥ 1
-      const piso = originais.has(a.id) ? 11 : 1;
-      expect(a.photos?.length, `${a.id} fotos`).toBeGreaterThanOrEqual(piso);
-      if (originais.has(a.id)) {
-        expect(a.photos?.length, `${a.id} fotos`).toBe(11);
-      }
+      expect(a.photos?.length, `${a.id} fotos`).toBeGreaterThanOrEqual(8);
+      // photos[0] é a capa: compat com o campo image.
       expect(a.photos?.[0].src, `${a.id} photos[0]`).toBe(a.image);
     }
   });

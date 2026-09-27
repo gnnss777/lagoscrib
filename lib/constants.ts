@@ -98,7 +98,11 @@ export const BATHROOM_OPTIONS = [1, 2, 3, 4] as const;
 export const PARKING_OPTIONS = [1, 2, 3] as const;
 
 // Limites dos inputs numéricos (placeholders/validação — filtro aceita null).
-export const RENT_PRICE_BOUNDS = { min: 0, max: 20000 } as const;
+// RENT_PRICE_BOUNDS.max subiu de 20k para 40k na leva 4: a base tem um
+// apartamento de 442 m² a R$ 35.000 (total all-in R$ 39.700) e o slider não
+// pode truncar o maior imóvel. Demais limites conferidos contra a base:
+// área máx 442 (≤1000), condomínio máx 3.000 (≤5000).
+export const RENT_PRICE_BOUNDS = { min: 0, max: 40000 } as const;
 export const SALE_PRICE_BOUNDS = { min: 0, max: 35000000 } as const;
 export const AREA_BOUNDS = { min: 0, max: 1000 } as const;
 export const CONDO_MAX_BOUNDS = { min: 0, max: 5000 } as const;
@@ -168,8 +172,11 @@ export const KANBAN_COLS_STORAGE_KEY = "apartamentos-app-kanban-cols";
 export const KANBAN_COLS_STORAGE_VERSION = 2;
 
 // Chave própria para ids de apartamentos removidos (estáticos ou new-*).
+// v2 (leva 4, 27/09/2026): bump descarta a lista v1 com os 109 ids do snapshot
+// 22/09/2026, já zerados de lib/data.ts. Sem isso, re-coletar um imóvel com o
+// mesmo id continuaria invisível para sempre.
 export const REMOVED_IDS_STORAGE_KEY = "apartamentos-app-removed";
-export const REMOVED_IDS_STORAGE_VERSION = 1;
+export const REMOVED_IDS_STORAGE_VERSION = 2;
 
 // Rótulos da UI do kanban (AC4: grep acha só aqui + importadores).
 export const KANBAN_ONLY_STALE_LABEL = "Só sem retorno";

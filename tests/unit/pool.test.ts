@@ -85,7 +85,7 @@ describe("pool único", () => {
   });
 
   it("test_pool_remove_ids_some_estaticos_e_user_added", () => {
-    const removedStaticId = apartments[0].id;
+    const removedStaticId = apartments[0]?.id;
     stubLocalStorage({
       [USER_ADDED_KEY]: JSON.stringify([
         { id: "user-visible", title: "Visível" },
@@ -106,7 +106,7 @@ describe("pool único", () => {
 
   it.each([
     "invalid{{{json",
-    JSON.stringify({ version: 99, ids: [apartments[0].id] }),
+    JSON.stringify({ version: 99, ids: [apartments[0]?.id] }),
     JSON.stringify({ version: REMOVED_IDS_STORAGE_VERSION, ids: "invalid" }),
   ])("test_pool_removed_ids_parse_defensivo", (stored) => {
     stubLocalStorage({ [REMOVED_IDS_STORAGE_KEY]: stored });

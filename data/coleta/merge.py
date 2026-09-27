@@ -1,20 +1,23 @@
-"""Merge-check da expansão: normaliza, valida e detecta colisões (sem escrever no app)."""
-import json, re, unicodedata
+"""Merge-check da leva: normaliza, valida e detecta colisões (sem escrever no app).
+
+Uso: python data/coleta/merge.py [fonte ...]
+     fontes sem argumento = as 5 listas do snapshot 22/09/2026 (retrocompat).
+     Exemplo: python data/coleta/merge.py zap-l4 viva-l4 olx-l4 apolar-l4
+"""
+import json, re, sys, unicodedata
 from collections import Counter
 
 BASE = "data/coleta"
-NEWLISTS = ["zap", "viva", "olx", "apolar", "imobiliarias"]
+DEFAULT_SOURCES = ["zap", "viva", "olx", "apolar", "imobiliarias"]
+SOURCES = [s.removesuffix(".json") for s in sys.argv[1:]] or DEFAULT_SOURCES
 
 # Correções de quartos (divergência Quartos×dormitórios sinalizada pelos coletores;
-# vale o descritivo/dormitórios).
-BEDROOM_FIX = {
-    "apolar-ahu-gabriela-mistral-78": 2,
-    "apolar-fanny-br-116-76": 2,
-    "apolar-merces-jacarezinho-115": 3,
-    "apolar-santa-quiteria-capiberibe-85": 3,
-}
+# vale o descritivo/dormitórios). Vazio na leva 4 — o coletor já valida.
+BEDROOM_FIX = {}
 # Sem nenhuma URL de foto: sem imagem para o app -> fora (registrado na evidência).
-DROP_NO_PHOTOS = {"olx-capao-raso-eponino-macuco-28"}
+DROP_NO_PHOTOS = set()
+
+PORTAL_ID_FIELDS = ("zapId", "vivaId", "olxId", "apolarId", "codigoAnunciante")
 
 
 def norm(s):
@@ -29,7 +32,7 @@ def key_of(address, area, bedrooms, transaction):
 
 def load_new():
     items = []
-    for name in NEWLISTS:
+    for name in SOURCES:
         d = json.load(open(f"{BASE}/{name}.json", encoding="utf-8"))
         for x in d["imoveis"]:
             x = dict(x)
@@ -38,9 +41,13 @@ def load_new():
     return items
 
 
+def read_data_ts():
+    return open("lib/data.ts", encoding="utf-8").read()
+
+
 def existing_keys():
     """Extrai (id, address, area, bedrooms, transaction) do lib/data.ts atual."""
-    src = open("lib/data.ts", encoding="utf-8").read()
+    src = read_data_ts()
     out = []
     for m in re.finditer(
         r'id:\s*"([^"]+)",.*?address:\s*"([^"]+)",.*?area:\s*([\d.]+),'
@@ -53,6 +60,29 @@ def existing_keys():
         trans = "venda" if 'transaction: "venda"' in block else "aluguel"
         out.append((m.group(1), m.group(2), float(m.group(3)), int(m.group(4)), trans))
     return out
+
+
+def existing_portal_ids():
+    """Ids de portal já em lib/data.ts.
+
+    Zap e VivaReal são a mesma plataforma (Zap Group, mesmo espaço de ids):
+    o mesmo id nos dois portais é o MESMO imóvel. Sem esta checagem, um
+    anúncio síndico entraria duas vezes na base.
+    """
+    src = read_data_ts()
+    out = set()
+    for field in PORTAL_ID_FIELDS:
+        for m in re.finditer(rf"\b{field}:\s*\"?(\w+)\"?", src):
+            out.add(m.group(1))
+    return out
+
+
+def portal_id_of(x):
+    for field in PORTAL_ID_FIELDS:
+        v = x.get(field)
+        if v not in (None, ""):
+            return str(v)
+    return None
 
 
 def normalize(x):
@@ -78,8 +108,13 @@ def normalize(x):
         x.pop("transaction", None)
         x.pop("salePrice", None)
         x["rent"] = int(x.get("rent", 0))
-        x["total"] = x["rent"] + int(x.get("condo", 0)) + int(x.get("iptu", 0))
-    x.pop("salePrice", None) if not is_venda else None
+        # ADR-001 §4: condomínio desconhecido é condo 0 + condoUnknown — nunca
+        # valor inventado. Normaliza para o total fechar com totalAllIn().
+        if x.get("condoUnknown"):
+            x["condo"] = 0
+        x["condo"] = int(x.get("condo", 0))
+        x["iptu"] = int(x.get("iptu", 0))
+        x["total"] = x["rent"] + x["condo"] + x["iptu"]
     if "salePrice" in x and x["salePrice"] == 0:
         del x["salePrice"]
     x["photoUrls"] = x["photoUrls"][:11]
@@ -88,6 +123,7 @@ def normalize(x):
 
 def main():
     raw = load_new()
+    print("fontes:", ", ".join(SOURCES))
     print("brutas:", len(raw))
     normed, problems = [], []
     for x in raw:
@@ -98,12 +134,12 @@ def main():
             # total consistente?
             if n.get("transaction") == "venda":
                 if n["total"] != n["salePrice"]:
-                    problems.append(("total-venda", x["id"]))
+                    problems.append(("total-venda", n["id"]))
             else:
                 if n["total"] != n["rent"] + n["condo"] + n["iptu"]:
-                    problems.append(("total-aluguel", x["id"]))
+                    problems.append(("total-aluguel", n["id"]))
             if (n.get("photosCount") or 99) < 8:
-                problems.append(("fotos<8", x["id"]))
+                problems.append(("fotos<8", n["id"]))
             normed.append(n)
     print("normalizadas:", len(normed), "| problemas:", problems)
 
@@ -111,8 +147,14 @@ def main():
     for id_, addr, area, bed, trans in existing_keys():
         seen[key_of(addr, area, bed, trans)] = f"EXISTENTE:{id_}"
     print("existentes:", len(seen))
+
+    portal_ids = existing_portal_ids()
     collisions = []
     for x in normed:
+        pid = portal_id_of(x)
+        if pid and pid in portal_ids:
+            collisions.append((x["id"], f"ID-JA-EXISTE:{pid}", x["address"]))
+            continue
         k = key_of(
             x["address"],
             x["area"],
@@ -123,21 +165,27 @@ def main():
             collisions.append((x["id"], seen[k], x["address"]))
         else:
             seen[k] = x["id"]
+            if pid:
+                portal_ids.add(pid)
     print("colisões:", len(collisions))
     for c in collisions:
         print("  ", c)
 
-    rent = [x for x in normed if x.get("transaction") != "venda"]
-    venda = [x for x in normed if x.get("transaction") == "venda"]
-    print("aluguel:", len(rent), "| venda:", len(venda))
-    print("combo:", Counter((x["bedrooms"], x.get("transaction", "aluguel")) for x in normed))
-    print("bairros novos:", len({x["neighborhood"] for x in normed}))
-    print("max rent total:", max(x["total"] for x in rent))
-    print("max venda:", max(x["total"] for x in venda))
-    print("max area:", max(x["area"] for x in normed))
-    print("max condo (aluguel):", max(x["condo"] for x in rent))
+    kept = [x for x in normed if x["id"] not in {c[0] for c in collisions}]
+    rent = [x for x in kept if x.get("transaction") != "venda"]
+    venda = [x for x in kept if x.get("transaction") == "venda"]
+    print("mantidos:", len(kept), "| aluguel:", len(rent), "| venda:", len(venda))
+    print("por fonte:", Counter(x["_fonte"] for x in kept))
+    print("combo:", Counter((x["bedrooms"], x.get("transaction", "aluguel")) for x in kept))
+    print("bairros novos:", len({x["neighborhood"] for x in kept}))
+    if rent:
+        print("max rent total:", max(x["total"] for x in rent))
+        print("max condo (aluguel):", max(x["condo"] for x in rent))
+    if venda:
+        print("max venda:", max(x["total"] for x in venda))
+    print("max area:", max(x["area"] for x in kept))
     json.dump(
-        normed,
+        kept,
         open(f"{BASE}/merge-normalizado.json", "w", encoding="utf-8"),
         ensure_ascii=False,
     )

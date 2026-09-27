@@ -1,11 +1,16 @@
 // Auditoria programática das galerias S002 (leva dores-consumidor).
 // Uso: node scripts/audit-photos.mjs
-// Checa por diretório public/imoveis/<id>/: magic RIFF/WEBP (pega HTML/403),
+// Checker por diretório public/imoveis/<id>/: magic RIFF/WEBP (pega HTML/403),
 // lado maior ≥ 800px e lado menor ≥ 500px (orientation-aware — retrato usa a
 // altura como eixo; parse do header VP8/VP8L/VP8X, sem dependências),
 // tamanho ≤ 350KB/arquivo, peso total ≤ 3,5MB, mínimo 8 fotos.
 // Capas avulsas (public/imoveis/*.webp): magic + tamanho (sem regra de largura).
 // Saída != 0 se qualquer checagem falhar.
+//
+// Auditoria só do que o app consome: os ids vêm de lib/data.ts. Fotos de imóveis
+// que saíram da base são órfãs e ficam de fora do gate (não quebram o build, e
+// continuam no disco caso a base volte). Use --tudo para auditar o diretório
+// inteiro, inclusive órfãs.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
@@ -52,9 +57,17 @@ const fail = (msg) => {
   console.log(`FAIL: ${msg}`);
 };
 
+// Ids que o app realmente consome (lib/data.ts). Sem --tudo, órfãs ficam de fora.
+const auditarTudo = process.argv.includes("--tudo");
+const idsDaBase = new Set(
+  [...readFileSync("lib/data.ts", "utf8").matchAll(/id:\s*"([^"]+)"/g)].map((m) => m[1]),
+);
+const naBase = (nome) => auditarTudo || idsDaBase.has(nome);
+
 const entries = readdirSync(ROOT, { withFileTypes: true });
 // Capas avulsas
 for (const e of entries.filter((x) => x.isFile() && x.name.endsWith(".webp"))) {
+  if (!naBase(e.name.replace(/\.webp$/, ""))) continue;
   const buf = readFileSync(join(ROOT, e.name));
   const dims = webpDims(buf);
   if (!dims) fail(`${e.name}: magic inválido (HTML/403?)`);
@@ -63,6 +76,7 @@ for (const e of entries.filter((x) => x.isFile() && x.name.endsWith(".webp"))) {
 }
 // Galerias
 for (const e of entries.filter((x) => x.isDirectory())) {
+  if (!naBase(e.name)) continue;
   const dir = join(ROOT, e.name);
   const files = readdirSync(dir).filter((f) => f.endsWith(".webp")).sort();
   let dirBytes = 0;
@@ -92,5 +106,11 @@ for (const e of entries.filter((x) => x.isDirectory())) {
   );
 }
 
+const orfas = entries.filter(
+  (x) => !naBase(x.isFile() ? x.name.replace(/\.webp$/, "") : x.name),
+).length;
+console.log(
+  `\nbase: ${idsDaBase.size} imoveis | orfans fora da auditoria: ${orfas}${auditarTudo ? " (--tudo: auditando tudo)" : ""}`,
+);
 console.log(errors === 0 ? "--- auditoria PASS (0 erros) ---" : `--- auditoria FAIL (${errors} erros) ---`);
 process.exitCode = errors === 0 ? 0 : 1;

@@ -39,7 +39,17 @@ Padrões de dev local: usuário `guinness` / admin `admin`.
 
 ## Dados
 
-8 apartamentos simulados (3 OLX + 2 VivaReal + 3 extras) com dados de Mercês, São Francisco, Centro, Vila Izabel, Portão, Água Verde, Batel e Cabral.
+**52 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (leva S008) de
+3 portais: **Zap** (20), **VivaReal** (16) e **Apolar** (16). 33 de 2 quartos,
+15 de 3 e 4 de 4+. Telefone/e-mail não são coletados (portais mascaram): o contato
+é sempre pelo link do anúncio original.
+
+O scraper é determinístico (sem LLM no loop) e versionado em
+`scripts/coleta/coleta.mjs`; o histórico do pipeline em `docs/stories/S008-coleta-4-portais.md`.
+O OLX ficou fora: a lista orgânica de anúncios não renderiza (ver a story).
+
+Snapshot anterior (22/09/2026, 109 imóveis em 5 fontes) preservado em
+`data/apartamentos.json` + `data/coleta/*.json`; fotos em `public/imoveis/`.
 
 ## Critérios de Aceitação
 
@@ -74,6 +84,28 @@ lib/
 | `npm run dev` | Servidor de desenvolvimento (porta 3000) |
 | `npm run build` | Build de produção |
 | `npm start` | Servidor de produção |
+| `npm run test` | Testes unitários (vitest) |
+| `npm run typecheck` | `tsc --noEmit` |
+| `node scripts/audit-photos.mjs` | Gate das galerias (≥8 fotos, WEBP, ≤350KB) |
+
+## Coleta de imóveis (leva)
+
+```bash
+# 1. coletar (Edge real + perfil persistente; 8s por navegação, ~20 min)
+node scripts/coleta/coleta.mjs --quartos=2,3 --qtd-zap=16 --qtd-viva=16 --qtd-apolar=18
+
+# 2. normalizar, deduplicar e validar
+python data/coleta/merge.py zap-23q-l4 viva-23q-l4 apolar-23q-l4
+python data/coleta/validar_bairros.py
+
+# 3. fotos (~15 min) e gate
+python data/coleta/download.py
+node scripts/audit-photos.mjs
+
+# 4. injetar em lib/data.ts (idempotente) e manifestar
+python data/coleta/generate.py
+python data/coleta/manifesto.py
+```
 
 ## Paleta de Cores (tema "Lightbox Analógico" — DESIGN.md v2.0)
 

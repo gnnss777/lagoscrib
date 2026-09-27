@@ -2,46 +2,39 @@ import { describe, expect, it } from "vitest";
 import { apartments, saleApartments } from "@/lib/data";
 import { totalAllIn, pricePerM2 } from "@/lib/pricing";
 
-// Base expandida 22/09/2026 (5 fontes): 57 aluguel + 52 venda.
+// Leva 4 (27/09/2026): base zerada e repovoada só com aluguel.
+// As invariantes valem para a base inteira — sem lista de ids fixos, que
+// quebrava a cada leva. A contagem fica travada em smoke.test.ts.
 // Convenção do estúdio: test_[sistema]_[cenário]_[resultado_esperado].
-describe("dados venda", () => {
+describe("dados", () => {
   it("test_dados_aluguel_sem_entradas_venda", () => {
     // assert: nenhuma entrada de venda vaza para o dashboard de aluguel
-    expect(apartments).toHaveLength(57);
     expect(apartments.every((a) => a.transaction !== "venda")).toBe(true);
   });
 
-  it("test_dados_venda_52imoveis_com_campos_validados", () => {
-    expect(saleApartments).toHaveLength(52);
-    const originais = [
-      "zap-bacacheri-parana-107",
-      "zap-tingui-brasilio-71",
-      "zap-aguaverde-iguacu-140",
-      "zap-capaoraso-churchill-78",
-      "zap-ecoville-rosa-87",
-    ];
-    for (const a of saleApartments) {
-      expect(a.transaction).toBe("venda");
-      expect(a.verifiedAt).toBe("2026-09-22");
-      expect(a.salePrice).toBeGreaterThan(0);
-      expect(a.total).toBe(a.salePrice);
-      expect(a.link).toMatch(/^https:\/\//);
-      expect(a.image).toMatch(/^\/imoveis\/.*\.webp$/);
-      expect(a.photos?.length).toBeGreaterThanOrEqual(1);
-      expect(a.phone).toBe("");
-      expect(a.email).toBe("");
-    }
-    // Regressão: os 5 originais continuam presentes.
-    for (const id of originais) {
-      expect(saleApartments.some((a) => a.id === id)).toBe(true);
+  it("test_dados_venda_vazio_na_leva_de_aluguel", () => {
+    expect(saleApartments).toHaveLength(0);
+  });
+
+  it("test_dados_aluguel_campos_validados", () => {
+    for (const a of apartments) {
+      expect(a.id, "id").toBeTruthy();
+      expect(a.verifiedAt, a.id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(a.link, a.id).toMatch(/^https:\/\//);
+      expect(a.image, a.id).toMatch(/^\/imoveis\/.*\.webp$/);
+      expect(a.photos?.length, `${a.id} fotos`).toBeGreaterThanOrEqual(8);
+      expect(a.phone, a.id).toBe("");
+      expect(a.email, a.id).toBe("");
     }
   });
 
-  it("test_dados_venda_totais_consistentes_com_pricing", () => {
-    // assert: total armazenado == totalAllIn (venda) e preço/m² computável
-    for (const a of saleApartments) {
-      expect(totalAllIn(a)).toBe(a.total);
-      expect(pricePerM2(a.total, a.area)).toBeGreaterThan(0);
+  it("test_dados_aluguel_totais_consistentes_com_pricing", () => {
+    // assert: total armazenado == totalAllIn e preço/m² computável.
+    // Cobre ADR-001 §4: condomínio desconhecido é condo 0 + condoUnknown, então
+    // o total continua fechando sem valor inventado.
+    for (const a of apartments) {
+      expect(totalAllIn(a), a.id).toBe(a.total);
+      expect(pricePerM2(a.total, a.area), a.id).toBeGreaterThan(0);
     }
   });
 });
