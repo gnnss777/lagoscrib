@@ -5,9 +5,11 @@ import {
 } from "@/lib/constants";
 import { USER_ADDED_KEY } from "@/lib/pool";
 
-// Kanban de prospecção em TELA CHEIA (leva kanban-tela-inteira-ui): board
-// full-viewport, mover por teclado, prospectar da busca, painel lateral de
-// configuração e filtro sem-retorno. Estado semeado via localStorage.
+// Quadro de prospecção como MODO DE VISUALIZAÇÃO (leva unificacao-busca-quadro):
+// o board é o corpo da própria tela, trocado pelo seletor "Busca | Quadro" do
+// header — não abre modal nem tela cheia separada. Mover por teclado, prospectar
+// da busca, painel de configuração e filtro sem-retorno. Estado semeado via
+// localStorage.
 
 async function gotoAuthed(page: Page, state: object = {}) {
   await page.addInitScript((s) => {
@@ -27,11 +29,51 @@ async function gotoAuthed(page: Page, state: object = {}) {
 }
 
 async function openKanban(page: Page) {
-  await page.getByRole("button", { name: "Abrir prospecção (kanban)" }).click();
+  await page.locator('[data-view-mode="quadro"]').click();
   const view = page.getByTestId("kanban-view");
   await expect(view).toBeVisible();
   return view;
 }
+
+async function backToSearch(page: Page) {
+  await page.locator('[data-view-mode="busca"]').click();
+}
+
+test("test_modo_visualizacao_anuncia_e_nao_perde_o_estado_da_busca", async ({
+  page,
+}) => {
+  await gotoAuthed(page);
+
+  // 1. Modo inicial é a busca, e o modo atual é anunciado.
+  await expect(page.getByTestId("view-busca")).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "Você está na busca" })).toHaveCount(1);
+  await expect(page.locator('[data-view-mode="busca"]')).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+
+  // 2. Filtro aplicado na busca sobrevive à ida e volta pelo quadro.
+  const busca = page.locator("#dash-search");
+  await busca.fill("Centro");
+  await expect(page.locator(".card-apartment").first()).toBeVisible();
+
+  // 3. Troca para o quadro: mesmo header, sem overlay por cima.
+  await openKanban(page);
+  await expect(page.getByTestId("view-busca")).toHaveCount(0);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByRole("status").filter({ hasText: "Você está no quadro" })).toHaveCount(1);
+
+  // 4. Volta para a busca com o filtro intacto.
+  await backToSearch(page);
+  await expect(page.getByTestId("view-quadro")).toHaveCount(0);
+  await expect(busca).toHaveValue("Centro");
+
+  // 5. O modo choice fica salvo para o próximo carregamento.
+  await page.locator('[data-view-mode="quadro"]').click();
+  await expect(page.getByTestId("kanban-view")).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId("kanban-view")).toBeVisible();
+});
 
 test("test_delete_universal_some_dashboard_e_kanban", async ({ page }) => {
   await gotoAuthed(page);
@@ -44,10 +86,10 @@ test("test_delete_universal_some_dashboard_e_kanban", async ({ page }) => {
     (await initialSummary.textContent())?.match(/\d+/)?.[0],
   );
   expect(initialPoolSize).toBeGreaterThan(0);
-  await initialView
-    .getByRole("button", { name: "Voltar para a busca (Esc)" })
-    .click();
+  await backToSearch(page);
   await expect(initialView).toHaveCount(0);
+  // O modo volta para a busca sem perder o estado: a grade continua lá.
+  await expect(page.locator(".card-apartment").first()).toBeVisible();
 
   const cards = page.locator(".card-apartment");
   const cardCount = await cards.count();
@@ -99,7 +141,7 @@ test("test_delete_new_remove_fisico_sem_removed_ids", async ({ page }) => {
     phone: "41999999999",
     email: "",
     link: "https://example.com/imovel",
-    image: "/imoveis/zap-ahu-eca-78.webp",
+    image: "/imoveis/zap-portao-124-5525.webp",
     features: [],
     description: "Imóvel removível do usuário.",
   };
@@ -145,7 +187,8 @@ test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
   const dialog = page.getByRole("dialog", { name: /Detalhes de/ });
   await expect(dialog).toBeVisible();
 
-  // 2ª ação: Prospectar na seção Status → fecha o modal e abre a view tela cheia.
+  // 2ª ação: Prospectar na seção Status → fecha o modal e troca o modo da
+  // tela para o quadro (não abre nada por cima).
   await dialog.getByRole("button", { name: /Prospectar/ }).click();
   const view = page.getByTestId("kanban-view");
   await expect(view).toBeVisible();
@@ -153,7 +196,7 @@ test("test_kanban_prospectar_da_busca_2_acoes", async ({ page }) => {
     view.getByRole("region", { name: /Não visitado/ }),
   ).toBeVisible();
 
-  // Tela cheia de verdade: board ocupa 100vw (sem modal centralizado).
+  // Quadro ocupa a largura toda (não é diálogo centralizado).
   const width = await view.evaluate((el) => el.getBoundingClientRect().width);
   expect(width).toBeGreaterThanOrEqual(900);
 
@@ -239,10 +282,10 @@ test("test_kanban_customizacao_painel_renomear_reload_reset", async ({
     view.getByRole("region", { name: /Quero visitar/ }),
   ).toBeVisible();
 
-  // Reload: customização sobrevive (AC-9).
+  // Reload: o modo choice (quadro) E a customização sobrevivem (AC-9).
   await page.reload();
-  await expect(page.locator(".card-apartment").first()).toBeVisible();
-  const view2 = await openKanban(page);
+  await expect(page.getByTestId("kanban-view")).toBeVisible();
+  const view2 = page.getByTestId("kanban-view");
   await expect(
     view2.getByRole("region", { name: /Quero visitar/ }),
   ).toBeVisible();
@@ -265,7 +308,7 @@ test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
   // 1 follow-up pendente há 8 dias (acima do limiar de 7).
   await gotoAuthed(page, {
     followUps: {
-      "zap-aguaverde-castro-123": {
+      "zap-portao-124-5525": {
         attempts: 2,
         status: "aguardando",
         lastContactAt: "2026-09-15T12:00:00.000Z",
@@ -332,7 +375,7 @@ test("test_kanban_scroll_interno_todos_cards", async ({ page }) => {
   const view = await openKanban(page);
 
   const col = view.getByRole("region", { name: /Não visitado/ });
-  await expect(col.locator("article")).toHaveCount(109);
+  await expect(col.locator("article")).toHaveCount(51);
   await expect(
     col.getByRole("button", { name: /imóveis ocultos em/ }),
   ).toHaveCount(0);
@@ -366,7 +409,7 @@ test("test_kanban_dedupe_filtro_coluna_e_whatsapp", async ({ page }) => {
     phone: "41999999999",
     email: "",
     link: "https://example.com/imovel",
-    image: "/imoveis/zap-ahu-eca-78.webp",
+    image: "/imoveis/zap-portao-124-5525.webp",
     features: [],
     description: "Imóvel usado para validar o Kanban.",
   };

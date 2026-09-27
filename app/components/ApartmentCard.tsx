@@ -45,6 +45,7 @@ export default function ApartmentCard({
         delay: cardStaggerDelay(index, DEFAULT_STAGGER_STEP, DEFAULT_STAGGER_CAP),
         ease: [0.4, 0, 0.2, 1],
       }}
+      data-id={apartment.id}
       className="card-apartment cursor-pointer group"
       onClick={() => onSelect(apartment)}
     >
@@ -110,7 +111,7 @@ export default function ApartmentCard({
         </div>
         <div className="absolute bottom-3 right-3">
           <div className="bg-night/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-taxi/40">
-            <span className="text-taxi font-mono font-bold text-sm">
+            <span data-testid="card-total" className="text-taxi font-mono font-bold text-sm">
               {formatBRL(apartment.total)}
             </span>
             {priceSuffix(apartment) && (
@@ -183,7 +184,9 @@ export default function ApartmentCard({
           </div>
           <div className="flex items-center gap-1.5">
             <Ruler size={15} />
-            <span className="text-sm">{apartment.area}m²</span>
+            <span data-testid="card-area" className="text-sm">
+              {apartment.area}m²
+            </span>
           </div>
         </div>
 

@@ -127,7 +127,14 @@ function KanbanCardDetail({
   const [compareChecked, setCompareChecked] = useState(false);
 
   return (
-    <div data-kanban-card-detail className="p-1.5">
+    // stopPropagation: o <article> externo alterna o detalhe ao clicar. Sem
+    // isto, clicar no X (ou no card dentro do detalhe) fecha e reabre na
+    // mesma hora — o card fica preso aberto.
+    <div
+      data-kanban-card-detail
+      className="p-1.5"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-line px-1 pb-1.5">
         <span className="truncate text-xs font-semibold text-ink">
           {apartment.title}

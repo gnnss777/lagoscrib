@@ -69,31 +69,40 @@ test("test_polimento_stagger_converge_sem_fila", async ({ page }) => {
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
 
-test("test_polimento_kanban_foco_esc_restaura_gatilho", async ({ page }) => {
+test("test_modo_quadro_nao_rouba_foco_e_anuncia_mudanca", async ({
+  page,
+}) => {
   const errors: string[] = [];
   await gotoAuthed(page);
 
-  // F1.4: abrir leva o foco p/ dentro da view (não é dialog).
-  const pill = page.getByRole("button", {
-    name: "Abrir prospecção (kanban)",
-  });
-  await pill.click();
+  // O quadro é um modo da tela, não um overlay: trocar não move o foco para
+  // dentro do board (roubaria foco de quem está só procurando) e não abre
+  // nada por cima. O foco fica no seletor que foi clicado.
+  const busca = page.locator('[data-view-mode="busca"]');
+  const quadro = page.locator('[data-view-mode="quadro"]');
+  await busca.focus();
+  await quadro.click();
   const view = page.getByTestId("kanban-view");
   await expect(view).toBeVisible();
   await expect
-    .poll(
-      async () =>
-        await view.evaluate((el) =>
-          el.contains(document.activeElement) ? "inside" : "outside",
-        ),
+    .poll(async () =>
+      await quadro.evaluate((el) => (el === document.activeElement ? "focused" : "blurred")),
     )
-    .toBe("inside");
+    .toBe("focused");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
-  // Esc fecha e devolve o foco ao gatilho (pill Prospecção).
-  await page.keyboard.press("Escape");
+  // A mudança de modo é anunciada (quem navega por leitor de tela).
+  await expect(
+    page.getByRole("status").filter({ hasText: "Você está no quadro" }),
+  ).toHaveCount(1);
+
+  // Voltar devolve o foco ao seletor da busca, com o board desmontado.
+  await busca.click();
   await expect(view).toHaveCount(0);
   await expect
-    .poll(async () => await pill.evaluate((el) => el === document.activeElement ? "focused" : "blurred"))
+    .poll(async () =>
+      await busca.evaluate((el) => (el === document.activeElement ? "focused" : "blurred")),
+    )
     .toBe("focused");
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);

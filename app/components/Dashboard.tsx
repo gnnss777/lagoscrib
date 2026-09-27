@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import {
   SignOut,
@@ -8,9 +8,21 @@ import {
   FunnelSimple,
   Buildings,
   MapPin,
+  SquaresFour,
+  Kanban,
 } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
-import { COMPARE_MAX, COMPARE_MIN, KANBAN_TAB_LABEL } from "@/lib/constants";
+import {
+  COMPARE_MAX,
+  COMPARE_MIN,
+  VIEW_BUSCA_LABEL,
+  VIEW_MODE_ANNOUNCE,
+  VIEW_MODE_GROUP_LABEL,
+  VIEW_MODE_STORAGE_KEY,
+  VIEW_MODE_STORAGE_VERSION,
+  VIEW_QUADRO_LABEL,
+  type ViewMode,
+} from "@/lib/constants";
 import {
   FILTER_DEBOUNCE_MS,
   FILTERS_STORAGE_KEY,
@@ -40,7 +52,7 @@ import AddApartmentForm from "./AddApartmentForm";
 import DetailModal from "./DetailModal";
 import CompareModal from "./CompareModal";
 import FilterPanel from "./FilterPanel";
-import ProfileModal from "./ProfileModal";
+import KanbanSection from "./KanbanSection";
 
 const STATUS_FILTERS: { value: StatusType | "todos"; label: string }[] = [
   { value: "todos", label: "Todos" },
@@ -79,8 +91,43 @@ export default function Dashboard() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareBlocked, setCompareBlocked] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
-  // Perfil/Prospecção (kanban): "Olá, {username}" vira botão (WS-A §3.1).
-  const [profileOpen, setProfileOpen] = useState(false);
+  // Modo de visualização (leva unificacao-busca-quadro): busca e quadro são o
+  // mesmo pool. O modo é estado local persistido — nada de abrir overlay.
+  const [view, setView] = useState<ViewMode>("busca");
+  const [viewHydrated, setViewHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { version?: unknown; mode?: unknown };
+        if (parsed?.version === VIEW_MODE_STORAGE_VERSION && (parsed.mode === "busca" || parsed.mode === "quadro")) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratação pós-mount, padrão AppContext
+          setView(parsed.mode);
+        }
+      }
+    } catch {
+      // ignore
+    }
+    setViewHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!viewHydrated) return;
+    try {
+      localStorage.setItem(
+        VIEW_MODE_STORAGE_KEY,
+        JSON.stringify({ version: VIEW_MODE_STORAGE_VERSION, mode: view }),
+      );
+    } catch {
+      // ignore
+    }
+  }, [view, viewHydrated]);
+
+  // Sem atalho de teclado para trocar de modo: o Esc já é do board (fecha
+  // detalhe inline, menu e dialog "+N restantes"). O caminho do modo é o
+  // seletor do header, e é o único.
+  const setViewMode = (mode: ViewMode) => setView(mode);
 
   const toggleCompare = (apartment: Apartment) => {
     const result = toggleCompareSelection(compareIds, apartment.id);
@@ -95,11 +142,11 @@ export default function Dashboard() {
   };
 
   // Prospectar da busca em ≤2 ações (AC-5): joga p/ Não visitado (topo) e
-  // abre o Perfil na aba Prospecção. Reversível (voltar = mover de volta).
+  // vai para o quadro. Reversível (voltar = mover de volta).
   const handleProspect = (apartment: Apartment) => {
     moveCardTo(apartment.id, "novo", 0);
     setSelectedApartment(null);
-    setProfileOpen(true);
+    setViewMode("quadro");
   };
 
   const allApartments = getAllApartments();
@@ -199,28 +246,56 @@ export default function Dashboard() {
                 Curitiba Apartamentos
               </h1>
               <p className="text-xs text-muted">
-                {tabApartments.length} apartamentos encontrados
+                {view === "busca"
+                  ? `${tabApartments.length} apartamentos encontrados`
+                  : `${kanbanApartments.length} imóveis no funil`}
               </p>
             </div>
           </div>
 
+          {/* Modo atual anunciado: quem navega por leitor de tela (ou pelo
+              print) sabe em que forma de visualização está. */}
+          <p data-testid="view-mode-status" className="sr-only" role="status" aria-live="polite">
+            {VIEW_MODE_ANNOUNCE[view]}
+          </p>
+
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Kanban tela cheia (leva kanban-tela-inteira-ui): pill visível
-                também no mobile — o "Olá" some em telas pequenas. */}
-            <button
-              onClick={() => setProfileOpen(true)}
-              aria-label="Abrir prospecção (kanban)"
-              className="px-4 py-2 min-h-11 rounded-full text-sm font-semibold bg-taxi text-ink hover:bg-taxi-strong transition-colors shadow-sm"
+            {/* Modo de visualização: mesmo pool, duas formas de ver. O
+                botão "Olá" virou o rótulo de quem está logado (não abre mais
+                nada) — antes ele abria o modal do kanban. */}
+            <div
+              role="group"
+              aria-label={VIEW_MODE_GROUP_LABEL}
+              className="flex items-center gap-1 p-1 rounded-full border border-line bg-card"
             >
-              {KANBAN_TAB_LABEL}
-            </button>
-            <button
-              onClick={() => setProfileOpen(true)}
-              aria-haspopup="dialog"
-              className="text-sm text-ink-soft hidden sm:block hover:text-ink transition-colors rounded-lg px-2 py-2 min-h-11"
-            >
+              {(
+                [
+                  { mode: "busca" as const, label: VIEW_BUSCA_LABEL, Icon: SquaresFour },
+                  { mode: "quadro" as const, label: VIEW_QUADRO_LABEL, Icon: Kanban },
+                ] satisfies { mode: ViewMode; label: string; Icon: typeof SquaresFour }[]
+              ).map(({ mode, label, Icon }) => {
+                const ativo = view === mode;
+                return (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    aria-pressed={ativo}
+                    data-view-mode={mode}
+                    className={`inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors ${
+                      ativo
+                        ? "bg-taxi text-ink shadow-sm"
+                        : "text-ink-soft hover:text-ink hover:bg-sand"
+                    }`}
+                  >
+                    <Icon size={16} weight={ativo ? "bold" : "regular"} />
+                    <span className="hidden xs:inline sm:inline">{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <span className="text-sm text-ink-soft hidden lg:inline">
               Olá, <span className="text-amberink font-medium">{username}</span>
-            </button>
+            </span>
             <button
               onClick={logout}
               className="flex items-center gap-2 px-3 py-2 text-ink-soft hover:text-ink hover:bg-sand rounded-full transition-colors text-sm"
@@ -232,7 +307,26 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      {/* Uma tela, dois modos. Busca e quadro compartilham o mesmo pool e o
+          mesmo header; só o corpo abaixo troca. O estado do outro modo fica
+          intacto porque nada é desmontado que guarde estado de filtro. */}
+      {view === "quadro" ? (
+        <main
+          key="quadro"
+          className="px-4 sm:px-6 py-6"
+          data-testid="view-quadro"
+        >
+          <KanbanSection
+            apartments={kanbanApartments}
+            onSelect={setSelectedApartment}
+          />
+        </main>
+      ) : (
+        <main
+          key="busca"
+          data-testid="view-busca"
+          className="max-w-7xl mx-auto px-6 py-8"
+        >
         {/* Filters (S009: labels visíveis AAA + sort; lógica em lib/filters) */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -489,7 +583,8 @@ export default function Dashboard() {
             )}
           </motion.div>
         )}
-      </main>
+        </main>
+      )}
 
       {/* CompareBar sticky (S005): contador 2–4 + bloqueio visível */}
       {compareIds.length > 0 && (
@@ -545,20 +640,6 @@ export default function Dashboard() {
           apartment={selectedApartment}
           onClose={() => setSelectedApartment(null)}
           onProspect={handleProspect}
-        />
-      )}
-
-      {/* Perfil/Prospecção (kanban): superfície única do funil */}
-      {profileOpen && (
-        <ProfileModal
-          open={profileOpen}
-          onClose={() => setProfileOpen(false)}
-          username={username}
-          apartments={kanbanApartments}
-          onSelect={(a) => {
-            setProfileOpen(false);
-            setSelectedApartment(a);
-          }}
         />
       )}
 

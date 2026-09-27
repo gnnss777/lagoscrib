@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { RENT_PRICE_BOUNDS, PRICE_SLIDER_RENT_STEPS } from "@/lib/constants";
 
 // S009 (AC-FILT-01..10): combinação quartos+preço+facilidade, teclado/Esc/foco,
 // persistência no reload, sort, empty state com limpar, zero console errors.
@@ -20,9 +21,13 @@ async function setRange(page: Page, name: string, pos: number) {
   }, pos);
 }
 
-// Aluguel linear 0–20k em 400 passos (R$50/passo): pos = preço / 50.
-const RENT_POS_3800 = 76;
-const RENT_POS_1000 = 20;
+// Aluguel é slider linear de 0 a RENT_PRICE_BOUNDS.max em
+// PRICE_SLIDER_RENT_STEPS passos. A posição deriva das constantes: fixar
+// números aqui quebrava sozinho quando o teto do filtro mudou (20k → 40k).
+const rentPos = (preco: number) =>
+  Math.round((preco / RENT_PRICE_BOUNDS.max) * PRICE_SLIDER_RENT_STEPS);
+const RENT_POS_3800 = rentPos(3800);
+const RENT_POS_1000 = rentPos(1000);
 
 function resetState(page: Page) {
   const clear = page.evaluate(() => {
@@ -42,7 +47,7 @@ async function login(page: Page) {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(57);
+  await expect(page.locator(".card-apartment")).toHaveCount(51);
 }
 
 test("test_filtros_combinacao_teclado_persistencia_sort_empty", async ({
@@ -83,7 +88,7 @@ test("test_filtros_combinacao_teclado_persistencia_sort_empty", async ({
   // 3+ quartos + máx R$ 3.800 + Elevador → contagem varia com dataset (≥1).
   await page.locator("#f-quartos").selectOption("3");
   await setRange(page, "Preço máximo", RENT_POS_3800);
-  await expect(page.locator(".card-apartment")).toHaveCount(3);
+  await expect(page.locator(".card-apartment")).toHaveCount(2);
   const main = ((await page.locator("main").textContent()) ?? "").replace(
     /\s/g,
     " "
@@ -103,7 +108,7 @@ expect(gridText).not.toContain("R$ 4.0");
     )
     .toContain("3800");
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(3);
+  await expect(page.locator(".card-apartment")).toHaveCount(2);
   // Painel abre fechado (só os filtros persistem) — reabre p/ conferir.
   await page.getByTestId("filter-toggle").click();
   await expect(
@@ -112,7 +117,7 @@ expect(gridText).not.toContain("R$ 4.0");
 
   // Limpar volta aos 7 (painel já está aberto da conferência acima).
   await page.getByRole("button", { name: "Limpar filtros" }).first().click();
-  await expect(page.locator(".card-apartment")).toHaveCount(57);
+  await expect(page.locator(".card-apartment")).toHaveCount(51);
 
   // AC-FILT-04: sort menor preço → Castro primeiro; maior área → 130m².
   await page.locator("#dash-sort").selectOption("menor-preco");
@@ -128,7 +133,7 @@ expect(gridText).not.toContain("R$ 4.0");
   await expect(page.locator(".card-apartment")).toHaveCount(0);
   await expect(page.getByText(/Nenhum imóvel com os .* filtros/)).toBeVisible();
   await page.getByRole("button", { name: "Limpar filtros" }).last().click();
-  await expect(page.locator(".card-apartment")).toHaveCount(57);
+  await expect(page.locator(".card-apartment")).toHaveCount(51);
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
@@ -155,7 +160,7 @@ test("test_filtros_bairro_novo_aparece_no_dropdown", async ({ page }) => {
     .fill("https://exemplo.com/e2e-filtros");
   await page.getByRole("button", { name: "Importar Novo Imóvel" }).click();
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(58);
+  await expect(page.locator(".card-apartment")).toHaveCount(52);
   await expect(page.locator("#dash-bairro")).toContainText("BairroE2EFiltros");
   await page.locator("#dash-bairro").selectOption("BairroE2EFiltros");
   await expect(page.locator(".card-apartment")).toHaveCount(1);

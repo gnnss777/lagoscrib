@@ -24,17 +24,24 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(57);
+  await expect(page.locator(".card-apartment")).toHaveCount(51);
 
-  // Primeiro imóvel: Água Verde Castro 123 (condomínio a confirmar, total 2350).
-  await page.locator(".card-apartment").first().locator("h3").click();
+  // O total vem do card, não de literal: a base muda a cada leva e um valor
+  // fixo aqui quebrava o teste sem aviso.
+  const card = page.locator(".card-apartment").first();
+  const total = (await card.getByTestId("card-total").textContent())?.trim() ?? "";
+  expect(total).toMatch(/^R\$/);
+  await card.locator("h3").click();
 
   // AllInPanel: total + faixas de entrada/mudança com o rótulo de estimativa.
   const allin = page.getByTestId("allin-panel");
   await expect(allin).toBeVisible();
-  await expect(allin).toContainText("R$ 2.350");
+  await expect(allin).toContainText(total);
+  // Entrada é um múltiplo do total (DEPOSIT_MONTHS), então o texto exato muda
+  // com a base. O que não muda é o formato: faixa "R$ … – R$ …". \s porque o
+  // Intl pt-BR usa espaço não separável depois do "R$".
   await expect(page.getByTestId("entry-estimate")).toHaveText(
-    "R$ 2.350 – R$ 9.400"
+    /^R\$\s[\d.]+\s–\sR\$\s[\d.]+$/,
   );
   await expect(page.getByTestId("moving-estimate")).toHaveText(
     "R$ 1.000 – R$ 1.800"
@@ -63,9 +70,13 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   await expect(checklist).toBeVisible();
   await checklist.getByRole("checkbox", { name: "Pressão da água e aquecedor" }).check();
   await page.getByRole("button", { name: "Copiar" }).click();
-  await expect(page.getByRole("status")).toHaveText("Checklist copiado!");
+  // Escopo o status: a página tem mais de um (o modo de visualização também
+  // anuncia, em role="status").
+  await expect(page.getByRole("status").filter({ hasText: "Checklist copiado" })).toHaveText(
+    "Checklist copiado!",
+  );
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(57);
+  await expect(page.locator(".card-apartment")).toHaveCount(51);
   await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: "Checklist" }).click();
   await expect(

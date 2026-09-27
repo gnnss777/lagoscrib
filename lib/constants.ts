@@ -187,6 +187,23 @@ export const KANBAN_RETURNED_LABEL = "Retornou ✓";
 export const KANBAN_PROSPECT_LABEL = "Prospectar";
 export const KANBAN_TAB_LABEL = "Prospecção";
 
+// Modo de visualização (leva unificacao-busca-quadro): busca e quadro são o
+// MESMO pool em duas formas de ver. O seletor fica no header e o modo atual é
+// anunciado — trocar de modo não troca de tela, não abre modal e não perde o
+// estado do outro modo.
+export const VIEW_MODE_STORAGE_KEY = "apartamentos-app-view";
+export const VIEW_MODE_STORAGE_VERSION = 1;
+export const VIEW_BUSCA_LABEL = "Busca";
+export const VIEW_QUADRO_LABEL = "Quadro";
+export const VIEW_MODE_GROUP_LABEL = "Modo de visualização";
+export const VIEW_MODE_ANNOUNCE: Record<ViewMode, string> = {
+  busca: "Você está na busca: grade de imóveis com filtros.",
+  quadro: "Você está no quadro de prospecção: imóveis por etapa do funil.",
+};
+export const QUADRO_HINT =
+  "Mesmo pool da busca, agrupado por etapa do funil. Arraste os cards para mover de coluna.";
+export type ViewMode = "busca" | "quadro";
+
 // Fallback do board gerenciável: o excedente vira o rodapé "+N restantes".
 // O cap cobre o pool padrão inteiro sem perder o fallback (LL-006).
 export const KANBAN_VISIBLE_CAP = 200;

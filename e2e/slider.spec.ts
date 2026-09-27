@@ -40,11 +40,12 @@ test("test_slider_teclado_valvetext_filtra_restaura", async ({ page }) => {
   await expect(min).toHaveAttribute("aria-valuetext", "Sem mínimo");
   await expect(max).toHaveAttribute("aria-valuetext", "Sem máximo");
 
-  // End no mínimo → R$ 20.000: nada passa (maior aluguel < 20k).
+  // End no mínimo = R$ 40.000 (RENT_PRICE_BOUNDS.max na leva 4): nada passa,
+  // porque o maior aluguel da base é R$ 3.000.
   await min.focus();
   await page.keyboard.press("End");
-  await expect(min).toHaveAttribute("aria-valuetext", /R\$\s20\.000/);
-  await expect(panel.getByText(/R\$\s20\.000/).first()).toBeVisible();
+  await expect(min).toHaveAttribute("aria-valuetext", /R\$\s40\.000/);
+  await expect(panel.getByText(/R\$\s40\.000/).first()).toBeVisible();
   await expect(page.locator(".card-apartment")).toHaveCount(0);
 
   // Home restaura: volta tudo.
@@ -75,13 +76,18 @@ test("test_slider_aba_comprar_escala_log_valvetext", async ({ page }) => {
   const min = panel.getByRole("slider", { name: "Preço mínimo" });
   await expect(min).toHaveAttribute("aria-valuetext", "Sem mínimo");
 
-  // End → teto de R$ 35M (log); nada passa; Home restaura.
+  // End = teto de R$ 35M (log); nada passa; Home restaura. A base da leva 4 é
+  // só de aluguel, então a aba Comprar fica vazia mesmo com "sem mínimo" —
+  // o que se trava aqui é a escala log e a ausência de estado preso.
   await min.focus();
   await page.keyboard.press("End");
   await expect(min).toHaveAttribute("aria-valuetext", /R\$\s35\.000\.000/);
   await expect(page.locator(".card-apartment")).toHaveCount(0);
   await page.keyboard.press("Home");
   await expect(min).toHaveAttribute("aria-valuetext", "Sem mínimo");
+  await expect(page.locator(".card-apartment")).toHaveCount(0);
+  // Voltando para Alugar a base volta inteira: o slider não grudou estado.
+  await page.getByRole("button", { name: "Alugar" }).click();
   expect(await page.locator(".card-apartment").count()).toBeGreaterThan(1);
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);

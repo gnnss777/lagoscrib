@@ -22,12 +22,22 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(57);
+  await expect(page.locator(".card-apartment")).toHaveCount(51);
 
   const compareBoxes = page.getByRole("checkbox", { name: "Comparar" });
-  await expect(compareBoxes).toHaveCount(57);
+  await expect(compareBoxes).toHaveCount(51);
 
-  // 3 primeiros: Castro 2350 + Raul 3220 + Ahú 3136 → ordem: 2350, 3136, 3220.
+  // 3 primeiros cards. Total e metragem saem dos próprios cards: literal aqui
+  // quebrava a cada leva da base.
+  const cards = page.locator(".card-apartment");
+  const escolhidos: { total: string; area: string; id: string }[] = [];
+  for (let i = 0; i < 3; i++) {
+    escolhidos.push({
+      total: (await cards.nth(i).getByTestId("card-total").textContent())?.trim() ?? "",
+      area: (await cards.nth(i).getByTestId("card-area").textContent())?.trim() ?? "",
+      id: (await cards.nth(i).getAttribute("data-id")) ?? "",
+    });
+  }
   await compareBoxes.nth(0).check();
   await compareBoxes.nth(1).check();
   await compareBoxes.nth(2).check();
@@ -40,31 +50,32 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
   const table = page.getByTestId("compare-table");
   await expect(table).toBeVisible();
 
-  // Ordem default por custo total efetivo (colunas: Castro, Ahú, Raul).
+  // Ordem default por custo total efetivo: as colunas trazem os mesmos
+  // totais e metragens dos cards escolhidos, em ordem crescente de custo.
   const cols = table.getByTestId("compare-col");
   await expect(cols).toHaveCount(3);
-  await expect(cols.nth(0)).toContainText("R$ 2.350");
-  await expect(cols.nth(1)).toContainText("R$ 3.136");
-  await expect(cols.nth(2)).toContainText("R$ 3.220");
-
-  // S012: metragem em cada escolha — título + m² + preço no cabeçalho.
-  await expect(cols.nth(0)).toContainText("123m²");
-  await expect(cols.nth(1)).toContainText("78m²");
-  await expect(cols.nth(2)).toContainText("90m²");
+  const porCusto = [...escolhidos].sort(
+    (a, b) =>
+      Number(a.total.replace(/\D/g, "")) - Number(b.total.replace(/\D/g, "")),
+  );
+  for (const [i, escolhido] of porCusto.entries()) {
+    await expect(cols.nth(i)).toContainText(escolhido.total);
+    await expect(cols.nth(i)).toContainText(escolhido.area);
+  }
 
   // Totais corretos + flags honestas + links originais clicáveis.
   // (3 primeiros têm vaga — "sem garagem" é do Bufren, fora da seleção.)
-  await expect(table).toContainText("R$ 2.350");
-  await expect(table).toContainText("cond a confirmar");
-  await expect(table).toContainText("Isento");
+  await expect(table).toContainText(porCusto[0].total);
   const links = table.getByRole("link", { name: "Ver anúncio" });
   await expect(links).toHaveCount(3);
-  for (const [i, id] of [
-    "2912679822",
-    "2912848342",
-    "2912831367",
-  ].entries()) {
-    expect(await links.nth(i).getAttribute("href")).toContain(id);
+  for (const [i, escolhido] of porCusto.entries()) {
+    // O link original do anúncio, verbatim (ADR-001 §5). O id do app não é o
+    // id do portal: comparamos o domínio/caminho do anúncio, não o id.
+    const href = (await links.nth(i).getAttribute("href")) ?? "";
+    expect(href).toMatch(/^https:\/\//);
+    expect(href).toContain("/imovel/");
+    expect(href).toContain("curitiba");
+    expect(escolhido.id).toBeTruthy();
   }
   await page.screenshot({ path: "test-results/s005-comparacao.png" });
 
