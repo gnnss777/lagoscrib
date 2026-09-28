@@ -11,10 +11,15 @@ import {
   Ruler,
   Shower,
   Trash,
+  WhatsappLogo,
 } from "@phosphor-icons/react";
 import { type Apartment } from "@/lib/data";
 import { priceSuffix } from "@/lib/transaction";
-import { formatBRL } from "@/lib/antiDores";
+import {
+  buildWhatsAppConfirm,
+  buildWhatsAppLink,
+  formatBRL,
+} from "@/lib/antiDores";
 import { cardStaggerDelay, DEFAULT_STAGGER_CAP, DEFAULT_STAGGER_STEP } from "@/lib/motion";
 import { useApp, STATUS_LABELS } from "@/lib/AppContext";
 
@@ -126,12 +131,17 @@ export default function ApartmentCard({
       <div className="grid grid-cols-1 justify-items-center gap-2 border-y border-line bg-sand px-4 py-3">
         {apartment.phone ? (
           <a
-            href={`tel:${apartment.phone}`}
+            // Clique no telefone abre o WhatsApp já com a mensagem pronta
+            // (valores do anúncio + 7 perguntas + pedido de visita amanhã).
+            // Ligar continua disponível no DetailModal, que tem os dois.
+            href={buildWhatsAppLink(apartment.phone, buildWhatsAppConfirm(apartment))}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={(event) => event.stopPropagation()}
             className="flex items-center justify-center gap-1.5 text-amberink hover:text-amberink/80 transition-colors"
-            aria-label={`Ligar para ${apartment.phone}`}
+            aria-label={`Conversar no WhatsApp sobre ${apartment.title}`}
           >
-            <Phone size={16} weight="fill" className="shrink-0" />
+            <WhatsappLogo size={16} weight="fill" className="shrink-0" />
             <span className="font-mono text-sm font-medium">{apartment.phone}</span>
           </a>
         ) : (

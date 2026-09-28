@@ -22,14 +22,29 @@ describe("antiDores", () => {
     link: "https://www.zapimoveis.com.br/imovel/x-id-2912831367/",
   };
 
-  it("test_whatsappconfirma_mensagem_contem_4_perguntas", () => {
+  it("test_whatsappconfirma_mensagem_pede_visita_amanha_com_valores_e_7_perguntas", () => {
     const msg = buildWhatsAppConfirm(base);
-    expect(msg).toContain("disponível");
-    expect(msg).toMatch(/condomínio/i);
-    expect(msg).toMatch(/pet/i);
-    expect(msg).toMatch(/fiador/i);
     expect(msg).toContain(base.title);
     expect(msg).toContain(base.link);
+    // Pedido de visita amanhã é o ponto do clique no telefone.
+    expect(msg).toMatch(/visita AMANHÃ/i);
+    // Valores do anúncio vão na mensagem, para o corretor corrigir.
+    // \s porque o Intl pt-BR usa espaço não separável depois do "R$".
+    expect(msg).toMatch(/R\$\s2\.500/); // aluguel
+    expect(msg).toMatch(/R\$\s140/); // IPTU
+    expect(msg).toMatch(/R\$\s3\.220/); // total
+    // As 7 perguntas que o dono pediu: disponibilidade, condomínio+conservação,
+    // IPTU, incentivo, seguros, seguro-fiador/fiador, pets.
+    expect(msg).toMatch(/disponível/i);
+    expect(msg).toMatch(/taxa de conservação/i);
+    expect(msg).toMatch(/IPTU/i);
+    expect(msg).toMatch(/incentivo/i);
+    expect(msg).toMatch(/seguro/i);
+    expect(msg).toMatch(/condomínio/i);
+    expect(msg).toMatch(/fiador/i);
+    expect(msg).toMatch(/pet/i);
+    // "amanhã" literal, sem data calculada: evita hydration mismatch.
+    expect(msg).not.toMatch(/\d{2}\/\d{2}/);
   });
 
   it("test_whatsappconfirma_condesconhecido_diz_aconfirmar", () => {

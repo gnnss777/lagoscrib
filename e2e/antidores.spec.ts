@@ -62,6 +62,25 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   expect(waDecoded).toMatch(/pet/i);
   expect(waDecoded).toMatch(/fiador/i);
 
+  // Clicar no TELEFONE do card abre o WhatsApp com a mesma mensagem — não é
+  // mais um link tel:. Pega o primeiro card com telefone da base.
+  const phoneCard = page
+    .locator(".card-apartment")
+    .filter({ has: page.getByRole("link", { name: /Conversar no WhatsApp sobre/ }) })
+    .first();
+  await expect(phoneCard).toBeVisible();
+  const cardWaHref =
+    (await phoneCard.getByRole("link", { name: /Conversar no WhatsApp sobre/ }).getAttribute("href")) ?? "";
+  expect(cardWaHref).toMatch(/^https:\/\/wa\.me\/\d{10,14}\?text=/);
+  expect(cardWaHref).not.toContain("tel:");
+  const cardMsg = decodeURIComponent(cardWaHref);
+  expect(cardMsg).toMatch(/visita AMANHÃ/i);
+  expect(cardMsg).toMatch(/taxa de conservação/i);
+  expect(cardMsg).toMatch(/IPTU/i);
+  expect(cardMsg).toMatch(/incentivo/i);
+  // O link `tel:` de ligar ficou só no DetailModal, que tem os dois.
+  await expect(phoneCard.locator('a[href^="tel:"]')).toHaveCount(0);
+
   // Checklist: marca → copia com feedback → persiste após reload.
   await page.getByRole("button", { name: "Checklist" }).click();
   const checklist = page.getByTestId("checklist");

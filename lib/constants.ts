@@ -60,9 +60,12 @@ export const GOLDEN_RULE =
 // Anti-ghost: 4 perguntas da mensagem de confirmação (UX spec F2/AC-WA-01).
 export const WHATSAPP_QUESTIONS = [
   "O imóvel ainda está disponível para visita?",
-  "Qual o valor atual do condomínio?",
+  "Qual o valor atual do condomínio e da taxa de conservação?",
+  "Qual o valor do IPTU, e ele é parcelado junto com o aluguel?",
+  "Existe algum incentivo ou desconto para este anúncio?",
+  "Quais seguros o imóvel exige (residencial, contra incêndio)?",
+  "Aceitam seguro-fiador, e qual o custo? Ou é possível usar um fiador?",
   "Aceita pets?",
-  "Quais garantias vocês aceitam (fiador, seguro-fiança ou caução)?",
 ] as const;
 
 // Checklist de visita (VisitChecklist): itens default, ids estáveis.

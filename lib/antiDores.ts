@@ -28,22 +28,58 @@ export interface ConfirmInput {
   pets?: string;
   total: number;
   link: string;
+  iptu?: number;
+  area?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  parking?: number;
+  /** Como o anúncio trata garantia: "fiador", "seguro-fiança", "caução". */
+  guarantor?: string;
 }
 
-/** Mensagem de confirmação anti-ghost com as 4 perguntas (AC-WA-01). */
+/**
+ * Mensagem de confirmação anti-ghost (AC-WA-01). Pede visita AMANHÃ e leva
+ * junto os valores do anúncio, para o corretor corrigir o que estiver errado
+ * em vez de responder "pode conferir?".
+ *
+ * "amanhã" é literal, não data calculada: a mensagem é montada no render
+ * (SSR incluído) e `new Date()` aqui causaria hydration mismatch na virada do
+ * dia, além de o fuso do broker ser outro.
+ */
 export function buildWhatsAppConfirm(a: ConfirmInput): string {
-  const condoLine = a.condoUnknown
-    ? "a confirmar (não informado no anúncio)"
-    : `${formatBRL(a.condo)} no anúncio`;
-  const petsLine = a.pets ? ` (no anúncio: ${a.pets})` : "";
-  const [q1, q2, q3, q4] = WHATSAPP_QUESTIONS;
+  const condo = a.condoUnknown ? "a confirmar" : formatBRL(a.condo);
+  const iptu = a.iptu ? formatBRL(a.iptu) : "a confirmar";
+  const pets = a.pets ? ` (no anúncio: ${a.pets})` : "";
+  const fiador = a.guarantor ? ` (no anúncio: ${a.guarantor})` : "";
+  const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
+  const specs = [
+    a.bedrooms ? `${a.bedrooms} ${plural(a.bedrooms, "quarto", "quartos")}` : null,
+    a.bathrooms
+      ? `${a.bathrooms} ${plural(a.bathrooms, "banheiro", "banheiros")}`
+      : null,
+    a.area ? `${a.area}m²` : null,
+    a.parking ? `${a.parking} ${plural(a.parking, "vaga", "vagas")}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const [q1, q2, q3, q4, q5, q6, q7] = WHATSAPP_QUESTIONS;
   return (
-    `Olá! Vi o anúncio "${a.title}" (${a.neighborhood} — ` +
-    `${formatBRL(a.total)}/mês) e gostaria de confirmar antes de visitar:\n` +
+    `Olá! Vi o anúncio "${a.title}" e gostaria de marcar uma visita AMANHÃ.\n\n` +
+    `O que o anúncio informa:\n` +
+    `• Aluguel: ${formatBRL(a.rent)}\n` +
+    `• Condomínio: ${condo}\n` +
+    `• IPTU: ${iptu}\n` +
+    `• Total: ${formatBRL(a.total)}/mês\n` +
+    `• ${a.neighborhood}${specs ? ` — ${specs}` : ""}\n\n` +
+    `Antes da visita, poderia me confirmar:\n` +
     `1. ${q1}\n` +
-    `2. ${q2} (no anúncio: ${condoLine})\n` +
-    `3. ${q3}${petsLine}\n` +
+    `2. ${q2} (no anúncio: ${condo})\n` +
+    `3. ${q3}\n` +
     `4. ${q4}\n` +
+    `5. ${q5}\n` +
+    `6. ${q6}${fiador}\n` +
+    `7. ${q7}${pets}\n\n` +
+    `Consigo amanhã de manhã ou à tarde — qual horário fica melhor?\n` +
     `Link do anúncio: ${a.link}`
   );
 }
