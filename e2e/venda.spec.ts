@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { collectConsoleErrors, openApp } from "./open-app";
 
 // Toggle Alugar | Comprar. A leva 4 (27/09/2026) é só de aluguel — a coleta
 // foi dirigida para 2-3 quartos até R$ 3.000, então `saleApartments` está
@@ -7,25 +8,9 @@ import { test, expect } from "@playwright/test";
 // vazio e nada quebra. As asserções de venda (preço/m², bloco "Valores de
 // Compra", busca em imóveis de venda) voltam quando a base tiver vendas.
 test("test_venda_toggle_abas_com_pool_de_venda_vazio", async ({ page }) => {
-  const errors: string[] = [];
-  page.on("console", (msg) => {
-    if (msg.type() === "error") {
-      const text = msg.text().trim();
-      // Next dev mode emite "eval() is not supported" do React — não é erro app.
-      if (!text.startsWith("eval()") && !text.includes("Content-Security-Policy")) {
-        errors.push(text);
-      }
-    }
-  });
+  const errors = collectConsoleErrors(page);
 
-  await page.goto("/");
-  await page
-    .getByPlaceholder("Digite seu usuário")
-    .fill(process.env.E2E_USER ?? "guinness");
-  await page
-    .getByPlaceholder("Digite sua senha")
-    .fill(process.env.E2E_PASS ?? "curitiba2026");
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await openApp(page);
 
   // Aba default: Alugar, com a base inteira e "/mês" no card.
   await expect(page.locator(".card-apartment")).toHaveCount(88);

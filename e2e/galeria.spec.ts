@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openApp } from "./open-app";
 
 // S003 (AC-GAL-01/02 + AC-ZOOM-01): galeria viewer-first navegável +
 // lightbox com zoom/pan + Esc + zero erro de console.
@@ -15,14 +16,7 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
   });
 
   // Login (mesmo padrão do smoke: env ou fallbacks de dev).
-  await page.goto("/");
-  await page
-    .getByPlaceholder("Digite seu usuário")
-    .fill(process.env.E2E_USER ?? "guinness");
-  await page
-    .getByPlaceholder("Digite sua senha")
-    .fill(process.env.E2E_PASS ?? "curitiba2026");
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await openApp(page);
   await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   // Abrir o primeiro imóvel → galeria viewer-first.

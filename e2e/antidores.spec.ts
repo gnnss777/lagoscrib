@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openApp } from "./open-app";
 
 // S004 (AC-ALLIN-01 + AC-WA-01 + AC-CHECK-01 + AC-PLANTA-01): AllInPanel com
 // faixas, WhatsApp com as 4 perguntas, checklist persiste/recarrega/copia,
@@ -16,14 +17,7 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   });
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
-  await page.goto("/");
-  await page
-    .getByPlaceholder("Digite seu usuário")
-    .fill(process.env.E2E_USER ?? "guinness");
-  await page
-    .getByPlaceholder("Digite sua senha")
-    .fill(process.env.E2E_PASS ?? "curitiba2026");
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await openApp(page);
   await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   // O total vem do card, não de literal: a base muda a cada leva e um valor
