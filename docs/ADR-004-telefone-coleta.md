@@ -74,20 +74,24 @@ exato é diferente em cada portal.
 
 ## Consequências
 
-- **41 dos 64 imóveis têm telefone, todos celulares DDD 41** (64% de cobertura):
-  - 25 do Apolar, sem browser e sem clique, todos da imobiliária Locação Centro
-    (`+5541991210624`) — o mesmo número, porque os 25 anúncios do Apolar na base
-    são todos dessa empresa
-  - 16 de 14 imobiliárias, do site de cada uma
-- **16 imóveis seguem sem telefone mas têm fixo publicado** no site da
-  imobiliária: Gonzaga 4, Jamaica 3, 2000 3, Paraíso 2, Galo 1, Especiale 1,
-  Basi 1, Nakayoshi 1. Ficam de fora do `phone` porque o requisito é celular. O
-  número está em `data/coleta/imobiliarias-aplicado.json`, pronto para entrar
-  se o requisito mudar.
-- **6 anunciantes sem solução**: Hoje (só 0800 toll-free), ReMax Kmk10 e ReMax
+- **58 dos 88 imóveis têm telefone, todos celulares DDD 41** (66% de cobertura):
+  - 35 do Apolar, sem browser e sem clique, todos da Locação Centro
+    (`+5541991210624`), Pinnais e Personnalite
+  - 23 de 20 imobiliárias, do site de cada uma
+- **17 imóveis seguem sem telefone mas têm fixo publicado** no site da
+  imobiliária: Gonzaga, Jamaica, 2000, Paraíso, Galo, Especiale, Basi, Noruega,
+  Premiere. Ficam de fora do `phone` porque o requisito é celular. Os números
+  estão em `data/coleta/imobiliarias-aplicado.json`, prontos para entrar se o
+  requisito mudar.
+- **9 anunciantes sem solução**: Hoje (só 0800 toll-free), ReMax Kmk10 e ReMax
   Share (site renderizado por JS, telefone não legível), Rezende (o único de
   Curitiba é CRECI 56940J, não 22256-J), Daniel Correa e Imobiliária M E D (sem
-  site). Mais 1 link morto (VivaReal 404).
+  site), Nakayoshi (site rotula 8 dígitos como celular), mais links mortos
+  (HTTP 502) e um erro de navegação.
+- **Uma divergência dentro de um site**: a A3Mais escreve `WhatsApp (41)
+  98746-4427` mas o link aponta para `98743-2817`. Entrei com o número escrito,
+  que é o que um humano leria, e registrei a divergência. Se a ligação falhar, o
+  certo é o do link.
 - `phone` no `lib/data.ts` é **público no bundle**. O repo é público
   (`gnnss777/lagoscrib`) e o context pack do projeto registra que o dono já
   aceitou exposição de telefone. Consequência: a promessa de
@@ -175,11 +179,83 @@ framework, e o telefone já estava no tipo `Apartment`. Regra AGENTS.md:
       conferido contra o anúncio.
 - [x] A validação barrou 2 "celulares" que eram fixo de 8 dígitos, e 7
       anunciantes foram recusados com motivo registrado em vez de chutar.
-- [x] `tsc --noEmit` limpo, `eslint` limpo, **157/157 testes verdes**.
+- [x] `tsc --noEmit` limpo, `eslint` limpo, `npm run build` gera as 17 páginas,
+      **157/157 testes verdes**.
+- [x] Apolar 35/35 e **58 de 88 imóveis com celular DDD 41** (66%), 20 números
+      distintos, 0 duplicados, round-trip latin1 idêntico.
 
-## Nota de encoding (armadilha)
+## Risco aberto: o `connectOverCDP` está em jogo
 
-`lib/data.ts` **não é UTF-8** — é Windows-1252 (`"VivaReal · 211095"`,
+**Em 27/09/2026, o `master` tinha um refactor não commitado que removia o bloco
+`--cdp` de `scripts/coleta/coleta.mjs`** — 47 inserções / 20 remoções, apagando
+justamente o trecho que abre a sessão logada:
+
+```
+-const CDP = (process.argv.find((a) => a.startsWith("--cdp=")) || "").split("=")[1] || "";
+-const ctx = CDP
+-  ? (await chromium.connectOverCDP(CDP)).contexts()[0]
+-  : await chromium.launchPersistentContext(PROFILE, { ... });
+```
+
+**Se esse refactor entrar sem reposicionar a sessão, a coleta de telefone volta a
+dar zero — em silêncio, que é o pior jeito de falhar.** Sem sessão, o Zap/VivaReal
+não publicam `a[href^="tel:"]` e o Apolar continua funcionando (é API), então o
+sintoma é "os celulares de imobiliária sumiram e o relatório de cobertura não
+acusa nada".
+
+O que substitui o bloco é `conectarSessaoLogada()` em `scripts/coleta/telefone.mjs`,
+que já resolve isso e é mais rígido:
+
+- default `http://127.0.0.1:9222`, sem fallback para perfil novo
+- se o Chromium logado não estiver de pé, **lança com a instrução** de como subir
+- se conectar mas o contexto não tiver aba, lança também
+- o navegador do usuário não é fechado
+
+O perfil certo é `C:/Users/gnnss/AppData/Local/Chromium/User Data`, `Profile 1`:
+
+```
+chromium.exe --remote-debugging-port=9222 --profile-directory="Profile 1"
+```
+
+**Regra para quem mexer no bootstrap do browser:** o `connectOverCDP` é
+obrigatório, não opcional. O perfil de coleta em `%TEMP%/coleta-edge-profile`
+existe só para o Cloudflare, e sem sessão ele devolve zero telefone sem erro.
+
+## Como entro em produção
+
+O merge ficou pendente em 27/09/2026 porque o `master` estava sujo com o
+refactor acima. Procedimento quando o `master` estiver limpo:
+
+```bash
+# 1. na lane
+git checkout oc/telefone
+git fetch origin
+git merge origin/master          # resolver o conflito de coleta.mjs sobre a sessão logada
+npm test && npm run typecheck && npm run lint && npm run build
+
+# 2. master
+git checkout master
+git merge --no-ff oc/telefone
+npm test                          # smoke espera 88; a base veio da leva 11
+git push origin master
+
+# 3. deploy
+npx vercel --prod
+```
+
+Antes do passo 3, conferir `data/coleta/imobiliarias-aplicado.json`: se a leva
+nova entrou alguém novo, rodar `creci-telefone.mjs` + resolve + `aplicar-imobiliarias.mjs`
+para o celular não ficar zerado.
+
+## Notas de encoding (armadilhas que já aconteceram)
+
+**`lib/data.ts` não é UTF-8** — é Windows-1252 (`"VivaReal · 211095"`,
 `"Lançamentos"`). Ler com `readFileSync(p, "utf8")` e escrever de volta troca
 cada byte inválido por `U+FFFD` e corrompe o arquivo inteiro. Qualquer script que
 escreva `lib/data.ts` tem que usar `"latin1"`, que faz round-trip byte a byte.
+Aconteceu duas vezes e quebrou o build duas vezes.
+
+**`Array.prototype.join(sep)` converte o RegExp em String.** `join(SEP)` escreveu
+o texto literal `/\r?\n  \{\r?\n/` no meio do TypeScript. Split precisa de
+**grupo capturado** para o separador voltar intacto. Comentado em
+`scripts/coleta/apolar-telefone.mjs`.
