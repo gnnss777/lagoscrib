@@ -3,6 +3,7 @@
   "_regra": "celularLocacao só entra se passesValidacao; fixoLocacao é fallback e fica marcado. Nunca mistura celular de uma imobiliária com fixo de outra.",
   "_avaliado": "2026-09-27",
   "anunciantes": [
+    { "n": 1,  "nome": "Gonzaga Imóveis", "creci": "00137-J-PR", "celular": null, "fixo": "+554130132222", "site": "https://www.gonzagaimoveis.com.br", "creciDoSite": "J04861", "conferePrefixo": true, "nota": "RESOLVIDO em 2026-09-27. São a mesma empresa com dois CRECIs e dois sites: gonzagaimoveis.com.br (J04861) é o braço de LOCAÇÃO — todos os anúncios do site são 'para locação', R$ 620 a 3.700 — e gonzagahome.com.br (J00137) é o de VENDA, imóveis de R$ 458k a 5,9M. Nossos 4 anúncios são de aluguel, então a linha correta é a do site de locação. O prefixo mascarado do portal é (41) 3013- e o site publica (41) 3013-2222: confere. Nenhum dos dois sites publica celular. Atenção: o CRECI do anúncio (00137) NÃO é o do site de locação (04861) — a empresa opera os dois registros." },
     { "n": 2,  "nome": "Jamaica Empreendimentos Imobiliários", "creci": "02412-J-PR", "celular": null, "fixo": "+554132012424", "site": "https://jamaicaimoveis.com.br", "creciDoSite": null, "conferePrefixo": true, "nota": "só publica fixo, no WhatsApp inclusive" },
     { "n": 3,  "nome": "Imobiliária 2000", "creci": "01339-J-PR", "celular": null, "fixo": "+554132502000", "site": "https://www.imobiliaria2000.com.br", "creciDoSite": "1339-J", "conferePrefixo": true, "nota": "wa.me/554132502000 é o mesmo fixo" },
     { "n": 4,  "nome": "Imobiliária Paraíso", "creci": "00475-J-PR", "celular": null, "fixo": "+554132336025", "site": "https://imobiliariaparaiso.com.br", "creciDoSite": "475-J", "conferePrefixo": true, "nota": "site rotula 'Vendas & Locações (41) 3233-6025'" },
@@ -26,7 +27,6 @@
     { "n": 28, "nome": "Auxiliadora Predial - Alugueis CWB", "creci": "10178-J-PR", "celular": "+5541987007777", "fixo": null, "site": "https://auxiliadoraalugueis.com.br", "creciDoSite": "10178-J", "conferePrefixo": null, "nota": "site de garantias locatícias; AGÊNCIA JUVEVÊ em auxiliadorapredial.com.br tem CRECI 52242 e outro número — não misturar" }
   ],
   "naoResolvidos": [
-    { "n": 1,  "nome": "Gonzaga Imóveis", "creci": "00137-J-PR", "motivo": "conflito de CRECI entre subdomínios: gonzagaimoveis.com.br diz J04861 com (41) 3013-2222 (bate no prefixo do portal), mas gonzagahome.com.br diz J00137 com (41) 3014-1010. O prefixo do portal é 3013-, que aponta para a linha J04861. Precisa de decisão humana: qual das duas é a linha de locação." },
     { "n": 7,  "nome": "Hoje Imóveis", "creci": "00822-J-PR", "motivo": "site publica só 0800 241 1234 (toll-free, formato que não cabe em +55+DDD+n). Sem celular e sem fixo DDD 41." },
     { "n": 9,  "nome": "ReMax Kmk10", "creci": "10169-J-PR", "motivo": "site oficial é renderizado por JS, telefone não pôde ser lido literalmente. O Instagram publica (41) 3026-1674 e (41) 99805-3356 e o prefixo 3026- bate, mas não é o site." },
     { "n": 11, "nome": "ReMax Share", "creci": null, "motivo": "escritório não encontrado. share.remax.com.br retorna vazio." },
