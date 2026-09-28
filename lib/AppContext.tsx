@@ -79,9 +79,18 @@ interface AppContextValue extends AppState {
   getFollowUp: (apartmentId: string) => FollowUp | undefined;
 }
 
+// Bypass do gate client-side: com NEXT_PUBLIC_OPEN_ACCESS=1 o app abre direto
+// no Dashboard, sem digitar usuário/senha. Login continua disponível ("Sair" no
+// cabeçalho leva ao LoginPage). NÃO afeta a API: /api/* segue exigindo sessão
+// (requireAuth/auth) — o Dashboard não consome essas rotas, é client-side.
+// Declarado aqui ANTES de defaultState: usa OPEN_ACCESS abaixo, e `const` na
+// zona morta temporal derrubava o app com ReferenceError em dev.
+const OPEN_ACCESS = process.env.NEXT_PUBLIC_OPEN_ACCESS === "1";
+const OPEN_ACCESS_USER = process.env.NEXT_PUBLIC_OPEN_ACCESS_USER ?? "local";
+
 const defaultState: AppState = {
-  isAuthenticated: false,
-  username: null,
+  isAuthenticated: OPEN_ACCESS,
+  username: OPEN_ACCESS ? OPEN_ACCESS_USER : null,
   notes: [],
   statuses: [],
   version: CHECKLIST_STORAGE_VERSION,
@@ -123,11 +132,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const migrated = migrateStoredState(JSON.parse(stored));
+        // StoredState tem índice [k: string]: unknown e não declara auth, então
+        // estreita aqui. Só aceita literal `true` (fail-closed, como o resto do
+        // arquivo): truthy vindo de storage não autentica ninguém.
+        const savedAuth = migrated["isAuthenticated"] === true;
+        const savedUser = typeof migrated["username"] === "string" ? migrated["username"] : null;
         // eslint-disable-next-line react-hooks/set-state-in-effect -- ver comentário acima
         setState((prev) => ({
           ...prev,
           ...migrated,
           version: CHECKLIST_STORAGE_VERSION,
+          // Bypass não pode ser sobrescrito por um estado antigo salvo no
+          // localStorage (quem já deu "Sair" ficaria preso no LoginPage).
+          // Base no estado salvo (`savedAuth`), não em `prev` (que é o
+          // defaultState): usar prev apagava o login salvo em todo load, e o
+          // reload voltava para a tela de login.
+          isAuthenticated: savedAuth || OPEN_ACCESS,
+          username: savedAuth ? savedUser : OPEN_ACCESS_USER,
         }));
       }
     } catch {
