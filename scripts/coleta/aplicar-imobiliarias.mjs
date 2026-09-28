@@ -17,21 +17,24 @@ const LER = "latin1";
 const mapa = JSON.parse(readFileSync("data/coleta/imobiliarias-telefone.json", "utf8"));
 const ident = JSON.parse(readFileSync("data/coleta/creci-telefone.json", "utf8"));
 
-// anunciante (n) -> { celular, fixo, nome, site }
-const porN = new Map();
+// Tudo chaveado por NOME da imobiliaria, nunca pelo indice `n`. O `n` e a
+// posicao na lista de anunciantes, e essa lista e reordenada a cada nova leva —
+// indexar por ele ja fez o apply silenciosamente errar uma vez. Nome de
+// imobiliaria e estavel.
+const porNome = new Map();
 const rejeitados = [];
 for (const a of mapa.anunciantes) {
   const cel = a.celular && ehCelular(a.celular) && ehDoDdd(a.celular) ? a.celular : null;
   const fix = a.fixo && ehFixo(a.fixo) && ehDoDdd(a.fixo) ? a.fixo : null;
   if (a.celular && !cel)
-    rejeitados.push({ n: a.n, nome: a.nome, motivo: `celular "${a.celular}" não passa na validação (DDD/9 dígitos)`, nota: a.nota });
-  porN.set(a.n, { celular: cel, fixo: fix, nome: a.nome, site: a.site, creci: a.creci });
+    rejeitados.push({
+      n: a.n,
+      nome: a.nome,
+      motivo: `celular "${a.celular}" não passa na validação (DDD 41 ou nono dígito)`,
+      nota: a.nota,
+    });
+  porNome.set(a.nome, { celular: cel, fixo: fix, nome: a.nome, site: a.site, creci: a.creci });
 }
-
-// id do imóvel -> anunciante
-const anuncianteDe = new Map();
-for (const g of ident.anunciantes) for (const id of g.ids) anuncianteDe.set(id, g);
-const nDeChave = new Map(ident.anunciantes.map((g) => [g.imobiliaria, g.chave]));
 
 const src = readFileSync("lib/data.ts", LER);
 const SEP_RE = /(\r?\n  \{\r?\n)/;
@@ -50,19 +53,25 @@ for (let i = 2; i < partes.length; i += 2) {
   }
   const id = bloco.match(/id:\s*"([^"]+)"/)?.[1];
   if (!id) continue;
-  const chave = anuncianteDe.get(id);
-  if (!chave) continue;
-  // mapeia o anunciante pelo nome (a lista de ids do creci-telefone tem a chave)
-  const n = mapa.anunciantes.find((a) => a.nome === chave.imobiliaria)?.n;
-  if (n == null) continue;
-  const t = porN.get(n);
-  if (!t?.celular) {
-    if (t) semCelular.push({ id, imobiliaria: t.nome, fixo: t.fixo ?? "" });
+  // imobiliaria do anúncio: salva no creci-telefone.json, gerado sem clique
+  const anunciante = ident.anunciantes.find((g) => g.ids.includes(id));
+  if (!anunciante?.imobiliaria) continue;
+  const t = porNome.get(anunciante.imobiliaria);
+  if (!t) continue;
+  if (!t.celular) {
+    semCelular.push({ id, imobiliaria: t.nome, fixo: t.fixo ?? "" });
     continue;
   }
   partes[i] = bloco.replace(/phone:\s*"[^"]*"/, () => `phone: "${t.celular}"`);
   celPreenchidos++;
-  aplicados.push({ id, imobiliaria: t.nome, phone: t.celular, site: t.site, creci: t.creci });
+  aplicados.push({
+    id,
+    imobiliaria: t.nome,
+    phone: t.celular,
+    site: t.site,
+    creci: t.creci,
+    creciAnuncio: anunciante.creci || "",
+  });
 }
 
 writeFileSync("lib/data.ts", partes.join(""), LER);

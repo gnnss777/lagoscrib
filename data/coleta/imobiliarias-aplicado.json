@@ -1,11 +1,63 @@
 {
- "aplicados": [],
- "semCelular": [
+ "aplicados": [
   {
-   "id": "zap-capao-raso-50-0719",
-   "imobiliaria": "Gonzaga Imóveis",
-   "fixo": "+554130132222"
+   "id": "zap-portao-54-9732",
+   "imobiliaria": "A3Mais Imóveis",
+   "phone": "+5541987464427",
+   "site": "https://www.a3maisimoveis.com.br/",
+   "creci": null,
+   "creciAnuncio": ""
   },
+  {
+   "id": "zap-portao-70-6792",
+   "imobiliaria": "Hansel Imoveis Ltda - Epp",
+   "phone": "+5541987137745",
+   "site": "https://hansel.com.br/fale-conosco",
+   "creci": "02658-J-PR",
+   "creciAnuncio": "02658-J-PR"
+  },
+  {
+   "id": "zap-cristo-rei-56-3957",
+   "imobiliaria": "Schneider Imoveis",
+   "phone": "+5541985341055",
+   "site": "https://www.schneiderimoveis.com.br/imoveis/locacao",
+   "creci": "02857-J-PR",
+   "creciAnuncio": "02857-J-PR"
+  },
+  {
+   "id": "zap-portao-52-3750",
+   "imobiliaria": "Casa Prates Imóveis",
+   "phone": "+5541935005704",
+   "site": "https://casaprates.com.br",
+   "creci": "6155-J-PR",
+   "creciAnuncio": "6155-J-PR"
+  },
+  {
+   "id": "zap-reboucas-48-4639",
+   "imobiliaria": "Imobiliária Tantus",
+   "phone": "+5541998000390",
+   "site": "https://www.tantus.com.br/fale-conosco",
+   "creci": "01523-J-PR",
+   "creciAnuncio": "01523-J-PR"
+  },
+  {
+   "id": "viva-cristo-rei-43-7914",
+   "imobiliaria": "Imobiliária Tantus",
+   "phone": "+5541998000390",
+   "site": "https://www.tantus.com.br/fale-conosco",
+   "creci": "01523-J-PR",
+   "creciAnuncio": "01523-J-PR"
+  },
+  {
+   "id": "viva-alto-da-rua-xv-80-2590",
+   "imobiliaria": "Living 41",
+   "phone": "+5541996793129",
+   "site": "https://www.living41.com.br/fale-conosco",
+   "creci": "9019-J-PR",
+   "creciAnuncio": "9019-J-PR"
+  }
+ ],
+ "semCelular": [
   {
    "id": "zap-cajuru-54-8844",
    "imobiliaria": "Jamaica Empreendimentos Imobiliários",
@@ -80,19 +132,39 @@
    "id": "viva-agua-verde-56-8940",
    "imobiliaria": "Imobiliária 2000",
    "fixo": "+554132502000"
+  },
+  {
+   "id": "zap-cabral-103-2255",
+   "imobiliaria": "Imobiliária Noruega",
+   "fixo": "+554132135758"
+  },
+  {
+   "id": "zap-cristo-rei-67-7628",
+   "imobiliaria": "Premiere Imóveis",
+   "fixo": "+554130189915"
+  },
+  {
+   "id": "zap-cabral-81-2521",
+   "imobiliaria": "Gonzaga Imóveis",
+   "fixo": "+554130132222"
+  },
+  {
+   "id": "zap-cabral-86-8032",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
   }
  ],
  "rejeitados": [
   {
    "n": 20,
    "nome": "Basi Corretagem",
-   "motivo": "celular \"+554195740407\" não passa na validação (DDD/9 dígitos)",
+   "motivo": "celular \"+554195740407\" não passa na validação (DDD 41 ou nono dígito)",
    "nota": "página /contato rotula 'Locação: 41 9574-0407'"
   },
   {
    "n": 21,
    "nome": "Nakayoshi Imoveis",
-   "motivo": "celular \"+554199960927\" não passa na validação (DDD/9 dígitos)",
+   "motivo": "celular \"+554199960927\" não passa na validação (DDD 41 ou nono dígito)",
    "nota": "REJEITADO: o site diz 'Fone Locação: (41) 9996-0927' — 8 dígitos, é fixo, não celular. Não usar."
   }
  ],
