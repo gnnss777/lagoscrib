@@ -28,10 +28,13 @@ export default function PrivacidadePage() {
           <h2 className="font-semibold mb-1">2. Finalidade e base legal</h2>
           <p>
             Operar sua conta e sincronizar seus dados entre dispositivos (execução de contrato,
-            art. 7º, V). Contatos de corretores/anunciantes exibidos na central agregadora são
-            dados tornados públicos nos anúncios de origem — exibimos o telefone somente em
-            horário comercial e, fora dele, apenas o link ao anúncio original (legítimo
-            interesse + minimização, art. 7º, IX).
+            art. 7º, V). Contatos de corretores/imobiliárias exibidos nos anúncios são dados
+            tornados públicos nos portais de origem, e o telefone fica visível no app assim que
+            o anúncio o publica — não há janela de horário comercial para contato de
+            imobiliária. O botão de WhatsApp usa o celular quando o anúncio o divulga, senão cai
+            para o link ao anúncio original. O link do anúncio é sempre a via preferida
+            (legítimo interesse + minimização, art. 7º, IX). Ver{" "}
+            <code>docs/ADR-004-telefone-coleta.md</code> para a regra de coleta.
           </p>
         </div>
         <div>
