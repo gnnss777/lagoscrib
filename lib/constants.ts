@@ -17,6 +17,13 @@ export const CURRENCY_CODE = "BRL";
 export const GALLERY_ZOOM_LEVELS = [1, 2, 4] as const;
 export const GALLERY_OWN_IMPL_MAX_LINES = 250;
 
+// Teto do produto: R$ 3.500 com TODAS as taxas (aluguel + condomínio + IPTU).
+// Regra do usuário, não do portal: a busca dos coletores filtra só por aluguel,
+// então sem isto a base aceita imóvel de R$ 2.500 com R$ 1.300 de condomínio.
+// Travado em teste (tests/unit/scope.test.ts) e replicado em data/coleta/merge.py
+// (MAX_TOTAL_ALUGUEL) e no scraper (--teto-total).
+export const TETO_TOTAL_ALUGUEL = 3500;
+
 // --- Anti-dores (S004, ADR-002 decisão 5) ---
 // Fontes comentadas; componentes importam daqui (nunca hardcodar — LL-006).
 

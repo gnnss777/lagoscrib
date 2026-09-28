@@ -306,9 +306,12 @@ test("test_kanban_customizacao_painel_renomear_reload_reset", async ({
 test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
   const errors: string[] = [];
   // 1 follow-up pendente há 8 dias (acima do limiar de 7).
+  // O id precisa existir na base ativa: a leva 6 podou os imóveis acima do
+  // teto de R$ 3.500 all-in e o antigo zap-portao-124-5525 saiu com ele
+  // (total 5.700), o que fazia o selo "sem retorno" não aparecer.
   await gotoAuthed(page, {
     followUps: {
-      "zap-portao-124-5525": {
+      "zap-agua-verde-96-0258": {
         attempts: 2,
         status: "aguardando",
         lastContactAt: "2026-09-15T12:00:00.000Z",
@@ -375,7 +378,7 @@ test("test_kanban_scroll_interno_todos_cards", async ({ page }) => {
   const view = await openKanban(page);
 
   const col = view.getByRole("region", { name: /Não visitado/ });
-  await expect(col.locator("article")).toHaveCount(80);
+  await expect(col.locator("article")).toHaveCount(64);
   await expect(
     col.getByRole("button", { name: /imóveis ocultos em/ }),
   ).toHaveCount(0);

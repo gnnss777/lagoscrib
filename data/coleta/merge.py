@@ -16,6 +16,12 @@ SOURCES = [s.removesuffix(".json") for s in sys.argv[1:]] or DEFAULT_SOURCES
 BEDROOM_FIX = {}
 # Sem nenhuma URL de foto: sem imagem para o app -> fora (registrado na evidência).
 DROP_NO_PHOTOS = set()
+# Teto do produto: R$ 3.500 com TODAS as taxas (aluguel + condomínio + IPTU).
+# O filtro de busca dos portais é só por aluguel (--preco-max), então sem esta
+# regra a base aceita imóvel de R$ 2.500 de aluguel com R$ 1.300 de condomínio.
+MAX_TOTAL_ALUGUEL = 3500
+# Ids derrubados por esse teto, para o motivo sair certo na evidência.
+ACIMA_DO_TETO = set()
 
 PORTAL_ID_FIELDS = ("zapId", "vivaId", "olxId", "apolarId", "codigoAnunciante")
 
@@ -115,6 +121,9 @@ def normalize(x):
         x["condo"] = int(x.get("condo", 0))
         x["iptu"] = int(x.get("iptu", 0))
         x["total"] = x["rent"] + x["condo"] + x["iptu"]
+        if x["total"] > MAX_TOTAL_ALUGUEL:
+            ACIMA_DO_TETO.add(x["id"])
+            return None
     if "salePrice" in x and x["salePrice"] == 0:
         del x["salePrice"]
     x["photoUrls"] = x["photoUrls"][:11]
@@ -129,7 +138,9 @@ def main():
     for x in raw:
         n = normalize(x)
         if n is None:
-            problems.append(("drop-sem-foto", x["id"]))
+            problemas.append(
+                ("acima-do-teto" if x["id"] in ACIMA_DO_TETO else "drop-sem-foto", x["id"])
+            )
         else:
             # total consistente?
             if n.get("transaction") == "venda":

@@ -11,7 +11,7 @@ async function login(page: Page) {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(80);
+  await expect(page.locator(".card-apartment")).toHaveCount(64);
 }
 
 test("test_form_novo_filtravel_quartos_elevador_banheiros", async ({
@@ -46,7 +46,7 @@ test("test_form_novo_filtravel_quartos_elevador_banheiros", async ({
   await page.screenshot({ path: "test-results/s010-form.png" });
   await page.getByRole("button", { name: "Importar Novo Imóvel" }).click();
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(81);
+  await expect(page.locator(".card-apartment")).toHaveCount(65);
 
   // Quartos 3+ + Elevador inclui o novo (Comendador + novo).
   await page.getByTestId("filter-toggle").click();

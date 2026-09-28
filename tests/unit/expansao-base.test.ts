@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { apartments, saleApartments } from "@/lib/data";
+import { TETO_TOTAL_ALUGUEL } from "@/lib/constants";
 import { totalAllIn } from "@/lib/pricing";
 
 // Expansão da base (5 fontes, 22/09/2026): invariantes de toda a base,
@@ -73,12 +74,15 @@ describe("expansao base", () => {
   });
 
   it("test_expansao_dentro_do_escopo_da_leva", () => {
-    // Trava o critério da coleta: 2-3 quartos e aluguel até R$ 3.000. Sem isso
-    // uma leva futura com outro filtro passa o build e muda o produto em
-    // silêncio. Ver docs/stories/S008-coleta-4-portais.md.
+    // Trava o critério da coleta: 2-3 quartos e R$ 3.500 com TODAS as taxas.
+    // O teto é no all-in (aluguel + condomínio + IPTU), não no aluguel: o filtro
+    // de busca dos portais é por aluguel (--preco-max), então travar só o
+    // aluguel deixaria passar imóvel de R$ 2.500 com R$ 1.300 de condomínio.
+    // Sem isso uma leva futura muda o produto em silêncio.
+    // Ver docs/stories/S010-coleta-teto-allin-3500.md.
     for (const a of all) {
       expect([2, 3], `${a.id} quartos`).toContain(a.bedrooms);
-      expect(a.rent, `${a.id} aluguel`).toBeLessThanOrEqual(3000);
+      expect(a.total, `${a.id} all-in`).toBeLessThanOrEqual(TETO_TOTAL_ALUGUEL);
     }
   });
 });

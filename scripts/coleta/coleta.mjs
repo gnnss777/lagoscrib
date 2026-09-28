@@ -119,20 +119,36 @@ function ruaDe(texto) {
 
 // ---------------------------------------------------------------- browser
 mkdirSync(OUT, { recursive: true });
-const ctx = await chromium.launchPersistentContext(PROFILE, {
-  channel: "msedge",
-  headless: false,
-  userAgent: UA,
-  locale: "pt-BR",
-  timezoneId: "America/Sao_Paulo",
-  viewport: { width: 1440, height: 900 },
-  args: ["--disable-blink-features=AutomationControlled"],
-  ignoreDefaultArgs: ["--enable-automation"],
-});
-await ctx.addInitScript(() => {
-  Object.defineProperty(navigator, "webdriver", { get: () => undefined });
-});
-const page = ctx.pages()[0] ?? (await ctx.newPage());
+// --cdp=http://127.0.0.1:9222: usa um Chromium JÁ ABERTO e logado em vez de subir
+// o perfil próprio. Para assim (abra antes):
+//   chrome.exe --remote-debugging-port=9222 --profile-directory="Profile 1"
+// Ganho: sessão real dos portais (zapAccessToken/z_user_id) e Cloudflare sem
+// Profiles. Custo: depende da aba viva e o perfil é do usuário.
+const CDP = (process.argv.find((a) => a.startsWith("--cdp=")) || "").split("=")[1] || "";
+const ctx = CDP
+  ? (await chromium.connectOverCDP(CDP)).contexts()[0]
+  : await chromium.launchPersistentContext(PROFILE, {
+      channel: "msedge",
+      headless: false,
+      userAgent: UA,
+      locale: "pt-BR",
+      timezoneId: "America/Sao_Paulo",
+      viewport: { width: 1440, height: 900 },
+      args: ["--disable-blink-features=AutomationControlled"],
+      ignoreDefaultArgs: ["--enable-automation"],
+    });
+if (!ctx) {
+  console.error(`--cdp=${CDP} nao conectou. O navegador esta aberto com a porta de debug?`);
+  process.exit(1);
+}
+if (!CDP) {
+  await ctx.addInitScript(() => {
+    Object.defineProperty(navigator, "webdriver", { get: () => undefined });
+  });
+} else {
+  console.log(`  [cdp] conectado em ${CDP} — usando a sessao ja logada do navegador aberto`);
+}
+const page = CDP ? await ctx.newPage() : (ctx.pages()[0] ?? (await ctx.newPage()));
 const descartados = [];
 const idsVistos = new Set();
 let apolarSufixo = "";
@@ -195,9 +211,16 @@ const QTS_SET = QTS_BUSCA ? new Set(QTS_BUSCA.split(",").map(Number).filter(Bool
 // --preco-max=3000: teto de aluguel. Vira ?precoMaximo= na busca e price_max na
 // API do Apolar, e é reaplicado no cliente — o portal não respeita o parâmetro
 // de forma confiável, então o corte final é nosso.
-const PRECO_MAX = Number(
-  (process.argv.find((a) => a.startsWith("--preco-max=")) || "").split("=")[1] || 0,
-);
+  const PRECO_MAX = Number(
+    (process.argv.find((a) => a.startsWith("--preco-max=")) || "").split("=")[1] || 0,
+  );
+  // Teto do PRODUTO: R$ 3.500 com todas as taxas (aluguel + condomínio + IPTU).
+  // --preco-max é só o filtro de busca do portal (aluguel); sozinho ele deixa
+  // passar imóvel de R$ 2.500 com R$ 1.300 de condomínio, que o usuário não
+  // aguenta. Aqui o corte é no all-in, e antes de gastar cota/foto.
+  const TETO_TOTAL = Number(
+    (process.argv.find((a) => a.startsWith("--teto-total=")) || "").split("=")[1] || 3500,
+  );
 const paramBusca = (qts, preco) =>
   [qts ? `quartos=${qts}` : "", preco ? `precoMaximo=${preco}` : ""].filter(Boolean).join("&");
 const SUFIXO_BUSCA = (() => {
@@ -373,6 +396,14 @@ async function coletarZap(portal) {
       fora(portal, pid, `aluguel R$${rent} acima do teto de R$${PRECO_MAX}`);
       continue;
     }
+    if (rent + condo + iptu > TETO_TOTAL) {
+      fora(
+        portal,
+        pid,
+        `all-in R$${rent + condo + iptu} (aluguel ${rent} + condo ${condo} + iptu ${iptu}) acima do teto de R$${TETO_TOTAL}`,
+      );
+      continue;
+    }
     if (!rent || !area || !quartos) {
       fora(portal, pid, `incompleto (rent=${rent} area=${area} qtos=${quartos})`);
       continue;
@@ -399,7 +430,7 @@ async function coletarZap(portal) {
     conta(bairro);
     saida.push({
       id: partes.filter(Boolean).join("-"),
-      title: (h1 || prod.name || `Apartamento para alugar — ${bairro}`).slice(0, 120),
+      title: (h1 || prod?.name || `Apartamento para alugar — ${bairro}`).slice(0, 120),
       neighborhood: bairro,
       address: `${rua || bairro}, ${bairro}, Curitiba - PR`,
       area,
@@ -429,36 +460,60 @@ async function coletarZap(portal) {
 
 // ---------------------------------------------------------------- OLX
 async function coletarOlx() {
-  const busca = "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/imoveis/aluguel/apartamentos";
+  // A URL de categoria (…/imoveis/aluguel/apartamentos) redireciona para a home
+  // e não devolve link de anúncio. A busca que funciona é a de estado com q=, e
+  // o card aponta para o path de anúncio (…/imoveis/<slug>-<id>), não /vi/<id>.
+  // Filtro de categoria vai na query: transacao=aluguel + tipo=apartamento.
+  const termo = encodeURIComponent(
+    `apartamento ${QTS_BUSCA || ""} quartos aluguel`.replace(/\s+/g, " ").trim(),
+  );
+  const extra = [
+    termo,
+    "f[transaction]=rent",
+    "f[type]=apartment",
+    PRECO_MAX ? `priceMax=${PRECO_MAX}` : "",
+  ]
+    .filter(Boolean)
+    .join("&");
+  const busca = `https://www.olx.com.br/estado-pr?q=${extra}`;
+
   const alvos = [];
-  for (let p = 1; alvos.length < QTD.olx * 4 && p <= 10; p++) {
-    const st = await abrir(p === 1 ? busca : `${busca}?page=${p}`);
+  for (let p = 1; alvos.length < QTD.olx * 4 && p <= 8; p++) {
+    const st = await abrir(p === 1 ? busca : `${busca}&page=${p}`);
     if (st !== 200) break;
-    const ids = (await hrefs())
-      .filter((h) => /\/vi\/\d+/.test(h))
-      .map((h) => h.match(/\/vi\/(\d+)/)?.[1])
-      .filter(Boolean);
-    console.log(`  [olx] pagina ${p}: ${ids.length} anuncios`);
-    for (const id of ids) alvos.push(id);
+    const hrefsOlx = (await hrefs()).filter((h) => /\/imoveis\/[^/?#]+-\d{6,}/.test(h));
+    console.log(`  [olx] pagina ${p}: ${hrefsOlx.length} anuncios`);
+    for (const h of hrefsOlx) alvos.push(h);
   }
 
   const saida = [];
-  for (const oid of [...new Set(alvos)]) {
+  for (const href of [...new Set(alvos)]) {
     if (saida.length >= QTD.olx) break;
-    const url = `https://www.olx.com.br/vi/${oid}`;
+    const url = href.startsWith("http") ? href : `https://www.olx.com.br${href}`;
+    const oid = (url.match(/-(\d{6,})/) || [])[1] || url.slice(-12);
     const st = await abrir(url);
     const html = await page.content();
     const prod = ldJson(html).find((b) => b?.["@type"] === "Product");
-    // A listagem mistura com o "Em alta" (eletrodomésticos etc). O anúncio real
-    // de imóvel tem /imoveis/ na URL canônica do ld+json.
-    if (st !== 200 || !prod || !/\/imoveis\//.test(prod.url || "")) {
-      fora("olx", oid, `fora do escopo (HTTP ${st}, url=${(prod?.url || "").slice(-40)})`);
+    // O anúncio real de imóvel tem /imoveis/ na URL canônica. Onde ela mora mudou:
+    // o ld+json do OLX hoje vem só com RentAction (sem Product e sem url), então
+    // ler dali reprovava 100% dos anúncios. A tag canonical ainda traz o path.
+    const canonico =
+      prod?.url || (await page.evaluate(() => document.querySelector('link[rel="canonical"]')?.href || ""));
+    if (st !== 200 || !/\/imoveis\//.test(canonico || "")) {
+      fora("olx", oid, `fora do escopo (HTTP ${st}, url=${(canonico || "").slice(-40)})`);
       continue;
     }
     const texto = await page.evaluate(() => document.body.innerText);
     const h1 = await page.evaluate(() => document.querySelector("h1")?.innerText?.trim() || "");
+    // O h1 vem vazio e o ld+json so tem RentAction. O que continua confiavel no
+    // anuncio do OLX e o <title> ("... - Bairro, Cidade - PR <id>") e o preco
+    // exibido como "R$ 2.000/mes". Pegar "o primeiro R$ do texto" trazia
+    // condominio/Parcela e gerava aluguel de R$ 300.
+    const titulo = await page.title();
     const fotos = [...new Set([...html.matchAll(/https:\/\/img\.olx\.com\.br\/[^"'\\ ]+/g)].map((m) => m[0]))];
+    const cidade = (titulo.match(/-\s*[^-,]{2,40},\s*([^-,]{2,30})\s*-\s*PR\b/i) || [])[1]?.trim() || "";
     const bairro =
+      bairroNoTexto(titulo) ||
       bairroNoTexto(h1) ||
       bairroNoTexto((texto.match(/Bairro:?\s*([^\n]{3,40})/i) || [])[1] || "") ||
       bairroNoTexto(texto.slice(0, 1200));
@@ -467,16 +522,33 @@ async function coletarOlx() {
     const banheiros = num((texto.match(/(\d+)\s*banheiro/) || [])[1]);
     const vagas = num((texto.match(/(\d+)\s*vaga/) || [])[1]);
     const rent =
-      money((texto.match(/Aluguel[\s\S]{0,40}/i) || [])[0]) || money((texto.match(/R\$\s*[\d.]{3,}/) || [])[0]);
+      money((texto.match(/Aluguel[\s\S]{0,40}/i) || [])[0]) ||
+      money((texto.match(/R\$\s*[\d.]{1,12}(?:,\d{1,2})?\s*\/\s*m[eê]s/i) || [])[0]);
     const iptu = money((texto.match(/IPTU[\s\S]{0,40}/i) || [])[0]);
-    const desc = (prod.description || "").replace(/<br\s*\/?>/gi, " ").replace(/\s+/g, " ").trim();
+    const desc = (prod?.description || "").replace(/<br\s?\/?>/gi, " ").replace(/\s+/g, " ").trim();
 
+    // O titulo tambem diz a cidade: a busca e do estado inteiro (5.817
+    // resultados em PR), entao sem isso entra Londrina/Foz/Cascavel na base.
+    if (cidade && !/curitiba/i.test(cidade)) {
+      fora("olx", oid, `fora de Curitiba (${cidade})`);
+      continue;
+    }
+    if (BAIRROS_SLUG.size && bairro && !BAIRROS_SLUG.has(slug(bairro))) {
+      fora("olx", oid, `bairro ${bairro} fora da lista de alvos`);
+      continue;
+    }
     if (!bairro) {
-      fora("olx", oid, `bairro nao identificado (${(h1 || prod.name || "").slice(0, 50)})`);
+      fora("olx", oid, `bairro nao identificado (${(titulo || h1 || "").slice(0, 60)})`);
       continue;
     }
     if (!rent || !area || !quartos) {
       fora("olx", oid, `incompleto (rent=${rent} area=${area} qtos=${quartos})`);
+      continue;
+    }
+    // OLX nao publica condominio: entra como condoUnknown (0), por isso o all-in
+    // aqui e o minimo possivel. O merge.py ainda barra o que passar do teto.
+    if (rent + iptu > TETO_TOTAL) {
+      fora("olx", oid, `all-in R$${rent + iptu} (aluguel ${rent} + iptu ${iptu}) acima do teto de R$${TETO_TOTAL}`);
       continue;
     }
     if (fotos.length < 8) {
@@ -485,7 +557,7 @@ async function coletarOlx() {
     }
     saida.push({
       id: `olx-${slug(bairro)}-${area}-${oid.slice(-5)}`,
-      title: (h1 || prod.name || `Apartamento para alugar — ${bairro}`).slice(0, 120),
+      title: (h1 || prod?.name || `Apartamento para alugar — ${bairro}`).slice(0, 120),
       neighborhood: bairro,
       address: `${ruaDe(texto.slice(0, 1500)) || bairro}, ${bairro}, Curitiba - PR`,
       area,
@@ -497,7 +569,7 @@ async function coletarOlx() {
       condoUnknown: true,
       iptu,
       total: rent + iptu,
-      link: prod.url || url,
+      link: prod?.url || canonico || url,
       source: "OLX",
       olxId: oid,
       features: [],
@@ -643,6 +715,14 @@ async function coletarApolar() {
       fora("apolar", ref, `incompleto (rent=${rent} area=${area} qtos=${quartos})`);
       continue;
     }
+    if (rent + condo + iptu > TETO_TOTAL) {
+      fora(
+        "apolar",
+        ref,
+        `all-in R$${rent + condo + iptu} (aluguel ${rent} + condo ${condo} + iptu ${iptu}) acima do teto de R$${TETO_TOTAL}`,
+      );
+      continue;
+    }
     if (fotos.length < 8) {
       fora("apolar", ref, `fotos<8 (${fotos.length})`);
       continue;
@@ -720,5 +800,11 @@ try {
   writeFileSync(`${OUT}/descartados-l4.json`, JSON.stringify(descartados, null, 1), "utf8");
   const total = Object.values(salvo).reduce((a, b) => a + b.length, 0);
   console.log(`TOTAL: ${total} | descartados: ${descartados.length}`);
-  await ctx.close();
+  // No modo --cdp o navegador é o do usuário, com as abas dele: NÃO fecha.
+  if (CDP) {
+    await page.close().catch(() => {});
+    console.log("  [cdp] aba do scraper fechada; o navegador segue aberto");
+  } else {
+    await ctx.close();
+  }
 }

@@ -22,10 +22,10 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(80);
+  await expect(page.locator(".card-apartment")).toHaveCount(64);
 
   const compareBoxes = page.getByRole("checkbox", { name: "Comparar" });
-  await expect(compareBoxes).toHaveCount(80);
+  await expect(compareBoxes).toHaveCount(64);
 
   // 3 primeiros cards. Total e metragem saem dos próprios cards: literal aqui
   // quebrava a cada leva da base.

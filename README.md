@@ -39,25 +39,35 @@ Padrões de dev local: usuário `guinness` / admin `admin`.
 
 ## Dados
 
-**80 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (levas S008+S009) de
-3 portais: **Zap** (29), **VivaReal** (21) e **Apolar** (30). Escopo: **2–3 quartos,
-aluguel até R$ 3.000** — 66 de 2 quartos e 14 de 3, de R$ 950 a R$ 3.000 de
-aluguel (R$ 6.362 all-in com condomínio e IPTU), em 36 bairros. O critério está
-travado em teste, então uma leva futura não muda o produto em silêncio.
+**64 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (levas S008→S010) de
+3 portais: **Zap** (23), **Apolar** (25) e **VivaReal** (16). Escopo: **2–3 quartos e
+até R$ 3.500 com todas as taxas** (aluguel + condomínio + IPTU) — 55 de 2 quartos e 9 de 3,
+em 32 bairros. O teto é no **all-in**, não no aluguel: o filtro de busca dos portais é por
+aluguel, então um imóvel de R$ 2.500 com R$ 1.300 de condomínio passa o filtro e não pode
+entrar na base. O critério está travado em teste (`tests/unit/scope.test.ts`).
 
-**38 imóveis nos 8 bairros prioritários** (levantada S009, `--bairros` com teto por
-bairro): Centro 8, Água Verde 9, Batel 6, Vila Izabel 6, Bigorrilho 5, Centro Cívico 2,
-Mercês 1, São Francisco 1. Mercês e São Francisco são os finos: o portal entrega
-pouco anúncio de 2 quartos ≤ R$ 3.000 neles, e a cota por bairro impede um bairro
-consumir a leva toda.
+**32 imóveis nos 8 bairros prioritários** (`--bairros` com cota por bairro): Centro 9,
+Água Verde 9, Batel 5, Vila Izabel 4, Bigorrilho 3, Mercês 1, São Francisco 1,
+Centro Cívico 0. Centro Cívico esvaziou: com o teto de R$ 3.500 all-in não sobra anúncio
+de 2 quartos lá, porque o condomínio da região come a faixa. Mercês e São Francisco
+também são finos. Em 4 coletas diferentes o scraper reencontrou os mesmos anúncios —
+o estoque de 2 quartos ≤ R$ 3.500 nesses bairros está praticamente esgotado.
 
 Telefone/e-mail não são coletados (portais mascaram): o contato é sempre pelo link
 do anúncio original.
 
 O scraper é determinístico (sem LLM no loop) e versionado em
-`scripts/coleta/coleta.mjs`; o histórico do pipeline em `docs/stories/S008-coleta-4-portais.md`
-e `docs/stories/S009-coleta-bairros-prioritarios.md`.
-O OLX ficou fora: a lista orgânica de anúncios não renderiza (ver a story).
+`scripts/coleta/coleta.mjs`; o histórico do pipeline em `docs/stories/S008-coleta-4-portais.md`,
+`S009-coleta-bairros-prioritarios.md` e `S010-coleta-teto-allin-3500.md`.
+
+O scraper aceita `--cdp=http://127.0.0.1:9222` para usar um Chromium já aberto e
+logado nos portais, em vez do perfil próprio (que só existe para passar do Cloudflare).
+
+O **OLX ficou fora** — a busca funciona (`olx.com.br/estado-pr?q=`) e entrega links de
+anúncio, mas o preço não é extraível com confiança: o anúncio não traz `Product` no
+`ld+json` (só `RentAction`) e o parse por texto erra o aluguel em parte dos anúncios
+(R$ 50, R$ 90 duplicados). Precisa de um seletor de preço exato antes de entrar.
+Ver a story.
 
 Snapshot anterior (22/09/2026, 109 imóveis em 5 fontes) preservado em
 `data/apartamentos.json` + `data/coleta/*.json`; fotos em `public/imoveis/`.
