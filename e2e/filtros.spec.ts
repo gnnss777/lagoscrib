@@ -47,7 +47,7 @@ async function login(page: Page) {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
 }
 
 test("test_filtros_combinacao_teclado_persistencia_sort_empty", async ({
@@ -117,7 +117,7 @@ expect(gridText).not.toContain("R$ 4.0");
 
   // Limpar volta aos 7 (painel já está aberto da conferência acima).
   await page.getByRole("button", { name: "Limpar filtros" }).first().click();
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   // AC-FILT-04: sort menor preço → Castro primeiro; maior área → 130m².
   await page.locator("#dash-sort").selectOption("menor-preco");
@@ -133,7 +133,7 @@ expect(gridText).not.toContain("R$ 4.0");
   await expect(page.locator(".card-apartment")).toHaveCount(0);
   await expect(page.getByText(/Nenhum imóvel com os .* filtros/)).toBeVisible();
   await page.getByRole("button", { name: "Limpar filtros" }).last().click();
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });
@@ -160,7 +160,7 @@ test("test_filtros_bairro_novo_aparece_no_dropdown", async ({ page }) => {
     .fill("https://exemplo.com/e2e-filtros");
   await page.getByRole("button", { name: "Importar Novo Imóvel" }).click();
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(65);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
   await expect(page.locator("#dash-bairro")).toContainText("BairroE2EFiltros");
   await page.locator("#dash-bairro").selectOption("BairroE2EFiltros");
   await expect(page.locator(".card-apartment")).toHaveCount(1);

@@ -13,11 +13,11 @@ export function buildCsp(nonce: string): string {
   // as outras diretivas continuam bloqueando origens externas e plugins.
   const directives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://va.vercel-analytics.com",
+    "script-src 'self' 'unsafe-inline' https://va.vercel-analytics.com https://vercel.live",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://va.vercel-analytics.com",
+    "connect-src 'self' https://va.vercel-analytics.com https://vercel.live",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

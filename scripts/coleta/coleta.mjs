@@ -340,7 +340,7 @@ async function coletarZap(portal) {
 
   const sep = base.includes("?") ? "&" : "?";
   const alvos = [];
-  for (let p = 1; alvos.length < QTD[portal] * 3 && p <= 6; p++) {
+  for (let p = 1; alvos.length < QTD[portal] * 3 && p <= 10; p++) {
     if (p > 1) {
       const st = await abrir(`${base}${sep}pagina=${p}`);
       if (st !== 200) break;

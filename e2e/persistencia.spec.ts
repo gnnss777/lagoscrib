@@ -25,7 +25,7 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
 
   // Já autenticado: dashboard direto, sem login.
   await page.goto("/");
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   // O id do primeiro card vem da própria base (muda a cada leva). Semear nota
   // e status nele e recarregar é o que prova a migração v1 -> v2.
@@ -60,7 +60,7 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
     );
   }, alvo!);
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   await page.locator(".card-apartment").first().locator("h3").click();
 
@@ -83,7 +83,7 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
     .getByRole("checkbox", { name: "Tomadas e interruptores" })
     .check();
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
   await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: /Notas \(1\)/ }).click();
   await expect(page.locator("text=Nota antiga v1 — deve sobreviver")).toBeVisible();
