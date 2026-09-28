@@ -28,9 +28,13 @@ test("test_polimento_card_com_origem_comparar_isolado", async ({
 
   const card = page.locator(".card-apartment").first();
 
-  // F3.1: card mínimo — só o link de origem, sem Prospectar (vive no DetailModal).
-  await expect(card.locator("a")).toHaveCount(1);
-  await expect(card.locator("a")).toHaveAttribute("href", /^https:\/\//);
+  // F3.1: card mínimo — sem Prospectar (vive no DetailModal). O link de
+  // origem é 1; o `tel:` só existe quando o anúncio tem telefone no
+  // `lib/data.ts` (ADR-004), então a contagem de âncoras depende do dado, não
+  // do layout. Por isso a asserção é no link de origem, não em `a` solto.
+  const origem = card.getByRole("link", { name: /Ver anúncio original em/ });
+  await expect(origem).toHaveCount(1);
+  await expect(origem).toHaveAttribute("href", /^https:\/\//);
   await expect(
     card.getByRole("button", { name: /Prospectar/ }),
   ).toHaveCount(0);

@@ -53,7 +53,9 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   );
   const waHref =
     (await page.getByTestId("confirm-button").getAttribute("href")) ?? "";
-  expect(waHref).toContain("https://wa.me/?text=");
+  // Com telefone no data.ts o deep link leva o número (wa.me/<phone>?text=…,
+  // ADR-004); sem telefone continua wa.me/?text=…
+  expect(waHref).toMatch(/^https:\/\/wa\.me\/(?:\d{10,14}\?text=|\?text=)/);
   const waDecoded = decodeURIComponent(waHref);
   expect(waDecoded).toContain("disponível");
   expect(waDecoded).toMatch(/condomínio/i);
