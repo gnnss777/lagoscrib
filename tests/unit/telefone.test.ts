@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { leadConfigurado, telApolar, telefonesDeHrefs } from "@/scripts/coleta/telefone.mjs";
+import {
+  ehCelular,
+  ehDoDdd,
+  ehFixo,
+  leadConfigurado,
+  telApolar,
+  telefonesDeHrefs,
+} from "@/scripts/coleta/telefone.mjs";
 
 // Convenção do estúdio: test_[sistema]_[cenário]_[resultado_esperado].
 //
@@ -80,6 +87,62 @@ describe("telefone da coleta", () => {
     const daApi = telApolar("(41)99121-0624");
     const t = telefonesDeHrefs([`tel:${daApi}`]);
     expect(t.celular).toBe("+5541991210624");
+  });
+});
+
+// A validação é o que impede número errado no app. O campo vem LIDO À MÃO do
+// site da imobiliária, e a revisão achou dois casos que vinham rotulados como
+// celular e eram fixo de 8 dígitos.
+describe("validacao de celular e fixo", () => {
+  it("test_valida_celular_so_com_nono_digito_nove", () => {
+    // Celulares reais lidos nos sites das imobiliárias
+    for (const ok of ["+5541996690773", "+5541985150317", "+5541987010407", "+5541988592464"])
+      expect(ehCelular(ok), ok).toBe(true);
+    // 8 dígitos, mesmo começando com 9: é número curto de fixo, não celular.
+    // Estes dois vieram rotulados como celular na revisão e foram barrados.
+    expect(ehCelular("+554195740407")).toBe(false); // Basi "41 9574-0407"
+    expect(ehCelular("+554199960927")).toBe(false); // Nakayoshi "41 9996-0927"
+  });
+
+  it("test_valida_fixo_com_8_digitos", () => {
+    expect(ehFixo("+554132336025")).toBe(true); // Paraíso
+    expect(ehFixo("+554132502000")).toBe(true); // 2000
+    expect(ehFixo("+5541996690773")).toBe(false); // celular não é fixo
+  });
+
+  it("test_valida_rejeita_tudo_que_nao_e_e164_brasil", () => {
+    // Aqui só o formato. DDD é outra checagem (ehDoDdd) — um celular de São
+    // Paulo é E.164 válido, só não é da região que o dono pediu.
+    for (const ruim of [
+      "",
+      null,
+      undefined,
+      "+55419996092700", // 14 dígitos: um a mais
+      "+5541", // curto demais
+      "41996690773", // sem +55
+      "+554199669077", // 9 dígitos
+      "0800 241 1234", // toll-free
+      "(41) 99699-0773", // com máscara
+      "+1 415 555 0100", // número dos EUA
+    ])
+      expect(ehCelular(ruim), String(ruim)).toBe(false);
+  });
+
+  it("test_celular_de_fora_da_regiao_e_valido_mas_nao_serve", () => {
+    // DDD 31 (São Paulo) e DDD 11 (Rio) são E.164 legítimos...
+    expect(ehCelular("+5531996690773")).toBe(true);
+    expect(ehCelular("+5511996690773")).toBe(true);
+    // ...mas não são da região Curitiba que o dono pediu.
+    expect(ehDoDdd("+5531996690773")).toBe(false);
+    expect(ehDoDdd("+5511996690773")).toBe(false);
+  });
+
+  it("test_valida_ddd_da_regiao_curitiba", () => {
+    expect(ehDoDdd("+5541996690773")).toBe(true);
+    expect(ehDoDdd("+554132336025")).toBe(true);
+    expect(ehDoDdd("+5531996690773")).toBe(false);
+    expect(ehDoDdd("+5511996690773")).toBe(false);
+    expect(ehDoDdd(null)).toBe(false);
   });
 });
 

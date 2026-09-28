@@ -1,0 +1,236 @@
+{
+ "aplicados": [
+  {
+   "id": "zap-centro-127-1549",
+   "imobiliaria": "Rechi Imóveis",
+   "phone": "+5541991110038",
+   "site": "https://www.rechiimoveis.com.br",
+   "creci": "6352-J-PR"
+  },
+  {
+   "id": "zap-sao-braz-36-4658",
+   "imobiliaria": "Villae Consultoria E Assessoria Imobiliária",
+   "phone": "+5541999671310",
+   "site": "https://www.villaeimoveis.com.br",
+   "creci": null
+  },
+  {
+   "id": "viva-fazendinha-70-9862",
+   "imobiliaria": "Imobiliária Ivan Freitas",
+   "phone": "+5541985150317",
+   "site": "https://www.imobiliariaivanfreitas.com.br",
+   "creci": "03631-J-PR"
+  },
+  {
+   "id": "viva-boa-vista-58-5114",
+   "imobiliaria": "Casa Prates Imóveis",
+   "phone": "+5541935005704",
+   "site": "https://casaprates.com.br",
+   "creci": "6155-J-PR"
+  },
+  {
+   "id": "viva-guaira-37-3392",
+   "imobiliaria": "Bella Torre Imoveis",
+   "phone": "+5541988037868",
+   "site": "https://www.bellatorre.com.br",
+   "creci": "02133-J-PR"
+  },
+  {
+   "id": "viva-centro-45-5444",
+   "imobiliaria": "Imobiliária Freitas Godoi",
+   "phone": "+5541997250521",
+   "site": "https://www.freitasgodoi.com.br",
+   "creci": "03378-J-PR"
+  },
+  {
+   "id": "viva-cristo-rei-66-6313",
+   "imobiliaria": "Innova Imobiliária",
+   "phone": "+5541987010407",
+   "site": "https://www.innovaimobiliaria.com.br",
+   "creci": null
+  },
+  {
+   "id": "zap-agua-verde-48-5418",
+   "imobiliaria": "Cadena Imóveis",
+   "phone": "+5541996690773",
+   "site": "https://cadenaimoveis.com.br",
+   "creci": "06230-J-PR"
+  },
+  {
+   "id": "zap-batel-75-8217",
+   "imobiliaria": "Idealle",
+   "phone": "+5541988677101",
+   "site": "https://www.idealleimoveis.com.br",
+   "creci": "04066-J-PR"
+  },
+  {
+   "id": "zap-batel-53-0509",
+   "imobiliaria": "Cesário Pereira Imóveis De Valor",
+   "phone": "+5541991275942",
+   "site": "https://cesariopereiraimoveis.com.br",
+   "creci": "06930-J-PR"
+  },
+  {
+   "id": "zap-sao-francisco-70-4740",
+   "imobiliaria": "Idealle",
+   "phone": "+5541988677101",
+   "site": "https://www.idealleimoveis.com.br",
+   "creci": "04066-J-PR"
+  },
+  {
+   "id": "zap-batel-87-7962",
+   "imobiliaria": "Cadena Imóveis",
+   "phone": "+5541996690773",
+   "site": "https://cadenaimoveis.com.br",
+   "creci": "06230-J-PR"
+  },
+  {
+   "id": "zap-bigorrilho-42-5444",
+   "imobiliaria": "FAVRETTO NEGÓCIOS IMOBILIÁRIOS",
+   "phone": "+5541988316995",
+   "site": "https://www.favrettonegociosimob.com.br",
+   "creci": "04525-J-PR"
+  },
+  {
+   "id": "zap-centro-56-9657",
+   "imobiliaria": "Atria Imoveis",
+   "phone": "+5541987783206",
+   "site": "https://atriaimobiliaria.com.br",
+   "creci": "05776-J-PR"
+  },
+  {
+   "id": "viva-agua-verde-47-0144",
+   "imobiliaria": "Imobiliária X",
+   "phone": "+5541988592464",
+   "site": "https://www.imobiliariax.com.br",
+   "creci": "03717-J-PR"
+  },
+  {
+   "id": "viva-centro-35-2811",
+   "imobiliaria": "Auxiliadora Predial - Alugueis CWB",
+   "phone": "+5541987007777",
+   "site": "https://auxiliadoraalugueis.com.br",
+   "creci": "10178-J-PR"
+  }
+ ],
+ "semCelular": [
+  {
+   "id": "zap-cajuru-54-8844",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "fixo": "+554132012424"
+  },
+  {
+   "id": "zap-centro-78-3911",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
+  },
+  {
+   "id": "zap-novo-mundo-66-4246",
+   "imobiliaria": "Imobiliária Paraíso",
+   "fixo": "+554132336025"
+  },
+  {
+   "id": "viva-uberaba-56-0725",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "fixo": "+554132012424"
+  },
+  {
+   "id": "viva-alto-da-rua-xv-90-6462",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
+  },
+  {
+   "id": "viva-portao-100-7848",
+   "imobiliaria": "Galo Consultoria De Imoveis",
+   "fixo": "+554133421516"
+  },
+  {
+   "id": "viva-parolin-52-0240",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "fixo": "+554132012424"
+  },
+  {
+   "id": "zap-agua-verde-70-1150",
+   "imobiliaria": "Especiale Imóveis",
+   "fixo": "+554130247675"
+  },
+  {
+   "id": "zap-vila-izabel-36-2370",
+   "imobiliaria": "Basi Corretagem",
+   "fixo": "+554133239595"
+  },
+  {
+   "id": "zap-bigorrilho-45-1418",
+   "imobiliaria": "Imobiliária Paraíso",
+   "fixo": "+554132336025"
+  },
+  {
+   "id": "zap-vila-izabel-75-1531",
+   "imobiliaria": "Nakayoshi Imoveis",
+   "fixo": ""
+  },
+  {
+   "id": "viva-agua-verde-56-8940",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
+  }
+ ],
+ "rejeitados": [
+  {
+   "n": 20,
+   "nome": "Basi Corretagem",
+   "motivo": "celular \"+554195740407\" não passa na validação (DDD/9 dígitos)",
+   "nota": "página /contato rotula 'Locação: 41 9574-0407'"
+  },
+  {
+   "n": 21,
+   "nome": "Nakayoshi Imoveis",
+   "motivo": "celular \"+554199960927\" não passa na validação (DDD/9 dígitos)",
+   "nota": "REJEITADO: o site diz 'Fone Locação: (41) 9996-0927' — 8 dígitos, é fixo, não celular. Não usar."
+  }
+ ],
+ "naoResolvidos": [
+  {
+   "n": 1,
+   "nome": "Gonzaga Imóveis",
+   "creci": "00137-J-PR",
+   "motivo": "conflito de CRECI entre subdomínios: gonzagaimoveis.com.br diz J04861 com (41) 3013-2222 (bate no prefixo do portal), mas gonzagahome.com.br diz J00137 com (41) 3014-1010. O prefixo do portal é 3013-, que aponta para a linha J04861. Precisa de decisão humana: qual das duas é a linha de locação."
+  },
+  {
+   "n": 7,
+   "nome": "Hoje Imóveis",
+   "creci": "00822-J-PR",
+   "motivo": "site publica só 0800 241 1234 (toll-free, formato que não cabe em +55+DDD+n). Sem celular e sem fixo DDD 41."
+  },
+  {
+   "n": 9,
+   "nome": "ReMax Kmk10",
+   "creci": "10169-J-PR",
+   "motivo": "site oficial é renderizado por JS, telefone não pôde ser lido literalmente. O Instagram publica (41) 3026-1674 e (41) 99805-3356 e o prefixo 3026- bate, mas não é o site."
+  },
+  {
+   "n": 11,
+   "nome": "ReMax Share",
+   "creci": null,
+   "motivo": "escritório não encontrado. share.remax.com.br retorna vazio."
+  },
+  {
+   "n": 13,
+   "nome": "Rezende Imóveis",
+   "creci": "22256-J-PR",
+   "motivo": "o único Rezende de Curitiba é CRECI 56940J, não 22256-J. Descartado por CRECI. (O site dele tinha WhatsApp de locação (41) 98783-2384 e fixo 3018-9091 que bate no prefixo, mas é outra empresa.)"
+  },
+  {
+   "n": 22,
+   "nome": "Daniel Correa",
+   "creci": null,
+   "motivo": "sem site de um Daniel Correa de Curitiba. Homônimos são de Joinville/SC, Barretos/SP e Passos/MG."
+  },
+  {
+   "n": 24,
+   "nome": "Imobiliaria M E D",
+   "creci": "03363-J-PR",
+   "motivo": "nenhuma 'Imobiliária M E D' com CRECI 3363-J em Curitiba. Buscas por 3333- retornaram empresas de nome parecido com CRECI diferente."
+  }
+ ]
+}

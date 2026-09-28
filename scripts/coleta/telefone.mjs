@@ -110,6 +110,46 @@ export async function extrairTelefone(page, { espera = 10000, clique = 8000 } = 
 /** Campos do formulário, na ordem em que aparecem no modal do Zap. */
 export const CAMPOS_LEAD = ["nome", "telefone", "email"];
 
+export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// --------------------------------------------------------------------------
+// Validação de celular/fixo (espelha lib/phone-gate.ts ehTelefoneValido)
+// --------------------------------------------------------------------------
+// Precisa ser exato, porque o campo vem LIDO À MÃO do site da imobiliária. Dois
+// casos reais que a validação pegou na revisão:
+//   "41 9574-0407" (Basi)        -> 8 dígitos, é FIXO, não celular
+//   "41 9996-0927" (Nakayoshi)   -> 8 dígitos, é FIXO, não celular
+// Ambos vinham rotulados como celular. Celular brasileiro tem NONO dígito (9
+//xxxx-xxxx, 5+4). Adivinhar o 9º dígito seria inventar telefone, então a regra
+// é: se não fecha em 11, não entra como celular.
+
+const E164 = /^\+55\d{10,11}$/;
+
+/** Celular brasileiro: +55, DDD de 2, 9 dígitos com nono = 9. Ex.: +5541996690773 */
+export function ehCelular(t) {
+  if (!E164.test(String(t ?? ""))) return false;
+  const n = String(t).slice(3);
+  return n.length === 11 && n[2] === "9";
+}
+
+/** Fixo brasileiro: +55, DDD de 2, 8 dígitos. Ex.: +554132336025 */
+export function ehFixo(t) {
+  if (!E164.test(String(t ?? ""))) return false;
+  const n = String(t).slice(3);
+  return n.length === 10 && n[2] !== "9";
+}
+
+/** O dono pediu região Curitiba: DDD 41. */
+export const DDD_CURITIBA = "41";
+export function ehDoDdd(t, ddd = DDD_CURITIBA) {
+  return String(t ?? "").startsWith(`+55${ddd}`);
+}
+
+
+/**
+ * @param {Record<string, string | undefined>} [env]
+ * @returns {{ habilitado: boolean, completo: boolean, dados: { nome: string, telefone: string, email: string } }}
+ */
 export function leadConfigurado(env = process.env) {
   const dados = {
     nome: env.LEAD_NOME ?? "",
