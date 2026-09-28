@@ -1,0 +1,766 @@
+{
+ "anuncios": [
+  {
+   "id": "zap-capao-raso-50-0719",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-sala-de-jantar-capao-raso-curitiba-pr-50m2-id-2909490719/",
+   "phone": "",
+   "erro": "Error: page.evaluate: Target page, context or browser has be"
+  },
+  {
+   "id": "zap-cajuru-54-8844",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-piscina-cajuru-curitiba-pr-54m2-id-2914108844/",
+   "phone": "",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/42859/",
+   "anuncianteId": "42859",
+   "creci": "02412-J-PR",
+   "creciNum": "02412",
+   "telefoneMascarado": "(41) 3201-",
+   "imoveisAnunciante": "90",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-vila-izabel-48-1836",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-sala-grande-vila-izabel-curitiba-pr-48m2-id-2914291836/",
+   "phone": "",
+   "imobiliaria": "Gonzaga Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/52572/",
+   "anuncianteId": "52572",
+   "creci": "00137-J-PR",
+   "creciNum": "00137",
+   "telefoneMascarado": "(41) 3013-",
+   "imoveisAnunciante": "229",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-campina-do-siqueira-70-7741",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-area-de-servico-campina-do-siqueira-curitiba-pr-70m2-id-2914167741/",
+   "phone": "",
+   "imobiliaria": "Hoje Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/51274/",
+   "anuncianteId": "51274",
+   "creci": "00822-J-PR",
+   "creciNum": "00822",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "107",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-agua-verde-96-0258",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-3-quartos-com-sala-grande-agua-verde-curitiba-pr-96m2-id-2914290258/",
+   "phone": "",
+   "imobiliaria": "Gonzaga Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/52572/",
+   "anuncianteId": "52572",
+   "creci": "00137-J-PR",
+   "creciNum": "00137",
+   "telefoneMascarado": "(41) 3013-",
+   "imoveisAnunciante": "229",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-boqueirao-73-9061",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-churrasqueira-boqueirao-curitiba-pr-73m2-id-2914229061/",
+   "phone": "",
+   "imobiliaria": "ReMax Kmk10",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/870818/",
+   "anuncianteId": "870818",
+   "creci": "10169-J-PR",
+   "creciNum": "10169",
+   "telefoneMascarado": "(41) 3026-",
+   "imoveisAnunciante": "80",
+   "anunciandoDesde": "21 de julho de 2025"
+  },
+  {
+   "id": "zap-centro-78-3911",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-centro-curitiba-pr-78m2-id-2914183911/",
+   "phone": "",
+   "imobiliaria": "Imobiliária 2000",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/53234/",
+   "anuncianteId": "53234",
+   "creci": "01339-J-PR",
+   "creciNum": "01339",
+   "telefoneMascarado": "(41) 3250-",
+   "imoveisAnunciante": "216",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-novo-mundo-66-4246",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-3-quartos-mobiliado-novo-mundo-curitiba-pr-66m2-id-2914274246/",
+   "phone": "",
+   "imobiliaria": "Imobiliária Paraíso",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/44364/",
+   "anuncianteId": "44364",
+   "creci": "00475-J-PR",
+   "creciNum": "00475",
+   "telefoneMascarado": "(41) 3233-",
+   "imoveisAnunciante": "52",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "viva-tatuquara-119-3561",
+   "link": "https://www.vivareal.com.br/imovel/sobrado-3-quartos-tatuquara-bairros-curitiba-com-garagem-119m2-aluguel-RS2800-id-2914333561/",
+   "phone": "",
+   "imobiliaria": "ReMax Share",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/793169/",
+   "anuncianteId": "793169",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "198",
+   "anunciandoDesde": "23 de janeiro de 2023"
+  },
+  {
+   "id": "viva-guabirotuba-125-2462",
+   "link": "https://www.vivareal.com.br/imovel/casa-de-condominio-3-quartos-guabirotuba-bairros-curitiba-com-garagem-125m2-aluguel-RS2900-id-2914282462/",
+   "phone": "",
+   "erro": "HTTP 404"
+  },
+  {
+   "id": "viva-guabirotuba-125-2462",
+   "link": "https://www.vivareal.com.br/imovel/casa-de-condominio-3-quartos-guabirotuba-bairros-curitiba-com-garagem-125m2-aluguel-RS2900-id-2914282462/",
+   "phone": "",
+   "erro": "HTTP 404"
+  },
+  {
+   "id": "viva-fazendinha-48-2514",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-fazendinha-bairros-curitiba-com-garagem-48m2-aluguel-RS1500-id-2914202514/",
+   "phone": "",
+   "imobiliaria": "Rezende Imóveis",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/424814/",
+   "anuncianteId": "424814",
+   "creci": "22256-J-PR",
+   "creciNum": "22256",
+   "telefoneMascarado": "(41) 3018-",
+   "imoveisAnunciante": "710",
+   "anunciandoDesde": "3 de julho de 2018"
+  },
+  {
+   "id": "viva-uberaba-56-0725",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-uberaba-bairros-curitiba-com-garagem-56m2-aluguel-RS1900-id-2913530725/",
+   "phone": "",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/42859/",
+   "anuncianteId": "42859",
+   "creci": "02412-J-PR",
+   "creciNum": "02412",
+   "telefoneMascarado": "(41) 3201-",
+   "imoveisAnunciante": "90",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "viva-alto-da-rua-xv-90-6462",
+   "link": "https://www.vivareal.com.br/imovel/casa-3-quartos-alto-da-rua-xv-bairros-curitiba-90m2-aluguel-RS2000-id-2914186462/",
+   "phone": "",
+   "imobiliaria": "Imobiliária 2000",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/53234/",
+   "anuncianteId": "53234",
+   "creci": "01339-J-PR",
+   "creciNum": "01339",
+   "telefoneMascarado": "(41) 3250-",
+   "imoveisAnunciante": "216",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "viva-portao-100-7848",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-3-quartos-portao-bairros-curitiba-com-garagem-100m2-aluguel-RS2550-id-2914157848/",
+   "phone": "",
+   "imobiliaria": "Galo Consultoria De Imoveis",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/134039/",
+   "anuncianteId": "134039",
+   "creci": "00755-J-PR",
+   "creciNum": "00755",
+   "telefoneMascarado": "(41) 3342-",
+   "imoveisAnunciante": "66",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "viva-parolin-52-0240",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-parolin-bairros-curitiba-com-garagem-52m2-aluguel-RS2500-id-2914110240/",
+   "phone": "",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/42859/",
+   "anuncianteId": "42859",
+   "creci": "02412-J-PR",
+   "creciNum": "02412",
+   "telefoneMascarado": "(41) 3201-",
+   "imoveisAnunciante": "90",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-agua-verde-70-1150",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-salao-de-festas-agua-verde-curitiba-pr-70m2-id-2914001150/",
+   "phone": "",
+   "imobiliaria": "Especiale Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/57304/",
+   "anuncianteId": "57304",
+   "creci": "05285-J-PR",
+   "creciNum": "05285",
+   "telefoneMascarado": "(41) 3024-",
+   "imoveisAnunciante": "360",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-vila-izabel-36-2370",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-mobiliado-vila-izabel-curitiba-pr-36m2-id-2913602370/",
+   "phone": "",
+   "imobiliaria": "Basi Corretagem",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/838461/",
+   "anuncianteId": "838461",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "(41) 3323-",
+   "imoveisAnunciante": "36",
+   "anunciandoDesde": "19 de julho de 2024"
+  },
+  {
+   "id": "zap-bigorrilho-45-1418",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-mobiliado-bigorrilho-curitiba-pr-45m2-id-2913661418/",
+   "phone": "",
+   "imobiliaria": "Imobiliária Paraíso",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/44364/",
+   "anuncianteId": "44364",
+   "creci": "00475-J-PR",
+   "creciNum": "00475",
+   "telefoneMascarado": "(41) 3233-",
+   "imoveisAnunciante": "52",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-vila-izabel-75-1531",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-vila-izabel-curitiba-pr-75m2-id-2906781531/",
+   "phone": "",
+   "imobiliaria": "Nakayoshi Imoveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/38014/",
+   "anuncianteId": "38014",
+   "creci": "02171-J-PR",
+   "creciNum": "02171",
+   "telefoneMascarado": "(41) 3332-",
+   "imoveisAnunciante": "35",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-batel-60-7793",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-batel-curitiba-pr-60m2-id-2904537793/",
+   "phone": "",
+   "imobiliaria": "Daniel Correa",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/703201/",
+   "anuncianteId": "703201",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "(41) 3667-",
+   "imoveisAnunciante": "10",
+   "anunciandoDesde": "28 de outubro de 2021"
+  },
+  {
+   "id": "viva-agua-verde-63-6843",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-agua-verde-bairros-curitiba-com-garagem-63m2-aluguel-RS2200-id-2913996843/",
+   "phone": "",
+   "imobiliaria": "Imobiliaria M E D",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/50728/",
+   "anuncianteId": "50728",
+   "creci": "03363-J-PR",
+   "creciNum": "03363",
+   "telefoneMascarado": "(41) 3333-",
+   "imoveisAnunciante": "37",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-centro-77-3532",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-centro-curitiba-pr-77m2-id-2913413532/",
+   "phone": "",
+   "imobiliaria": "Gonzaga Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/52572/",
+   "anuncianteId": "52572",
+   "creci": "00137-J-PR",
+   "creciNum": "00137",
+   "telefoneMascarado": "(41) 3013-",
+   "imoveisAnunciante": "229",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "viva-agua-verde-56-8940",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-agua-verde-bairros-curitiba-com-garagem-56m2-aluguel-RS2500-id-2913778940/",
+   "phone": "",
+   "imobiliaria": "Imobiliária 2000",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/53234/",
+   "anuncianteId": "53234",
+   "creci": "01339-J-PR",
+   "creciNum": "01339",
+   "telefoneMascarado": "(41) 3250-",
+   "imoveisAnunciante": "216",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-portao-54-9732",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-portao-curitiba-pr-54m2-id-2913539732/",
+   "phone": "",
+   "imobiliaria": "A3Mais Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/135680/",
+   "anuncianteId": "135680",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "(41) 3528-",
+   "imoveisAnunciante": "150",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-portao-70-6792",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-churrasqueira-portao-curitiba-pr-70m2-id-2913606792/",
+   "phone": "",
+   "imobiliaria": "Hansel Imoveis Ltda - Epp",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/50972/",
+   "anuncianteId": "50972",
+   "creci": "02658-J-PR",
+   "creciNum": "02658",
+   "telefoneMascarado": "(41) 3376-",
+   "imoveisAnunciante": "115",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-cabral-103-2255",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-varanda-cabral-curitiba-pr-103m2-id-2913442255/",
+   "phone": "",
+   "imobiliaria": "Imobiliária Noruega",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/52500/",
+   "anuncianteId": "52500",
+   "creci": "03338-J-PR",
+   "creciNum": "03338",
+   "telefoneMascarado": "(41) 3213-",
+   "imoveisAnunciante": "137",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-cristo-rei-56-3957",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-mobiliado-cristo-rei-curitiba-pr-56m2-id-2914093957/",
+   "phone": "",
+   "imobiliaria": "Schneider Imoveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/135989/",
+   "anuncianteId": "135989",
+   "creci": "02857-J-PR",
+   "creciNum": "02857",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "20",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-portao-52-3750",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-portao-curitiba-pr-52m2-id-2912263750/",
+   "phone": "",
+   "imobiliaria": "Casa Prates Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/674202/",
+   "anuncianteId": "674202",
+   "creci": "6155-J-PR",
+   "creciNum": "6155",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "410",
+   "anunciandoDesde": "16 de setembro de 2021"
+  },
+  {
+   "id": "zap-cristo-rei-67-7628",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-cristo-rei-curitiba-pr-67m2-id-2913637628/",
+   "phone": "",
+   "imobiliaria": "Premiere Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/50248/",
+   "anuncianteId": "50248",
+   "creci": "04075-J-PR",
+   "creciNum": "04075",
+   "telefoneMascarado": "(41) 3018-",
+   "imoveisAnunciante": "445",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-reboucas-48-4639",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-churrasqueira-reboucas-curitiba-pr-48m2-id-2912054639/",
+   "phone": "",
+   "imobiliaria": "Imobiliária Tantus",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/17069/",
+   "anuncianteId": "17069",
+   "creci": "01523-J-PR",
+   "creciNum": "01523",
+   "telefoneMascarado": "(41) 3353-",
+   "imoveisAnunciante": "218",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-juveve-102-1549",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-cozinha-juveve-curitiba-pr-102m2-id-2913621549/",
+   "phone": "",
+   "erro": "Error: page.evaluate: Target page, context or browser has be"
+  },
+  {
+   "id": "zap-reboucas-46-0103",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-reboucas-curitiba-pr-46m2-id-2901010103/",
+   "phone": "",
+   "erro": "HTTP 502"
+  },
+  {
+   "id": "zap-reboucas-46-0103",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-reboucas-curitiba-pr-46m2-id-2901010103/",
+   "phone": "",
+   "erro": "HTTP 502"
+  },
+  {
+   "id": "zap-cabral-81-2521",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-cabral-curitiba-pr-81m2-id-2912602521/",
+   "phone": "",
+   "imobiliaria": "Gonzaga Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/52572/",
+   "anuncianteId": "52572",
+   "creci": "00137-J-PR",
+   "creciNum": "00137",
+   "telefoneMascarado": "(41) 3013-",
+   "imoveisAnunciante": "229",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "zap-cabral-86-8032",
+   "link": "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-cabral-curitiba-pr-86m2-id-2913558032/",
+   "phone": "",
+   "imobiliaria": "Imobiliária 2000",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/53234/",
+   "anuncianteId": "53234",
+   "creci": "01339-J-PR",
+   "creciNum": "01339",
+   "telefoneMascarado": "(41) 3250-",
+   "imoveisAnunciante": "216",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "viva-cristo-rei-43-7914",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-cristo-rei-bairros-curitiba-43m2-aluguel-RS1900-id-2913577914/",
+   "phone": "",
+   "imobiliaria": "Imobiliária Tantus",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/17069/",
+   "anuncianteId": "17069",
+   "creci": "01523-J-PR",
+   "creciNum": "01523",
+   "telefoneMascarado": "(41) 3353-",
+   "imoveisAnunciante": "218",
+   "anunciandoDesde": "27 de março de 2018"
+  },
+  {
+   "id": "viva-agua-verde-62-8320",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-agua-verde-bairros-curitiba-com-garagem-62m2-aluguel-RS2440-id-2910868320/",
+   "phone": "",
+   "erro": "HTTP 502"
+  },
+  {
+   "id": "viva-agua-verde-62-8320",
+   "link": "https://www.vivareal.com.br/imovel/apartamento-2-quartos-agua-verde-bairros-curitiba-com-garagem-62m2-aluguel-RS2440-id-2910868320/",
+   "phone": "",
+   "erro": "HTTP 502"
+  },
+  {
+   "id": "viva-alto-da-rua-xv-80-2590",
+   "link": "https://www.vivareal.com.br/imovel/imovel-comercial-2-quartos-alto-da-rua-xv-bairros-curitiba-80m2-aluguel-RS2650-id-2912242590/",
+   "phone": "",
+   "imobiliaria": "Living 41",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/893808/",
+   "anuncianteId": "893808",
+   "creci": "9019-J-PR",
+   "creciNum": "9019",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "219",
+   "anunciandoDesde": "29 de maio de 2026"
+  }
+ ],
+ "anunciantes": [
+  {
+   "chave": "52572",
+   "imobiliaria": "Gonzaga Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/52572/",
+   "creci": "00137-J-PR",
+   "creciNum": "00137",
+   "telefoneMascarado": "(41) 3013-",
+   "imoveisAnunciante": "229",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-vila-izabel-48-1836",
+    "zap-agua-verde-96-0258",
+    "zap-centro-77-3532",
+    "zap-cabral-81-2521"
+   ]
+  },
+  {
+   "chave": "53234",
+   "imobiliaria": "Imobiliária 2000",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/53234/",
+   "creci": "01339-J-PR",
+   "creciNum": "01339",
+   "telefoneMascarado": "(41) 3250-",
+   "imoveisAnunciante": "216",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-centro-78-3911",
+    "viva-alto-da-rua-xv-90-6462",
+    "viva-agua-verde-56-8940",
+    "zap-cabral-86-8032"
+   ]
+  },
+  {
+   "chave": "42859",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/42859/",
+   "creci": "02412-J-PR",
+   "creciNum": "02412",
+   "telefoneMascarado": "(41) 3201-",
+   "imoveisAnunciante": "90",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-cajuru-54-8844",
+    "viva-uberaba-56-0725",
+    "viva-parolin-52-0240"
+   ]
+  },
+  {
+   "chave": "44364",
+   "imobiliaria": "Imobiliária Paraíso",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/44364/",
+   "creci": "00475-J-PR",
+   "creciNum": "00475",
+   "telefoneMascarado": "(41) 3233-",
+   "imoveisAnunciante": "52",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-novo-mundo-66-4246",
+    "zap-bigorrilho-45-1418"
+   ]
+  },
+  {
+   "chave": "17069",
+   "imobiliaria": "Imobiliária Tantus",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/17069/",
+   "creci": "01523-J-PR",
+   "creciNum": "01523",
+   "telefoneMascarado": "(41) 3353-",
+   "imoveisAnunciante": "218",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-reboucas-48-4639",
+    "viva-cristo-rei-43-7914"
+   ]
+  },
+  {
+   "chave": "51274",
+   "imobiliaria": "Hoje Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/51274/",
+   "creci": "00822-J-PR",
+   "creciNum": "00822",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "107",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-campina-do-siqueira-70-7741"
+   ]
+  },
+  {
+   "chave": "870818",
+   "imobiliaria": "ReMax Kmk10",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/870818/",
+   "creci": "10169-J-PR",
+   "creciNum": "10169",
+   "telefoneMascarado": "(41) 3026-",
+   "imoveisAnunciante": "80",
+   "anunciandoDesde": "21 de julho de 2025",
+   "ids": [
+    "zap-boqueirao-73-9061"
+   ]
+  },
+  {
+   "chave": "793169",
+   "imobiliaria": "ReMax Share",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/793169/",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "198",
+   "anunciandoDesde": "23 de janeiro de 2023",
+   "ids": [
+    "viva-tatuquara-119-3561"
+   ]
+  },
+  {
+   "chave": "424814",
+   "imobiliaria": "Rezende Imóveis",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/424814/",
+   "creci": "22256-J-PR",
+   "creciNum": "22256",
+   "telefoneMascarado": "(41) 3018-",
+   "imoveisAnunciante": "710",
+   "anunciandoDesde": "3 de julho de 2018",
+   "ids": [
+    "viva-fazendinha-48-2514"
+   ]
+  },
+  {
+   "chave": "134039",
+   "imobiliaria": "Galo Consultoria De Imoveis",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/134039/",
+   "creci": "00755-J-PR",
+   "creciNum": "00755",
+   "telefoneMascarado": "(41) 3342-",
+   "imoveisAnunciante": "66",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "viva-portao-100-7848"
+   ]
+  },
+  {
+   "chave": "57304",
+   "imobiliaria": "Especiale Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/57304/",
+   "creci": "05285-J-PR",
+   "creciNum": "05285",
+   "telefoneMascarado": "(41) 3024-",
+   "imoveisAnunciante": "360",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-agua-verde-70-1150"
+   ]
+  },
+  {
+   "chave": "838461",
+   "imobiliaria": "Basi Corretagem",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/838461/",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "(41) 3323-",
+   "imoveisAnunciante": "36",
+   "anunciandoDesde": "19 de julho de 2024",
+   "ids": [
+    "zap-vila-izabel-36-2370"
+   ]
+  },
+  {
+   "chave": "38014",
+   "imobiliaria": "Nakayoshi Imoveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/38014/",
+   "creci": "02171-J-PR",
+   "creciNum": "02171",
+   "telefoneMascarado": "(41) 3332-",
+   "imoveisAnunciante": "35",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-vila-izabel-75-1531"
+   ]
+  },
+  {
+   "chave": "703201",
+   "imobiliaria": "Daniel Correa",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/703201/",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "(41) 3667-",
+   "imoveisAnunciante": "10",
+   "anunciandoDesde": "28 de outubro de 2021",
+   "ids": [
+    "zap-batel-60-7793"
+   ]
+  },
+  {
+   "chave": "50728",
+   "imobiliaria": "Imobiliaria M E D",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/50728/",
+   "creci": "03363-J-PR",
+   "creciNum": "03363",
+   "telefoneMascarado": "(41) 3333-",
+   "imoveisAnunciante": "37",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "viva-agua-verde-63-6843"
+   ]
+  },
+  {
+   "chave": "135680",
+   "imobiliaria": "A3Mais Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/135680/",
+   "creci": "",
+   "creciNum": "",
+   "telefoneMascarado": "(41) 3528-",
+   "imoveisAnunciante": "150",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-portao-54-9732"
+   ]
+  },
+  {
+   "chave": "50972",
+   "imobiliaria": "Hansel Imoveis Ltda - Epp",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/50972/",
+   "creci": "02658-J-PR",
+   "creciNum": "02658",
+   "telefoneMascarado": "(41) 3376-",
+   "imoveisAnunciante": "115",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-portao-70-6792"
+   ]
+  },
+  {
+   "chave": "52500",
+   "imobiliaria": "Imobiliária Noruega",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/52500/",
+   "creci": "03338-J-PR",
+   "creciNum": "03338",
+   "telefoneMascarado": "(41) 3213-",
+   "imoveisAnunciante": "137",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-cabral-103-2255"
+   ]
+  },
+  {
+   "chave": "135989",
+   "imobiliaria": "Schneider Imoveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/135989/",
+   "creci": "02857-J-PR",
+   "creciNum": "02857",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "20",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-cristo-rei-56-3957"
+   ]
+  },
+  {
+   "chave": "674202",
+   "imobiliaria": "Casa Prates Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/674202/",
+   "creci": "6155-J-PR",
+   "creciNum": "6155",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "410",
+   "anunciandoDesde": "16 de setembro de 2021",
+   "ids": [
+    "zap-portao-52-3750"
+   ]
+  },
+  {
+   "chave": "50248",
+   "imobiliaria": "Premiere Imóveis",
+   "imobiliariaUrl": "https://www.zapimoveis.com.br/imobiliaria/50248/",
+   "creci": "04075-J-PR",
+   "creciNum": "04075",
+   "telefoneMascarado": "(41) 3018-",
+   "imoveisAnunciante": "445",
+   "anunciandoDesde": "27 de março de 2018",
+   "ids": [
+    "zap-cristo-rei-67-7628"
+   ]
+  },
+  {
+   "chave": "893808",
+   "imobiliaria": "Living 41",
+   "imobiliariaUrl": "https://www.vivareal.com.br/imobiliaria/893808/",
+   "creci": "9019-J-PR",
+   "creciNum": "9019",
+   "telefoneMascarado": "",
+   "imoveisAnunciante": "219",
+   "anunciandoDesde": "29 de maio de 2026",
+   "ids": [
+    "viva-alto-da-rua-xv-80-2590"
+   ]
+  }
+ ]
+}

@@ -17,8 +17,12 @@ que precisam alimentar o app sem quebrar determinismo nem revisabilidade.
    features[], description, source?, zapId?, condoUnknown?`).
 4. `total` = aluguel líquido (pós-bonificação) + condomínio + IPTU. Condomínio
    desconhecido = `condo: 0 + condoUnknown: true` + flag em `features` — nunca inventar valor.
-5. Contato sempre pelo `link` do anúncio original (banco de links). Telefone/e-mail
-   mascarados nos portais => campos vazios, UI esconde os botões.
+5. Contato sempre pelo `link` do anúncio original (banco de links).
+   ~~Telefone/e-mail mascarados nos portais => campos vazios, UI esconde os botões.~~
+   **SUPERSEDIDO pelo ADR-004 §5** (27/09/2026): a premissa de "portais mascaram"
+   era falsa. No Apolar o telefone vem no campo `lojacelular` da API; no Zap/VivaReal
+   um clique em "mostrar telefone` publica o número. Telefone virou campo obrigatório
+   do schema. E-mail continua vazio — nenhum portal publica e-mail do anunciante.
 
 ## Consequências
 - Build e testes determinísticos; cada leva de dados é um diff revisável.

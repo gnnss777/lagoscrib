@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { apartments, saleApartments } from "@/lib/data";
 import { totalAllIn, pricePerM2 } from "@/lib/pricing";
+import { ehTelefoneValido } from "@/lib/phone";
 
 // Leva 4 (27/09/2026): base zerada e repovoada só com aluguel.
 // As invariantes valem para a base inteira — sem lista de ids fixos, que
@@ -23,7 +24,7 @@ describe("dados", () => {
       expect(a.link, a.id).toMatch(/^https:\/\//);
       expect(a.image, a.id).toMatch(/^\/imoveis\/.*\.webp$/);
       expect(a.photos?.length, `${a.id} fotos`).toBeGreaterThanOrEqual(8);
-      expect(a.phone, a.id).toBe("");
+      if (a.phone) expect(ehTelefoneValido(a.phone), `${a.id} phone=${a.phone}`).toBe(true);
       expect(a.email, a.id).toBe("");
     }
   });

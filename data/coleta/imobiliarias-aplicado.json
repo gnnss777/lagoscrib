@@ -1,0 +1,209 @@
+{
+ "aplicados": [
+  {
+   "id": "zap-portao-54-9732",
+   "imobiliaria": "A3Mais Imóveis",
+   "phone": "+5541987464427",
+   "site": "https://www.a3maisimoveis.com.br/",
+   "creci": null,
+   "creciAnuncio": ""
+  },
+  {
+   "id": "zap-portao-70-6792",
+   "imobiliaria": "Hansel Imoveis Ltda - Epp",
+   "phone": "+5541987137745",
+   "site": "https://hansel.com.br/fale-conosco",
+   "creci": "02658-J-PR",
+   "creciAnuncio": "02658-J-PR"
+  },
+  {
+   "id": "zap-cristo-rei-56-3957",
+   "imobiliaria": "Schneider Imoveis",
+   "phone": "+5541985341055",
+   "site": "https://www.schneiderimoveis.com.br/imoveis/locacao",
+   "creci": "02857-J-PR",
+   "creciAnuncio": "02857-J-PR"
+  },
+  {
+   "id": "zap-portao-52-3750",
+   "imobiliaria": "Casa Prates Imóveis",
+   "phone": "+5541935005704",
+   "site": "https://casaprates.com.br",
+   "creci": "6155-J-PR",
+   "creciAnuncio": "6155-J-PR"
+  },
+  {
+   "id": "zap-reboucas-48-4639",
+   "imobiliaria": "Imobiliária Tantus",
+   "phone": "+5541998000390",
+   "site": "https://www.tantus.com.br/fale-conosco",
+   "creci": "01523-J-PR",
+   "creciAnuncio": "01523-J-PR"
+  },
+  {
+   "id": "viva-cristo-rei-43-7914",
+   "imobiliaria": "Imobiliária Tantus",
+   "phone": "+5541998000390",
+   "site": "https://www.tantus.com.br/fale-conosco",
+   "creci": "01523-J-PR",
+   "creciAnuncio": "01523-J-PR"
+  },
+  {
+   "id": "viva-alto-da-rua-xv-80-2590",
+   "imobiliaria": "Living 41",
+   "phone": "+5541996793129",
+   "site": "https://www.living41.com.br/fale-conosco",
+   "creci": "9019-J-PR",
+   "creciAnuncio": "9019-J-PR"
+  }
+ ],
+ "semCelular": [
+  {
+   "id": "zap-cajuru-54-8844",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "fixo": "+554132012424"
+  },
+  {
+   "id": "zap-vila-izabel-48-1836",
+   "imobiliaria": "Gonzaga Imóveis",
+   "fixo": "+554130132222"
+  },
+  {
+   "id": "zap-agua-verde-96-0258",
+   "imobiliaria": "Gonzaga Imóveis",
+   "fixo": "+554130132222"
+  },
+  {
+   "id": "zap-centro-78-3911",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
+  },
+  {
+   "id": "zap-novo-mundo-66-4246",
+   "imobiliaria": "Imobiliária Paraíso",
+   "fixo": "+554132336025"
+  },
+  {
+   "id": "viva-uberaba-56-0725",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "fixo": "+554132012424"
+  },
+  {
+   "id": "viva-alto-da-rua-xv-90-6462",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
+  },
+  {
+   "id": "viva-portao-100-7848",
+   "imobiliaria": "Galo Consultoria De Imoveis",
+   "fixo": "+554133421516"
+  },
+  {
+   "id": "viva-parolin-52-0240",
+   "imobiliaria": "Jamaica Empreendimentos Imobiliários",
+   "fixo": "+554132012424"
+  },
+  {
+   "id": "zap-agua-verde-70-1150",
+   "imobiliaria": "Especiale Imóveis",
+   "fixo": "+554130247675"
+  },
+  {
+   "id": "zap-vila-izabel-36-2370",
+   "imobiliaria": "Basi Corretagem",
+   "fixo": "+554133239595"
+  },
+  {
+   "id": "zap-bigorrilho-45-1418",
+   "imobiliaria": "Imobiliária Paraíso",
+   "fixo": "+554132336025"
+  },
+  {
+   "id": "zap-vila-izabel-75-1531",
+   "imobiliaria": "Nakayoshi Imoveis",
+   "fixo": ""
+  },
+  {
+   "id": "zap-centro-77-3532",
+   "imobiliaria": "Gonzaga Imóveis",
+   "fixo": "+554130132222"
+  },
+  {
+   "id": "viva-agua-verde-56-8940",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
+  },
+  {
+   "id": "zap-cabral-103-2255",
+   "imobiliaria": "Imobiliária Noruega",
+   "fixo": "+554132135758"
+  },
+  {
+   "id": "zap-cristo-rei-67-7628",
+   "imobiliaria": "Premiere Imóveis",
+   "fixo": "+554130189915"
+  },
+  {
+   "id": "zap-cabral-81-2521",
+   "imobiliaria": "Gonzaga Imóveis",
+   "fixo": "+554130132222"
+  },
+  {
+   "id": "zap-cabral-86-8032",
+   "imobiliaria": "Imobiliária 2000",
+   "fixo": "+554132502000"
+  }
+ ],
+ "rejeitados": [
+  {
+   "n": 20,
+   "nome": "Basi Corretagem",
+   "motivo": "celular \"+554195740407\" não passa na validação (DDD 41 ou nono dígito)",
+   "nota": "página /contato rotula 'Locação: 41 9574-0407'"
+  },
+  {
+   "n": 21,
+   "nome": "Nakayoshi Imoveis",
+   "motivo": "celular \"+554199960927\" não passa na validação (DDD 41 ou nono dígito)",
+   "nota": "REJEITADO: o site diz 'Fone Locação: (41) 9996-0927' — 8 dígitos, é fixo, não celular. Não usar."
+  }
+ ],
+ "naoResolvidos": [
+  {
+   "n": 7,
+   "nome": "Hoje Imóveis",
+   "creci": "00822-J-PR",
+   "motivo": "site publica só 0800 241 1234 (toll-free, formato que não cabe em +55+DDD+n). Sem celular e sem fixo DDD 41."
+  },
+  {
+   "n": 9,
+   "nome": "ReMax Kmk10",
+   "creci": "10169-J-PR",
+   "motivo": "site oficial é renderizado por JS, telefone não pôde ser lido literalmente. O Instagram publica (41) 3026-1674 e (41) 99805-3356 e o prefixo 3026- bate, mas não é o site."
+  },
+  {
+   "n": 11,
+   "nome": "ReMax Share",
+   "creci": null,
+   "motivo": "escritório não encontrado. share.remax.com.br retorna vazio."
+  },
+  {
+   "n": 13,
+   "nome": "Rezende Imóveis",
+   "creci": "22256-J-PR",
+   "motivo": "o único Rezende de Curitiba é CRECI 56940J, não 22256-J. Descartado por CRECI. (O site dele tinha WhatsApp de locação (41) 98783-2384 e fixo 3018-9091 que bate no prefixo, mas é outra empresa.)"
+  },
+  {
+   "n": 22,
+   "nome": "Daniel Correa",
+   "creci": null,
+   "motivo": "sem site de um Daniel Correa de Curitiba. Homônimos são de Joinville/SC, Barretos/SP e Passos/MG."
+  },
+  {
+   "n": 24,
+   "nome": "Imobiliaria M E D",
+   "creci": "03363-J-PR",
+   "motivo": "nenhuma 'Imobiliária M E D' com CRECI 3363-J em Curitiba. Buscas por 3333- retornaram empresas de nome parecido com CRECI diferente."
+  }
+ ]
+}

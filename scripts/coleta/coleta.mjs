@@ -21,6 +21,18 @@
 // ADR-001 §4: condomínio ausente vira condo 0 + condoUnknown, nunca estimativa.
 import { chromium } from "@playwright/test";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { extrairTelefone as _extrairTelefone, telApolar } from "./telefone.mjs";
+
+// O telefone NÃO está no DOM. Nas páginas de detalhe do Zap e do VivaReal
+// (mesma plataforma, mesmo espaço de ids) existe um botão "mostrar telefone" e
+// é o clique que faz o portal publicar a[href^="tel:"] com o número real.
+// Antes do clique: zero telefone no HTML, no ld+json e no __NEXT_DATA__.
+// ADR-001 §5 dizia "portais mascaram, campos vazios" — superseded pelo ADR-004:
+// o número estava atrás do botão, não atrás de máscara.
+// A lógica (classificação celular/fixo, a armadilha do +55) vive em
+// telefone.mjs, que tem teste em tests/unit/telefone.test.ts. Este wrapper
+// existe só para injetar a `page` do coletor.
+const extrairTelefone = () => _extrairTelefone(page);
 
 const PROFILE = "C:/Users/gnnss/AppData/Local/Temp/coleta-edge-profile";
 const OUT = "data/coleta";
@@ -150,6 +162,9 @@ if (!CDP) {
 }
 const page = CDP ? await ctx.newPage() : (ctx.pages()[0] ?? (await ctx.newPage()));
 const descartados = [];
+// Log de cliques em "mostrar telefone": cada linha é um lead registrado no
+// painel do anunciante. Auditoria do que foi pedido, não só do que saiu.
+const telefones = [];
 const idsVistos = new Set();
 let apolarSufixo = "";
 const fora = (fonte, ref, motivo) => descartados.push({ fonte, ref, motivo });
@@ -425,6 +440,19 @@ async function coletarZap(portal) {
     ].slice(0, 10);
     const anunciante = (texto.match(/Código do anunciante:\s*([\w-]+)/) || [])[1] || "";
 
+    // Telefone por último, DEPOIS de todos os filtros: só pedimos o número de
+    // anúncio que entra na base. Clicar "mostrar telefone" registra lead no
+    // painel do anunciante, então não gastamos clique com imóvel descartado.
+    const tel = await extrairTelefone();
+    telefones.push({
+      fonte: portal,
+      ref: pid,
+      phone: tel?.phone ?? "",
+      celular: tel?.celular ?? "",
+      fixo: tel?.fixo ?? "",
+    });
+    if (!tel) console.log(`  [${portal}] + sem telefone ${pid.slice(-6)}`);
+
     const partes = [portal, slug(bairro), slug(rua), String(area), pid.slice(-4)];
     idsVistos.add(pid);
     conta(bairro);
@@ -441,6 +469,7 @@ async function coletarZap(portal) {
       condo,
       iptu,
       total: rent + condo + iptu,
+      phone: tel?.phone ?? "",
       link: url,
       source: anunciante ? `${fonte} · ${anunciante}` : fonte,
       [field]: pid,
@@ -744,6 +773,10 @@ async function coletarApolar() {
       condo,
       iptu,
       total: rent + condo + iptu,
+      // Telefone da imobiliária (campo `loja` da API), não de pessoa: o mesmo
+      // celular aparece em todos os anúncios de uma loja. Celular tem 11 dígitos
+      // e é o WhatsApp; o fixo é o telefone do escritório. Celular tem prioridade.
+      phone: telApolar(x.lojacelular) || telApolar(x.lojatelefone),
       link,
       source: "Apolar · LocaAção",
       apolarId: String(ref),
@@ -798,8 +831,17 @@ try {
   process.exitCode = 1;
 } finally {
   writeFileSync(`${OUT}/descartados-l4.json`, JSON.stringify(descartados, null, 1), "utf8");
+  writeFileSync(`${OUT}/telefones-l4.json`, JSON.stringify(telefones, null, 1), "utf8");
   const total = Object.values(salvo).reduce((a, b) => a + b.length, 0);
-  console.log(`TOTAL: ${total} | descartados: ${descartados.length}`);
+  // Cobertura de telefone, sobre TODOS os portais (o Apolar vem da API, sem
+  // clique). Alerta, não erro: uma leva pode legitamente ficar sem número em
+  // parte dos imóveis. Zero em TODOS é sinal de que o scraper quebrou — foi
+  // exatamente o que o ADR-001 §5 escondeu por meses.
+  const todos = Object.values(salvo).flat();
+  const comTel = todos.filter((x) => x.phone).length;
+  const pct = todos.length ? Math.round((comTel / todos.length) * 100) : 0;
+  console.log(`TOTAL: ${total} | descartados: ${descartados.length} | telefone: ${comTel}/${todos.length} (${pct}%)`);
+  if (todos.length && !comTel) console.warn("  AVISO: zero telefone em toda a leva — o portal mudou o botão? rode com --cdp=");
   // No modo --cdp o navegador é o do usuário, com as abas dele: NÃO fecha.
   if (CDP) {
     await page.close().catch(() => {});
