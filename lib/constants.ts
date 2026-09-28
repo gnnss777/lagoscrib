@@ -102,6 +102,11 @@ export const FILTERS_STORAGE_VERSION = 1;
 // Debounce da persistência ao digitar (ms).
 export const FILTER_DEBOUNCE_MS = 300;
 
+// Debounce do push do estado do dono para o servidor (ms). Maior que o dos
+// filtros: arrastar um card no kanban dispara vários updates seguidos e não
+// vale um request por frame.
+export const SYNC_DEBOUNCE_MS = 2500;
+
 // Valor "tanto faz" nos dropdowns de bairro.
 export const NEIGHBORHOOD_ALL = "Todos";
 

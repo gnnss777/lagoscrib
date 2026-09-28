@@ -26,6 +26,18 @@ import {
   type FollowUp,
   type StatusType,
 } from "@/lib/kanban";
+import {
+  applySnapshot,
+  buildSnapshot,
+  clearSyncToken,
+  mergeSnapshots,
+  pullSnapshot,
+  pushSnapshot,
+  readSyncToken,
+  writeSyncToken,
+  type SyncStatus,
+} from "@/lib/ownerState";
+import { SYNC_DEBOUNCE_MS } from "@/lib/constants";
 
 // Re-exports (back-compat): STATUS_LABELS/StatusType moram em lib/kanban.ts
 // (fonte única das colunas, LL-006). Importadores existentes não quebram.
@@ -56,6 +68,13 @@ interface AppContextValue extends AppState {
   logout: () => void;
   /** Sincroniza sessão do NextAuth (backend) com o estado local. */
   setSessionUser: (username: string | null) => void;
+  /* Sync entre dispositivos (lib/ownerState): o código é digitado uma vez por
+     dispositivo e nunca vai para o bundle — se fosse NEXT_PUBLIC_, qualquer
+     pessoa que abrisse o app leria e poderia reescrever o estado do dono. */
+  syncStatus: SyncStatus;
+  syncEnabled: boolean;
+  enableSync: (token: string) => void;
+  disableSync: () => void;
   addApartment: (apartment: Apartment) => void;
   /** Remove imóvel da visualização local. */
   removeApartment: (apartmentId: string) => void;
@@ -122,6 +141,13 @@ const USERS: Record<string, string> = buildLegacyUsers();
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(defaultState);
   const [isHydrated, setIsHydrated] = useState(false);
+  // Sync entre dispositivos (lib/ownerState). `null` = desligado neste
+  // dispositivo; o dono liga digitando o código uma vez (SyncGate).
+  const [syncToken, setSyncToken] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("off");
+  // O push só liga DEPOIS do pull: senão um dispositivo novo empurraria o
+  // documento vazio por cima do estado bom do dono.
+  const [syncReady, setSyncReady] = useState(false);
 
   // Load from localStorage on mount. Hidratação SSR-safe: localStorage só
   // existe no client; ler no initializer causaria hydration mismatch.
@@ -163,6 +189,93 @@ export function AppProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
   }, [state, isHydrated]);
+
+  /* ------------------------------------------------------- sync entre PCs */
+
+  // Monta: lê o token e puxa o documento do dono. Roda depois da hidratação
+  // do localStorage, senão o merge compararia um local vazio com o remoto.
+  useEffect(() => {
+    if (!isHydrated) return;
+    const token = readSyncToken();
+    // Sem token, o estado inicial já é o certo ("off"/null) — setar aqui seria
+    // ruído e forçaria um segundo render.
+    if (!token) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratação pós-mount de preferência de aparelho, mesmo padrão do efeito de localStorage acima
+    setSyncToken(token);
+    let cancelled = false;
+    setSyncStatus("syncing");
+    void (async () => {
+      const { ok, snapshot, reason } = await pullSnapshot(token);
+      if (cancelled) return;
+      if (!ok) {
+        setSyncStatus(reason === "Código inválido" ? "denied" : "error");
+        setSyncReady(true);
+        return;
+      }
+      const local = buildSnapshot();
+      const { snapshot: winner, adoptedRemote } = mergeSnapshots(local, snapshot);
+      if (adoptedRemote && snapshot) {
+        applySnapshot(winner);
+        setState((prev) => ({
+          ...prev,
+          notes: winner.notes,
+          // `scheduledDate` chega como `string | null` (o schema tolera null de
+          // versões antigas) e o tipo do app é `string | undefined` — a limpeza
+          // em moveCard remove o campo, então null vira undefined.
+          statuses: winner.statuses.map((s) => ({
+            ...s,
+            scheduledDate: s.scheduledDate ?? undefined,
+          })),
+          checklist: winner.checklist,
+          // `lastContactAt` idem: null no schema, `string | undefined` no app.
+          followUps: Object.fromEntries(
+            Object.entries(winner.followUps).map(([id, f]) => [
+              id,
+              { ...f, lastContactAt: f.lastContactAt ?? undefined },
+            ]),
+          ),
+        }));
+      } else {
+        // Local mais novo que o servidor: manda o nosso.
+        await pushSnapshot(token, winner);
+      }
+      if (cancelled) return;
+      setSyncStatus("idle");
+      setSyncReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isHydrated]);
+
+  // Push com debounce. O snapshot é montado na hora (lê as 3 chaves), não do
+  // estado React, porque removidos e imóveis adicionados vivem fora do
+  // AppContext.
+  useEffect(() => {
+    if (!isHydrated || !syncReady || !syncToken) return;
+    const t = setTimeout(() => {
+      setSyncStatus("syncing");
+      void pushSnapshot(syncToken, buildSnapshot()).then((r) => {
+        setSyncStatus(r.ok ? "idle" : "error");
+      });
+    }, SYNC_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [state, isHydrated, syncReady, syncToken]);
+
+  const enableSync = useCallback((token: string) => {
+    if (!token.trim()) return;
+    writeSyncToken(token);
+    setSyncToken(token.trim());
+    setSyncReady(false);
+    setSyncStatus("syncing");
+  }, []);
+
+  const disableSync = useCallback(() => {
+    clearSyncToken();
+    setSyncToken(null);
+    setSyncReady(false);
+    setSyncStatus("off");
+  }, []);
 
   const login = useCallback((username: string, password: string): boolean => {
     if (USERS[username.toLowerCase()] === password) {
@@ -390,6 +503,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         setSessionUser,
+        syncStatus,
+        syncEnabled: syncToken !== null,
+        enableSync,
+        disableSync,
         addApartment,
         removeApartment,
         addNote,
