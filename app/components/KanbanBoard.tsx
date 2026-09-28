@@ -531,7 +531,11 @@ export default function KanbanBoard({
                         if (e.key === "Escape") setMenuFor(null);
                       }}
                       onClick={(e) => {
-                        // Clique no article abre o inline
+                        // Clique no article abre o inline. Clique que vem de
+                        // dentro do menu é dos próprios itens, que já fazem
+                        // setMenuFor(null) — expandir o card aqui seria
+                        // efeito colateral.
+                        if ((e.target as HTMLElement).closest('[role="menu"]')) return;
                         setMenuFor(null);
                         setExpandedCardId((current) =>
                           current === id ? null : id,
@@ -605,9 +609,13 @@ export default function KanbanBoard({
                           aria-label={`Mover ${a.title}, abrir menu de destinos`}
                           aria-expanded={menuFor === id}
                           aria-haspopup="menu"
-                          onClick={() =>
-                            setMenuFor((v) => (v === id ? null : id))
-                          }
+                          onClick={(e) => {
+                            // stopPropagation: sem isso o clique sobe para o
+                            // <article>, que faz setMenuFor(null) na mesma
+                            // fra e o menu nunca abre.
+                            e.stopPropagation();
+                            setMenuFor((v) => (v === id ? null : id));
+                          }}
                           className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sand hover:text-ink"
                         >
                           <DotsThree size={18} weight="bold" />

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openApp } from "./open-app";
 
 // S005 (AC-COMP-01): 3 selecionados → tabela com totais e links; 5º bloqueado
 // com aviso; ordem default por custo total efetivo; zero erro de console.
@@ -14,14 +15,7 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
     }
   });
 
-  await page.goto("/");
-  await page
-    .getByPlaceholder("Digite seu usuário")
-    .fill(process.env.E2E_USER ?? "guinness");
-  await page
-    .getByPlaceholder("Digite sua senha")
-    .fill(process.env.E2E_PASS ?? "curitiba2026");
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await openApp(page);
   await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   const compareBoxes = page.getByRole("checkbox", { name: "Comparar" });

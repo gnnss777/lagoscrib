@@ -1,16 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
+import { openApp } from "./open-app";
 
 // S010 (F3): form completo — imóvel novo com 4/2/2 entra nos filtros
 // numéricos; banheiros 3+ o exclui. Zero erro de console.
 async function login(page: Page) {
-  await page.goto("/");
-  await page
-    .getByPlaceholder("Digite seu usuário")
-    .fill(process.env.E2E_USER ?? "guinness");
-  await page
-    .getByPlaceholder("Digite sua senha")
-    .fill(process.env.E2E_PASS ?? "curitiba2026");
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await openApp(page);
   await expect(page.locator(".card-apartment")).toHaveCount(88);
 }
 

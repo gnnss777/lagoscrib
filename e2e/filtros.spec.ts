@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { openApp } from "./open-app";
 import { RENT_PRICE_BOUNDS, PRICE_SLIDER_RENT_STEPS } from "@/lib/constants";
 
 // S009 (AC-FILT-01..10): combinação quartos+preço+facilidade, teclado/Esc/foco,
@@ -39,14 +40,7 @@ function resetState(page: Page) {
 }
 
 async function login(page: Page) {
-  await page.goto("/");
-  await page
-    .getByPlaceholder("Digite seu usuário")
-    .fill(process.env.E2E_USER ?? "guinness");
-  await page
-    .getByPlaceholder("Digite sua senha")
-    .fill(process.env.E2E_PASS ?? "curitiba2026");
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await openApp(page);
   await expect(page.locator(".card-apartment")).toHaveCount(88);
 }
 
