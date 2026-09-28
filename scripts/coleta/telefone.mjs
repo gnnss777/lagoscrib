@@ -88,3 +88,81 @@ export async function extrairTelefone(page, { espera = 10000, clique = 8000 } = 
   const t = telefonesDeHrefs(hrefs);
   return t.phone ? t : null;
 }
+
+// --------------------------------------------------------------------------
+// Formulário de lead — o outro caminho do Zap/VivaReal
+// --------------------------------------------------------------------------
+// Parte dos anúncios não revela nada no clique. Abre um modal "Informe seus
+// dados para ver o telefone" com Nome / Telefone / E-mail e o botão "Enviar
+// dados e ver telefone". O texto do botão cita Termos de uso e Política de
+// Privacidade do portal.
+//
+// Preencher isso envia dados pessoais do dono do app para CADA anunciante, e
+// cada envio aparece como lead no painel da imobiliária. Por isso:
+//   - os valores vêm de env (LEAD_NOME/LEAD_TELEFONE/LEAD_EMAIL), nunca do código
+//   - exige LEAD_ENABLED=true, senão o backfill não chega nem perto
+//   - devolve um objeto que DIZ o que foi enviado, para o log de auditoria
+//
+// ponytail: um único `try` no chamador. Se o portal mudar o texto do botão, a
+// função devolve `{ ok: false, motivo }` e a leva segue sem telefone em vez de
+// travar — falha silenciosa aqui só custa um número a mais.
+
+/** Campos do formulário, na ordem em que aparecem no modal do Zap. */
+export const CAMPOS_LEAD = ["nome", "telefone", "email"];
+
+export function leadConfigurado(env = process.env) {
+  const dados = {
+    nome: env.LEAD_NOME ?? "",
+    telefone: env.LEAD_TELEFONE ?? "",
+    email: env.LEAD_EMAIL ?? "",
+  };
+  const habilitado = String(env.LEAD_ENABLED ?? "").toLowerCase() === "true";
+  const completo = CAMPOS_LEAD.every((c) => dados[c].trim() !== "");
+  return { habilitado, completo, dados };
+}
+
+export async function preencherFormularioLead(page, dados, { espera = 15000 } = {}) {
+  const modal = page.locator('[role=dialog], [aria-modal=true]').last();
+  const escopo = (await modal.count()) > 0 ? modal : page;
+
+  // nome
+  const campoNome = escopo.locator('input[type="text"], input:not([type])').first();
+  // telefone: seletor tolerante, porque o mask do input muda o type/placeholder
+  const campoTel = escopo
+    .locator('input')
+    .filter({ hasNot: page.locator('[type="email"]') })
+    .nth(1);
+  const campoEmail = escopo.locator('input[type="email"]').first();
+
+  try {
+    await campoNome.fill(dados.nome, { timeout: 5000 });
+    await campoTel.fill(dados.telefone, { timeout: 5000 });
+    await campoEmail.fill(dados.email, { timeout: 5000 });
+  } catch (e) {
+    return { ok: false, motivo: `preenchimento falhou: ${String(e).split("\n")[0].slice(0, 60)}` };
+  }
+
+  const enviar = escopo
+    .locator('button:has-text("Enviar dados"), button:has-text("ver telefone"), button[type="submit"]')
+    .first();
+  if ((await enviar.count()) === 0) {
+    return { ok: false, motivo: "botao de envio nao encontrado" };
+  }
+  try {
+    await enviar.click({ timeout: 8000 });
+  } catch (e) {
+    return { ok: false, motivo: `envio falhou: ${String(e).split("\n")[0].slice(0, 60)}` };
+  }
+
+  // depois do envio o portal publica o número — ou não, se recusar.
+  await page
+    .locator('a[href^="tel:"]')
+    .first()
+    .waitFor({ timeout: espera })
+    .catch(() => {});
+  const hrefs = await page.evaluate(() =>
+    [...document.querySelectorAll('a[href^="tel:"]')].map((a) => a.getAttribute("href") || ""),
+  );
+  const t = telefonesDeHrefs(hrefs);
+  return t.phone ? { ok: true, ...t } : { ok: false, motivo: "enviado, mas o portal nao publicou o numero" };
+}

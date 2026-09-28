@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { telApolar, telefonesDeHrefs } from "@/scripts/coleta/telefone.mjs";
+import { leadConfigurado, telApolar, telefonesDeHrefs } from "@/scripts/coleta/telefone.mjs";
 
 // Convenção do estúdio: test_[sistema]_[cenário]_[resultado_esperado].
 //
@@ -80,5 +80,37 @@ describe("telefone da coleta", () => {
     const daApi = telApolar("(41)99121-0624");
     const t = telefonesDeHrefs([`tel:${daApi}`]);
     expect(t.celular).toBe("+5541991210624");
+  });
+});
+
+// O formulário de lead envia dados pessoais do dono para CADA anunciante. A
+// trava é dupla de propósito: flag explícita E variáveis preenchidas. Se um dia
+// alguém preencher o env e esquecer a flag, o backfill ainda não envia nada.
+describe("lead de formulario", () => {
+  const completo = { LEAD_NOME: "Fulano", LEAD_TELEFONE: "+5541999999999", LEAD_EMAIL: "a@b.com" };
+
+  it("test_lead_exige_flag_e_dados", () => {
+    expect(leadConfigurado({}).habilitado).toBe(false);
+    expect(leadConfigurado({ ...completo }).habilitado).toBe(false);
+    expect(leadConfigurado({ ...completo, LEAD_ENABLED: "true" })).toMatchObject({
+      habilitado: true,
+      completo: true,
+    });
+  });
+
+  it("test_lead_flag_true_sem_dados_nao_ativa", () => {
+    // A combinação perigosa: flag ligada, mas falta um campo. Não ativa.
+    const r = leadConfigurado({ LEAD_ENABLED: "true", LEAD_NOME: "Fulano", LEAD_EMAIL: "a@b.com" });
+    expect(r.habilitado).toBe(true);
+    expect(r.completo).toBe(false);
+  });
+
+  it("test_lead_flag_aceita_caixa_alta", () => {
+    expect(leadConfigurado({ ...completo, LEAD_ENABLED: "TRUE" }).habilitado).toBe(true);
+  });
+
+  it("test_lead_flag_false_explicito_nao_ativa", () => {
+    expect(leadConfigurado({ ...completo, LEAD_ENABLED: "false" }).habilitado).toBe(false);
+    expect(leadConfigurado({ ...completo, LEAD_ENABLED: "1" }).habilitado).toBe(false);
   });
 });
