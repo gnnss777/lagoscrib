@@ -5,7 +5,7 @@ import { openApp } from "./open-app";
 // numéricos; banheiros 3+ o exclui. Zero erro de console.
 async function login(page: Page) {
   await openApp(page);
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
 }
 
 test("test_form_novo_filtravel_quartos_elevador_banheiros", async ({
@@ -40,7 +40,7 @@ test("test_form_novo_filtravel_quartos_elevador_banheiros", async ({
   await page.screenshot({ path: "test-results/s010-form.png" });
   await page.getByRole("button", { name: "Importar Novo Imóvel" }).click();
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await expect(page.locator(".card-apartment")).toHaveCount(90);
 
   // Quartos 3+ + Elevador inclui o novo (Comendador + novo).
   await page.getByTestId("filter-toggle").click();

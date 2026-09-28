@@ -229,12 +229,12 @@ const QTS_SET = QTS_BUSCA ? new Set(QTS_BUSCA.split(",").map(Number).filter(Bool
   const PRECO_MAX = Number(
     (process.argv.find((a) => a.startsWith("--preco-max=")) || "").split("=")[1] || 0,
   );
-  // Teto do PRODUTO: R$ 3.500 com todas as taxas (aluguel + condomínio + IPTU).
+  // Teto do PRODUTO: R$ 3.600 com todas as taxas (aluguel + condomínio + IPTU).
   // --preco-max é só o filtro de busca do portal (aluguel); sozinho ele deixa
   // passar imóvel de R$ 2.500 com R$ 1.300 de condomínio, que o usuário não
   // aguenta. Aqui o corte é no all-in, e antes de gastar cota/foto.
   const TETO_TOTAL = Number(
-    (process.argv.find((a) => a.startsWith("--teto-total=")) || "").split("=")[1] || 3500,
+    (process.argv.find((a) => a.startsWith("--teto-total=")) || "").split("=")[1] || 3600,
   );
 const paramBusca = (qts, preco) =>
   [qts ? `quartos=${qts}` : "", preco ? `precoMaximo=${preco}` : ""].filter(Boolean).join("&");

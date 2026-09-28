@@ -9,5 +9,5 @@ import { openApp } from "./open-app";
 test("test_open_app_chega_no_dashboard_ncards", async ({ page }) => {
   await openApp(page);
 
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
 });

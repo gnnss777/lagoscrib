@@ -16,10 +16,10 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
   });
 
   await openApp(page);
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
 
   const compareBoxes = page.getByRole("checkbox", { name: "Comparar" });
-  await expect(compareBoxes).toHaveCount(88);
+  await expect(compareBoxes).toHaveCount(89);
 
   // 3 primeiros cards. Total e metragem saem dos próprios cards: literal aqui
   // quebrava a cada leva da base.

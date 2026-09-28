@@ -18,7 +18,7 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
   await openApp(page);
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
 
   // O total vem do card, não de literal: a base muda a cada leva e um valor
   // fixo aqui quebrava o teste sem aviso.
@@ -74,7 +74,7 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
     "Checklist copiado!",
   );
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
   await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: "Checklist" }).click();
   await expect(

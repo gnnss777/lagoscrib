@@ -17,7 +17,7 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
 
   // Login (mesmo padrão do smoke: env ou fallbacks de dev).
   await openApp(page);
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
 
   // Abrir o primeiro imóvel → galeria viewer-first.
   await page.locator(".card-apartment").first().locator("h3").click();
@@ -69,7 +69,7 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
   // Esc fecha o modal.
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("gallery")).toBeHidden();
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });

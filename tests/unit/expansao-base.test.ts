@@ -43,12 +43,14 @@ describe("expansao base", () => {
   it("test_expansao_links_verbatim_por_fonte", () => {
     // Portais ativos na leva 4. Apolar entra com a URL do anúncio
     // (/alugar/apartamento/...), não mais com ?ref= da home.
-    const domains = [
-      "zapimoveis.com.br/imovel/",
-      "vivareal.com.br/imovel/",
-      "olx.com.br",
-      "apolar.com.br/",
-    ];
+      const domains = [
+        "zapimoveis.com.br/imovel/",
+        "vivareal.com.br/imovel/",
+        "olx.com.br",
+        "apolar.com.br/",
+        // 5a fonte: import por link (S011). Entra com a URL do anúncio.
+        "chavesnamao.com.br/imovel/",
+      ];
     for (const a of all) {
       expect(domains.some((d) => a.link.includes(d))).toBe(true);
     }

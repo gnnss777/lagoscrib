@@ -13,7 +13,7 @@ test("test_venda_toggle_abas_com_pool_de_venda_vazio", async ({ page }) => {
   await openApp(page);
 
   // Aba default: Alugar, com a base inteira e "/mês" no card.
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
   const toggle = page.getByTestId("transaction-toggle");
   await expect(toggle.getByRole("button", { name: "Alugar" })).toHaveAttribute(
     "aria-pressed",
@@ -26,7 +26,7 @@ test("test_venda_toggle_abas_com_pool_de_venda_vazio", async ({ page }) => {
   await toggle.getByRole("button", { name: "Comprar" }).click();
   await expect(page.locator(".card-apartment")).toHaveCount(0);
   await toggle.getByRole("button", { name: "Alugar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
   await toggle.getByRole("button", { name: "Comprar" }).click();
   await expect(page.locator(".card-apartment")).toHaveCount(0);
   await expect(toggle.getByRole("button", { name: "Comprar" })).toHaveAttribute(
@@ -41,7 +41,7 @@ test("test_venda_toggle_abas_com_pool_de_venda_vazio", async ({ page }) => {
 
   // Voltar para Alugar restaura a base inteira.
   await toggle.getByRole("button", { name: "Alugar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(88);
+  await expect(page.locator(".card-apartment")).toHaveCount(89);
   await expect(page.locator(".card-apartment").first()).toContainText("/mês");
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);

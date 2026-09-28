@@ -16,10 +16,10 @@ SOURCES = [s.removesuffix(".json") for s in sys.argv[1:]] or DEFAULT_SOURCES
 BEDROOM_FIX = {}
 # Sem nenhuma URL de foto: sem imagem para o app -> fora (registrado na evidência).
 DROP_NO_PHOTOS = set()
-# Teto do produto: R$ 3.500 com TODAS as taxas (aluguel + condomínio + IPTU).
+# Teto do produto: R$ 3.600 com TODAS as taxas (aluguel + condomínio + IPTU).
 # O filtro de busca dos portais é só por aluguel (--preco-max), então sem esta
 # regra a base aceita imóvel de R$ 2.500 de aluguel com R$ 1.300 de condomínio.
-MAX_TOTAL_ALUGUEL = 3500
+MAX_TOTAL_ALUGUEL = 3600
 # Ids derrubados por esse teto, para o motivo sair certo na evidência.
 ACIMA_DO_TETO = set()
 

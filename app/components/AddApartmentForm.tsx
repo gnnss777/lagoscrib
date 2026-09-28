@@ -44,6 +44,8 @@ export default function AddApartmentForm() {
     phone: "",
     email: "",
     image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop",
+    // Galeria local. Vazio = imóvel digitado à mão, que fica só com a capa.
+    photos: [] as { src: string; caption?: string }[],
     features: ["Elevador", "Portaria 24h"],
   });
 
@@ -56,6 +58,60 @@ export default function AddApartmentForm() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
+
+  const [linkParaImportar, setLinkParaImportar] = useState("");
+  const [importando, setImportando] = useState(false);
+  const [importErro, setImportErro] = useState("");
+  const [avisos, setAvisos] = useState<string[]>([]);
+  const [fotosImportadas, setFotosImportadas] = useState(0);
+
+  const importarPorLink = async () => {
+    setImportErro("");
+    setAvisos([]);
+    if (!/^https?:\/\//i.test(linkParaImportar)) {
+      setImportErro("Cole a URL completa do anúncio.");
+      return;
+    }
+    setImportando(true);
+    try {
+      const r = await fetch("/api/import/imovel", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: linkParaImportar }),
+      });
+      const j = await r.json();
+      if (!r.ok) {
+        setImportErro(j?.error ?? `Falha no import (HTTP ${r.status})`);
+        return;
+      }
+      const a = j.imovel;
+      // Só sobrescreve o que a página realmente disse. Campo que veio 0
+      // (quartos, banheiros, vaga) mantém o valor que o usuário já digitou,
+      // senão o import apagaria preenchimento manual.
+      setForm((f) => ({
+        ...f,
+        title: a.title || f.title,
+        neighborhood: a.neighborhood || f.neighborhood,
+        address: a.address || f.address,
+        link: a.link || f.link,
+        area: a.area || f.area,
+        bedrooms: a.bedrooms || f.bedrooms,
+        bathrooms: a.bathrooms || f.bathrooms,
+        parking: a.parking || f.parking,
+        rent: a.rent || f.rent,
+        condo: a.condo,
+        iptu: a.iptu,
+        image: a.image || f.image,
+        photos: a.photos?.length ? a.photos : f.photos,
+      }));
+      setAvisos(j.avisos ?? []);
+      setFotosImportadas(j.fotosBaixadas ?? 0);
+    } catch (e) {
+      setImportErro(String(e).slice(0, 160));
+    } finally {
+      setImportando(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,11 +129,30 @@ export default function AddApartmentForm() {
       salePrice: isSale ? form.salePrice : undefined,
       rent: isSale ? 0 : form.rent,
       pets,
-      description: "Novo imóvel adicionado pelo usuário.",
+      // Importado por link tem descrição e galeria de verdade; digitado à mão
+      // não, e aí o app mostra só a capa (o resto da base também tem).
+      description: form.photos.length
+        ? "Imóvel importado do link do anúncio."
+        : "Novo imóvel adicionado pelo usuário.",
       features: form.features,
     });
     setOpen(false);
-    setForm({ ...form, title: "", neighborhood: "", address: "", link: "", phone: "", email: "" });
+    // Limpa galeria e capa junto: senão as fotos do imóvel importado anterior
+    // ficam presas no imóvel que o usuário cadastrar em seguida.
+    setForm({
+      ...form,
+      title: "",
+      neighborhood: "",
+      address: "",
+      link: "",
+      phone: "",
+      email: "",
+      photos: [],
+      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop",
+    });
+    setLinkParaImportar("");
+    setAvisos([]);
+    setFotosImportadas(0);
   };
 
   if (!open) {
@@ -109,6 +184,46 @@ export default function AddApartmentForm() {
         <button type="button" onClick={() => setOpen(false)} aria-label="Fechar formulário" className="text-muted hover:text-ink">
           <X size={18} />
         </button>
+      </div>
+
+      {/* Import por link: cola a URL do anúncio e os campos se preenchem. O
+          usuário ainda revisa e corrige o que a página não disse (os avisos
+          ficam visíveis) antes de salvar — o import não inventa valor. */}
+      <div className="rounded-lg border border-taxi/30 bg-night/40 p-3 space-y-2">
+        <label className="block text-xs text-muted">
+          Colar link do anúncio para preencher sozinho (Zap, VivaReal, OLX, Chaves na Mão)
+        </label>
+        <div className="flex gap-2">
+          <input
+            placeholder="https://..."
+            value={linkParaImportar}
+            onChange={(e) => setLinkParaImportar(e.target.value)}
+            className="input-field flex-1"
+            aria-label="Link do anúncio para importar"
+          />
+          <button
+            type="button"
+            onClick={importarPorLink}
+            disabled={importando}
+            className="rounded-md bg-taxi px-3 py-2 text-sm font-semibold text-ink disabled:opacity-60"
+          >
+            {importando ? "Lendo…" : "Preencher"}
+          </button>
+        </div>
+        {importErro && <p className="text-xs text-red-300">{importErro}</p>}
+        {avisos.length > 0 && (
+          <ul className="text-xs text-amberink space-y-0.5">
+            {avisos.map((a) => (
+              <li key={a}>• {a}</li>
+            ))}
+          </ul>
+        )}
+        {fotosImportadas > 0 && (
+          <p className="text-xs text-muted">
+            {fotosImportadas} foto{fotosImportadas > 1 ? "s" : ""} baixada
+            {fotosImportadas > 1 ? "s" : ""} para o app.
+          </p>
+        )}
       </div>
       <div className="grid grid-cols-2 gap-3">
         <input ref={titleRef} placeholder="Título" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-field" required />
