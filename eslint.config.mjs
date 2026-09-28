@@ -10,6 +10,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Worktrees do proprio repo (oc/<tema>): tem .next proprio, que o
+    // padrao acima nao alcanca porque o glob e ancorado na raiz.
+    "oc/**",
   ]),
 ]);
 

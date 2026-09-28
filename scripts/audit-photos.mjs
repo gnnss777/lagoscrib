@@ -11,7 +11,7 @@
 // que saíram da base são órfãs e ficam de fora do gate (não quebram o build, e
 // continuam no disco caso a base volte). Use --tudo para auditar o diretório
 // inteiro, inclusive órfãs.
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 // Regra orientation-aware (correção S002 pós-auditoria): o CDN entrega fit-in,
@@ -80,7 +80,11 @@ for (const e of entries.filter((x) => x.isDirectory())) {
   const dir = join(ROOT, e.name);
   const files = readdirSync(dir).filter((f) => f.endsWith(".webp")).sort();
   let dirBytes = 0;
-  let valid = 0;
+  // A galeria que o app mostra inclui a capa como primeira foto (photos[0] em
+  // data.ts, via getGalleryPhotos). Ela conta no mínimo: sem isso, um imóvel
+  // com 8 fotos no app é reprovado como se tivesse 7.
+  const capa = join(ROOT, `${e.name}.webp`);
+  let valid = existsSync(capa) && webpDims(readFileSync(capa)) ? 1 : 0;
   for (const f of files) {
     const p = join(dir, f);
     const buf = readFileSync(p);

@@ -14,5 +14,5 @@ test("test_login_fluxo_dashboard_ncards", async ({ page }) => {
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
 
-  await expect(page.locator(".card-apartment")).toHaveCount(51);
+  await expect(page.locator(".card-apartment")).toHaveCount(80);
 });

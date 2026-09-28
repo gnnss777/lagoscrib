@@ -24,7 +24,7 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(51);
+  await expect(page.locator(".card-apartment")).toHaveCount(80);
 
   // O total vem do card, não de literal: a base muda a cada leva e um valor
   // fixo aqui quebrava o teste sem aviso.
@@ -76,7 +76,7 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
     "Checklist copiado!",
   );
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(51);
+  await expect(page.locator(".card-apartment")).toHaveCount(80);
   await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: "Checklist" }).click();
   await expect(

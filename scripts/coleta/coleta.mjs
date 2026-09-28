@@ -207,7 +207,68 @@ const SUFIXO_BUSCA = (() => {
 const prox = (u) => (SUFIXO_BUSCA ? `${u}${SUFIXO_BUSCA}` : u);
 const sufixoQts = QTS_BUSCA ? `-${QTS_BUSCA.replace(/,/g, "")}q` : "";
 const sufixoPreco = PRECO_MAX ? `-ate${PRECO_MAX}` : "";
-const sufixoPorPortal = `${sufixoQts}${sufixoPreco}`;
+
+// --bairros=Batel,Mercês: concentra a coleta. Nenhum portal aceita bairro na
+// URL de busca de forma confiável (o `&bairro=` do Zap é ignorado), então o
+// corte é feito em duas frentes:
+//   - Zap/VivaReal: o bairro já está no slug da url da listagem
+//     (...-batel-curitiba-pr-40m2-id-X), então filtramos os candidatos ANTES
+//     de abrir a página do anúncio — sem custo de request.
+//   - Apolar: a API aceita `district: ["Batel"]` de verdade, uma chamada por
+//     bairro.
+// --por-bairro=7: teto por bairro, para um bairro não comer a cota toda.
+const BAIRROS_RAW = (process.argv.find((a) => a.startsWith("--bairros=")) || "")
+  .split("=")[1]
+  ?.split(",")
+  .map((b) => b.trim())
+  .filter(Boolean) ?? [];
+const BAIRROS_SLUG = new Set(BAIRROS_RAW.map(slug));
+const POR_BAIRRO = Number(
+  (process.argv.find((a) => a.startsWith("--por-bairro=")) || "").split("=")[1] || 0,
+);
+// nome oficial a partir do slug, para a API do Apolar (que quer "Batel")
+const official = (s) => {
+  for (const [sl, nome] of BAIRROS) if (sl === s) return nome;
+  return null;
+};
+const sufixoBairros = BAIRROS_RAW.length ? `-${BAIRROS_SLUG.size}b` : "";
+const sufixoPorPortal = `${sufixoQts}${sufixoPreco}${sufixoBairros}`;
+
+// O bairro mora no slug da url, antes do marcador de cidade. Zap e VivaReal
+// são a mesma plataforma mas com slugs diferentes:
+//   Zap:        .../aluguel-apartamento-2-quartos-mobiliado-centro-curitiba-pr-40m2-id-X
+//   VivaReal:   .../imovel/apartamento-2-quartos-vila-izabel-bairros-curitiba-...-id-X
+// O bairro pode ter hífen ("campina-do-siqueira"), então casar por regex guloso
+// pega o slug inteiro. O jeito certo é por SUFIXO do prefixo: o alvo casa se o
+// prefixo termina em "-{alvo}", o que garante fronteira de palavra.
+function prefixoBairro(url) {
+  let melhor = -1;
+  for (const marcador of ["-curitiba-pr-", "-bairros-curitiba-"]) {
+    const i = url.indexOf(marcador);
+    if (i >= 0 && (melhor < 0 || i < melhor)) melhor = i;
+  }
+  return melhor < 0 ? null : url.slice(0, melhor);
+}
+
+function bairroNoSlug(url, nomesDoSlug) {
+  const antes = prefixoBairro(url);
+  if (antes === null) return null;
+  for (const sl of nomesDoSlug) if (antes.endsWith(`-${sl}`)) return sl;
+  return null;
+}
+
+// Sem lista de alvos: descobre o bairro pela lista oficial, do mais longo para
+// o mais curto (para o caso de um bairro ser sufixo de outro).
+function bairroOficialNoSlug(url) {
+  const antes = prefixoBairro(url);
+  if (antes === null) return null;
+  let melhor = null;
+  for (const [sl, nome] of BAIRROS) {
+    if (!antes.endsWith(`-${sl}`)) continue;
+    if (!melhor || sl.length > melhor.length) melhor = sl;
+  }
+  return melhor ? BAIRROS.get(melhor) : null;
+}
 
 const BUSCAS = {
   zap: [
@@ -247,9 +308,23 @@ async function coletarZap(portal) {
       if (st !== 200) break;
     }
     const achados = (await hrefs()).filter((h) => h.includes("/imovel/") && /aluguel-/.test(h));
-    console.log(`  [${portal}] pagina ${p}: ${achados.length} anuncios`);
-    for (const l of achados) alvos.push(l.split("?")[0]);
+    // Filtro de bairro no slug, ANTES de abrir a página: o Zap e o VivaReal
+    // não filtram por bairro na url, mas o slug carrega o bairro
+    // (.../aluguel-apartamento-2-quartos-...-batel-curitiba-pr-40m2-id-X).
+    const noBairro = achados.filter((h) => {
+      if (!BAIRROS_SLUG.size) return true;
+      return bairroNoSlug(h, BAIRROS_SLUG) !== null;
+    });
+    console.log(
+      `  [${portal}] pagina ${p}: ${achados.length} anuncios, ${noBairro.length} nos bairros-alvo`,
+    );
+    for (const l of noBairro) alvos.push(l.split("?")[0]);
   }
+
+  // Cota por bairro: um bairro com many anúncios não come a leva inteira.
+  const porBairro = new Map();
+  const lotado = (b) => (BAIRROS_SLUG.size === 0 ? false : (porBairro.get(slug(b)) ?? 0) >= POR_BAIRRO);
+  const conta = (b) => porBairro.set(slug(b), (porBairro.get(slug(b)) ?? 0) + 1);
 
   const saida = [];
   for (const url of [...new Set(alvos)]) {
@@ -270,7 +345,11 @@ async function coletarZap(portal) {
     const texto = await page.evaluate(() => document.body.innerText);
     const h1 = await page.evaluate(() => document.querySelector("h1")?.innerText?.trim() || "");
     const bairroSlug = (url.match(/-([a-z0-9-]+)-curitiba-pr-/) || [])[1] || "";
-    const bairro = bairroDe(bairroSlug) || bairroNoTexto(prod.name || "") || bairroNoTexto(texto.slice(0, 1500));
+    const bairro =
+      bairroOficialNoSlug(url) ||
+      bairroDe(bairroSlug) ||
+      bairroNoTexto(prod.name || "") ||
+      bairroNoTexto(texto.slice(0, 1500));
     const area = num((url.match(/-(\d+(?:[.,]\d+)?)m2-/) || [])[1] || (texto.match(/([\d.,]{2,7})\s*m²/) || [])[1]);
     const quartos = num((url.match(/-(\d+)-quarto/) || [])[1] || (texto.match(/(\d+)\s*quarto/) || [])[1]);
     const banheiros = num((texto.match(/(\d+)\s*banheiro/) || [])[1]);
@@ -285,6 +364,11 @@ async function coletarZap(portal) {
       fora(portal, pid, `bairro fora da lista (${bairroSlug || (prod.name || "").slice(0, 40)})`);
       continue;
     }
+    if (BAIRROS_SLUG.size && !BAIRROS_SLUG.has(slug(bairro))) {
+      fora(portal, pid, `bairro ${bairro} fora da lista de alvos`);
+      continue;
+    }
+    if (lotado(bairro)) continue;
     if (PRECO_MAX && rent > PRECO_MAX) {
       fora(portal, pid, `aluguel R$${rent} acima do teto de R$${PRECO_MAX}`);
       continue;
@@ -312,6 +396,7 @@ async function coletarZap(portal) {
 
     const partes = [portal, slug(bairro), slug(rua), String(area), pid.slice(-4)];
     idsVistos.add(pid);
+    conta(bairro);
     saida.push({
       id: partes.filter(Boolean).join("-"),
       title: (h1 || prod.name || `Apartamento para alugar — ${bairro}`).slice(0, 120),
@@ -454,43 +539,56 @@ async function coletarApolar() {
     console.log(`  [apolar] listagem pagina ${p}: ${achados.length} anuncios (total ${porRef.size})`);
   }
 
-  // 2. Dados ricos via API
+  // 2. Dados ricos via API. Com --bairros, uma chamada por bairro (o filtro
+  // `district` da Apolar é o único que funciona de verdade entre os portais).
   await abrir(listagem, 5000);
-  const bruto = await page.evaluate(
-    async ([api, fields, qtos, teto]) => {
-      const milhar = new Intl.NumberFormat("pt-BR");
-      const r = await fetch(api, {
-        method: "POST",
-        headers: { "Content-Type": "application/json; charset=UTF-8" },
-        body: JSON.stringify({
-          business: "Locacao", business_subfilter: "", reference: "",
-          city: "Curitiba", country: "Brasil", district: [],
-          property_type: ["Apartamento"], property_type_combo: [],
-          bedrooms: qtos, garage: [], bathrooms: [],
-          price_max: teto ? `R$ ${milhar.format(teto)},00` : "R$ 0,00",
-          price_min: "R$ 0,00",
-          area_max: "0,00 m²", area_min: "0,00 m²",
-          address: null, address_number: null, open_search: "",
-          in_condominium: false, include_condominium_price: false,
-          conveniences: [], recreation: [], facilities: [], rooms: [], idLoja: null,
-          use_scroll: true, showStoreImmobiles: true, order: "price_asc",
-          size: 200, fields,
-          price: [0, 0], area: [0, 0],
-        }),
-      });
-      return await r.json();
-    },
-    [APOLAR_API, APOLAR_FIELDS, QTS_BUSCA ? [...QTS_SET].map(String) : [], PRECO_MAX],
-  );
-  const brutos = bruto?.data ?? [];
+  const districts = BAIRROS_RAW.map((nome) => official(slug(nome)) || nome);
+  const lotes = districts.length ? districts : [""];
+  let brutos = [];
+  for (const district of lotes) {
+    const bruto = await page.evaluate(
+      async ([api, fields, qtos, teto, district]) => {
+        const milhar = new Intl.NumberFormat("pt-BR");
+        const r = await fetch(api, {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=UTF-8" },
+          body: JSON.stringify({
+            business: "Locacao", business_subfilter: "", reference: "",
+            city: "Curitiba", country: "Brasil", district: district ? [district] : [],
+            property_type: ["Apartamento"], property_type_combo: [],
+            bedrooms: qtos, garage: [], bathrooms: [],
+            price_max: teto ? `R$ ${milhar.format(teto)},00` : "R$ 0,00",
+            price_min: "R$ 0,00",
+            area_max: "0,00 m²", area_min: "0,00 m²",
+            address: null, address_number: null, open_search: "",
+            in_condominium: false, include_condominium_price: false,
+            conveniences: [], recreation: [], facilities: [], rooms: [], idLoja: null,
+            use_scroll: true, showStoreImmobiles: true, order: "price_asc",
+            size: 200, fields,
+            price: [0, 0], area: [0, 0],
+          }),
+        });
+        return await r.json();
+      },
+      [APOLAR_API, APOLAR_FIELDS, QTS_BUSCA ? [...QTS_SET].map(String) : [], PRECO_MAX, district],
+    );
+    const lote = bruto?.data ?? [];
+    console.log(`  [apolar] ${district || "todos os bairros"}: ${lote.length} anuncios`);
+    brutos = brutos.concat(lote);
+  }
   // Filtro de quartos no cliente: o campo bedrooms da API não é confiável.
   const itens = QTS_SET
     ? brutos.filter((x) => QTS_SET.has(num(x.Quartos) || num(x.dormitorios)))
     : brutos;
   console.log(
-    `  [apolar] API: ${brutos.length} anuncios, ${itens.length} no filtro quartos=${[...(QTS_SET ?? [])].join(",") || "todos"}`,
+    `  [apolar] total ${brutos.length} anuncios, ${itens.length} no filtro quartos=${[...(QTS_SET ?? [])].join(",") || "todos"}`,
   );
   apolarSufixo = sufixo;
+
+  // Cota por bairro também no Apolar (senão Centro, que tem muito anúncio
+  // barato, come a leva inteira).
+  const porBairro = new Map();
+  const lotado = (b) => (BAIRROS_SLUG.size === 0 ? false : (porBairro.get(slug(b)) ?? 0) >= POR_BAIRRO);
 
   const saida = [];
   for (const x of itens) {
@@ -498,6 +596,11 @@ async function coletarApolar() {
     const ref = x.referencia;
     if (!ref) continue;
     const bairro = bairroDe(x.bairro) || bairroNoTexto(x.endereco || "");
+    if (BAIRROS_SLUG.size && !BAIRROS_SLUG.has(slug(bairro || ""))) {
+      fora("apolar", ref, `bairro ${x.bairro} fora da lista de alvos`);
+      continue;
+    }
+    if (lotado(bairro || "")) continue;
     const area = num(x.area_total);
     const quartos = num(x.Quartos || x.dormitorios);
     const banheiros = num(x.banheiro);
@@ -571,6 +674,7 @@ async function coletarApolar() {
       verifiedAt: HOJE,
     });
     if (!condo) saida[saida.length - 1].condoUnknown = true;
+    porBairro.set(slug(bairro || ""), (porBairro.get(slug(bairro || "")) ?? 0) + 1);
     console.log(
       `  [apolar] + ${saida.length}/${QTD.apolar} ${bairro} ${area}m2 ${quartos}qt R$${rent} fotos=${fotos.length}`,
     );

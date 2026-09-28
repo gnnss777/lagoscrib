@@ -39,17 +39,24 @@ Padrões de dev local: usuário `guinness` / admin `admin`.
 
 ## Dados
 
-**51 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (leva S008) de
-3 portais: **Zap** (18), **VivaReal** (18) e **Apolar** (15). Escopo: **2–3 quartos,
-aluguel até R$ 3.000** — 37 de 2 quartos e 14 de 3, de R$ 1.400 a R$ 3.000 de
-aluguel (R$ 5.900 all-in com condomínio e IPTU), em 32 bairros. O critério está
+**80 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (levas S008+S009) de
+3 portais: **Zap** (29), **VivaReal** (21) e **Apolar** (30). Escopo: **2–3 quartos,
+aluguel até R$ 3.000** — 66 de 2 quartos e 14 de 3, de R$ 950 a R$ 3.000 de
+aluguel (R$ 6.362 all-in com condomínio e IPTU), em 36 bairros. O critério está
 travado em teste, então uma leva futura não muda o produto em silêncio.
+
+**38 imóveis nos 8 bairros prioritários** (levantada S009, `--bairros` com teto por
+bairro): Centro 8, Água Verde 9, Batel 6, Vila Izabel 6, Bigorrilho 5, Centro Cívico 2,
+Mercês 1, São Francisco 1. Mercês e São Francisco são os finos: o portal entrega
+pouco anúncio de 2 quartos ≤ R$ 3.000 neles, e a cota por bairro impede um bairro
+consumir a leva toda.
 
 Telefone/e-mail não são coletados (portais mascaram): o contato é sempre pelo link
 do anúncio original.
 
 O scraper é determinístico (sem LLM no loop) e versionado em
-`scripts/coleta/coleta.mjs`; o histórico do pipeline em `docs/stories/S008-coleta-4-portais.md`.
+`scripts/coleta/coleta.mjs`; o histórico do pipeline em `docs/stories/S008-coleta-4-portais.md`
+e `docs/stories/S009-coleta-bairros-prioritarios.md`.
 O OLX ficou fora: a lista orgânica de anúncios não renderiza (ver a story).
 
 Snapshot anterior (22/09/2026, 109 imóveis em 5 fontes) preservado em

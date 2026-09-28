@@ -375,7 +375,7 @@ test("test_kanban_scroll_interno_todos_cards", async ({ page }) => {
   const view = await openKanban(page);
 
   const col = view.getByRole("region", { name: /Não visitado/ });
-  await expect(col.locator("article")).toHaveCount(51);
+  await expect(col.locator("article")).toHaveCount(80);
   await expect(
     col.getByRole("button", { name: /imóveis ocultos em/ }),
   ).toHaveCount(0);
