@@ -23,7 +23,7 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
     .getByPlaceholder("Digite sua senha")
     .fill(process.env.E2E_PASS ?? "curitiba2026");
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   // Abrir o primeiro imóvel → galeria viewer-first.
   await page.locator(".card-apartment").first().locator("h3").click();
@@ -75,7 +75,7 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
   // Esc fecha o modal.
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("gallery")).toBeHidden();
-  await expect(page.locator(".card-apartment")).toHaveCount(64);
+  await expect(page.locator(".card-apartment")).toHaveCount(88);
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });

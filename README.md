@@ -39,19 +39,21 @@ Padrões de dev local: usuário `guinness` / admin `admin`.
 
 ## Dados
 
-**64 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (levas S008→S010) de
-3 portais: **Zap** (23), **Apolar** (25) e **VivaReal** (16). Escopo: **2–3 quartos e
-até R$ 3.500 com todas as taxas** (aluguel + condomínio + IPTU) — 55 de 2 quartos e 9 de 3,
-em 32 bairros. O teto é no **all-in**, não no aluguel: o filtro de busca dos portais é por
-aluguel, então um imóvel de R$ 2.500 com R$ 1.300 de condomínio passa o filtro e não pode
-entrar na base. O critério está travado em teste (`tests/unit/scope.test.ts`).
+**88 imóveis reais de aluguel** em Curitiba, coletados em 27/09/2026 (levas S008→S011) de
+3 portais: **Zap** (34), **Apolar** (35) e **VivaReal** (19). Escopo: **2–3 quartos e
+até R$ 3.500 com todas as taxas** (aluguel + condomínio + IPTU) — 79 de 2 quartos e 9 de 3,
+em 36 bairros, sendo **40 com 70m² ou mais** (o maior com 127m²). O teto é no **all-in**,
+não no aluguel: o filtro de busca dos portais é por aluguel, então um imóvel de R$ 2.500
+com R$ 1.300 de condomínio passa o filtro e não pode entrar na base. O critério está
+travado em teste (`tests/unit/scope.test.ts`).
 
-**32 imóveis nos 8 bairros prioritários** (`--bairros` com cota por bairro): Centro 9,
-Água Verde 9, Batel 5, Vila Izabel 4, Bigorrilho 3, Mercês 1, São Francisco 1,
-Centro Cívico 0. Centro Cívico esvaziou: com o teto de R$ 3.500 all-in não sobra anúncio
-de 2 quartos lá, porque o condomínio da região come a faixa. Mercês e São Francisco
-também são finos. Em 4 coletas diferentes o scraper reencontrou os mesmos anúncios —
-o estoque de 2 quartos ≤ R$ 3.500 nesses bairros está praticamente esgotado.
+**14 bairros-alvo** (`--bairros` com cota por bairro): Água Verde 10, Centro 9, Cristo Rei 7,
+Portão 7, Batel 5, Alto da Rua XV 4, Bigorrilho 3, Cabral 3, Rebouças 2, Alto da Glória 2,
+Juvevê 1, Mercês 1, São Francisco 1, Centro Cívico 0. Centro Cívico segue vazio: com o teto
+de R$ 3.500 all-in não sobra anúncio de 2 quartos lá, porque o condomínio da região come a
+faixa. Mercês e São Francisco também são finos. Nas coletas restritas a 8 bairros o scraper
+reencontrou os mesmos anúncios — o estoque de 2 quartos ≤ R$ 3.500 nesses bairros está
+praticamente esgotado. Ampliar para 14 bairros rendeu +24 imóveis, 15 deles com 70m² ou mais.
 
 Telefone/e-mail não são coletados (portais mascaram): o contato é sempre pelo link
 do anúncio original.
