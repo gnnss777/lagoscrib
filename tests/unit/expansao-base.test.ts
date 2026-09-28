@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { apartments, saleApartments } from "@/lib/data";
 import { TETO_TOTAL_ALUGUEL } from "@/lib/constants";
 import { totalAllIn } from "@/lib/pricing";
-import { ehTelefoneValido } from "@/lib/phone-gate";
+import { ehTelefoneValido } from "@/lib/phone";
 
 // Expansão da base (5 fontes, 22/09/2026): invariantes de toda a base,
 // originais + novos. Regras: sem contato, link verbatim, total consistente,

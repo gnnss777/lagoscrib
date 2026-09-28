@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { apartments, saleApartments } from "@/lib/data";
 import { totalAllIn, pricePerM2 } from "@/lib/pricing";
-import { ehTelefoneValido } from "@/lib/phone-gate";
+import { ehTelefoneValido } from "@/lib/phone";
 
 // Leva 4 (27/09/2026): base zerada e repovoada só com aluguel.
 // As invariantes valem para a base inteira — sem lista de ids fixos, que

@@ -125,8 +125,24 @@ lista de "só fixo".
   o formato de algum anúncio só exista lá.
 - **Interceptar XHR em vez de clicar**: desnecessário. O clique de qualquer forma
   registra lead, e o site da imobiliária é a fonte melhor.
-- **Normalizar para `(41) 99699-0773`**: `maskPhone` e `buildWhatsAppLink` já
-  sabem lidar com `+55…`. Normalizar seria reescrever algo certo.
+- **Normalizar para `(41) 99699-0773`**: `buildWhatsAppLink` já sabe lidar com
+  `+55…`. Normalizar seria reescrever algo certo.
+- **Janela de horário comercial para revelar o telefone** (`isBusinessHours` +
+  `maskPhone` em `lib/phone-gate.ts` + `app/api/contact/[id]`, removidos em
+  28/09/2026): **rejeitada por ser segurança de fachada.** O gate existia só
+  na rota de API (`requireAuth` + `rateLimit` + log `CONTACT_REVEAL`), mas
+  **nenhum componente chamava essa rota** — `ApartmentCard`, `DetailModal`,
+  `KanbanBoard` e `VisitChecklist` leem `apartment.phone` direto do
+  `lib/data.ts`, que é um módulo estático importado por componentes `"use
+  client"`. Ou seja: o número ia no payload do browser de qualquer visitante,
+  e a janela horária nunca protegeu nada. Pior, dava impressão falsa de
+  controle. Como o telefone é contato **profissional** de imobiliária, já
+  público no anúncio de origem, a base legal é legítimo interesse + minimização
+  (art. 7º, IX) — não sigilo. Manter duas políticas de privacidade simultâneas
+  na mesma árvore era o pior dos dois mundos. O que substitui o gate é a
+  transparência: `app/privacidade` declara a regra, e o link do anúncio
+  original continua sendo a via preferida. `lib/phone-gate.ts` virou
+  `lib/phone.ts`, só com o validador de formato `ehTelefoneValido`.
 - **Preencher o telefone com fixo quando não há celular**: 16 imóveis ficariam
   cobertos, mas o requisito do dono é celular DDD 41. Os fixos ficaram
   registrados em `data/coleta/imobiliarias-aplicado.json` para virar decisão
@@ -136,7 +152,8 @@ lista de "só fixo".
   **nenhum código cria registro** — o endpoint sempre retorna 404. Como o
   telefone agora vive no `lib/data.ts` estático, um writer a mais sem
   consumidor real é custo sem retorno. Fica para quando existir multiusuário
-  de verdade.
+  de verdade. A rota foi removida em 28/09/2026 junto com o gate de horário
+  comercial; a tabela fica no schema, sem writer nem reader.
 
 ## Por que o `phone` vazio passou tanto tempo
 
