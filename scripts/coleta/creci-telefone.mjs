@@ -21,8 +21,8 @@
 // é onde ela publica o contato de propósito.
 //
 // Uso: node scripts/coleta/creci-telefone.mjs --cdp=http://127.0.0.1:9222 [--limite=0] [--so=zap]
-import { chromium } from "@playwright/test";
 import { readFileSync, writeFileSync } from "node:fs";
+import { conectarSessaoLogada } from "./telefone.mjs";
 
 const DELAY = 8000; // mesmo ritmo do coleta.mjs
 const arg = (nome, padrao = "") => {
@@ -58,22 +58,12 @@ function baseAlvo() {
   return out;
 }
 
-if (!CDPIA) {
-  console.error("ERRO: --cdp= obrigatório. A página é renderizada por JS; fetch puro não lê o card.");
-  process.exit(1);
-}
-
 const base = baseAlvo().filter((x) => !x.phone && !x.id.startsWith("apolar-"));
 const alvos = (SO ? base.filter((x) => x.id.startsWith(SO)) : base).slice(0, LIMITE);
 console.log(`sem telefone e fora do apolar: ${base.length} | alvo: ${alvos.length}`);
 
-const b = await chromium.connectOverCDP(CDPIA);
-const ctx = b.contexts()[0];
-if (!ctx) {
-  console.error(`--cdp=${CDPIA} nao conectou.`);
-  process.exit(1);
-}
-console.log(`  [cdp] conectado\n`);
+const { ctx } = await conectarSessaoLogada(CDPIA);
+console.log(`  [sessao] chromium logado conectado (perfil gnnss777)\n`);
 
 // Lê só o que já está renderizado. NENHUM clique nesta função.
 const LER = () => {

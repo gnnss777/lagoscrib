@@ -14,9 +14,9 @@
 //
 // Clicar "mostrar telefone" REGISTRA LEAD no painel do anunciante. Uma passada
 // = um clique por imóvel, no ritmo do DELAY. Rode quando quiser, não é urgency.
-import { chromium } from "@playwright/test";
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import {
+  conectarSessaoLogada,
   extrairTelefone,
   leadConfigurado,
   preencherFormularioLead,
@@ -90,18 +90,11 @@ console.log(
     : "lead: inativo — só coleta o que revela direto (LEAD_ENABLED=true + LEAD_* no env pra ativar)",
 );
 
-if (!CDPIA) {
-  console.error("ERRO: --cdp= é obrigatório. O telefone do Zap/VivaReal só sai de um browser logado.");
-  process.exit(1);
-}
-
-const browser = await chromium.connectOverCDP(CDPIA);
-const ctx = browser.contexts()[0];
-if (!ctx) {
-  console.error(`--cdp=${CDPIA} nao conectou.`);
-  process.exit(1);
-}
-console.log(`  [cdp] conectado em ${CDPIA}`);
+// Sem fallback para perfil novo: o perfil limpo devolveria zero telefone em
+// silêncio. Se o Chromium logado (gnnss777 / Profile 1) não estiver de pé, o
+// script para com a instrução de como subir.
+const { ctx } = await conectarSessaoLogada(CDPIA);
+console.log(`  [sessao] chromium logado conectado (perfil gnnss777)`);
 const page = await ctx.newPage();
 
 const pegaDoBrowser = [];

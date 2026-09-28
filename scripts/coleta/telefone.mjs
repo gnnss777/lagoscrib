@@ -113,6 +113,54 @@ export const CAMPOS_LEAD = ["nome", "telefone", "email"];
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // --------------------------------------------------------------------------
+// Sessão logada — obrigatória, não opcional
+// --------------------------------------------------------------------------
+// O perfil do Chromium do usuário é o que tem sessão nos portais (zapAccessToken,
+// z_user_id) e o `cf_clearance` do Cloudflare. O perfil de coleta em %TEMP% é
+// limpo e devolve zero telefone — silenciosamente, que é o pior jeito de falhar
+// (postmortem ERRO-2). Por isso aqui não existe fallback para perfil novo:
+// se o navegador logado não estiver de pé, o script PARA COM MENSAGEM.
+//
+// Para subir o navegador certo (perfil gnnss777, Profile 1):
+//   chromium.exe --remote-debugging-port=9222 --profile-directory="Profile 1"
+//
+// ponytail: sem --cdp= obrigatório explícito, o default é 9222. Quem já passa a
+// flag continua funcionando.
+export const CDP_PADRAO = "http://127.0.0.1:9222";
+
+/**
+ * Conecta no Chromium já aberto e logado, e confirma que ele serve.
+ * @param {string} [cdpUrl]
+ * @returns {Promise<{ browser: import("playwright").Browser, ctx: import("playwright").BrowserContext, versao: string }>}
+ */
+export async function conectarSessaoLogada(cdpUrl) {
+  const alvo = cdpUrl || process.env.CDP_URL || CDP_PADRAO;
+  const { chromium } = await import("@playwright/test");
+
+  let browser;
+  try {
+    browser = await chromium.connectOverCDP(alvo);
+  } catch {
+    throw new Error(
+      `Nao conectou em ${alvo}.\n` +
+        `O perfil logado (gnnss777 / Profile 1) precisa estar aberto:\n` +
+        `  chromium.exe --remote-debugging-port=9222 --profile-directory="Profile 1"\n` +
+        `Sem ele a coleta roda sem sessao e volta com ZERO telefone, sem erro.`,
+    );
+  }
+
+  // Não confia no rótulo do browserType: o que importa é ter conectado e ter
+  // aba no contexto. Sem aba não há sessão com os portais.
+  const ctx = browser.contexts()[0];
+  if (!ctx || !ctx.pages().length) {
+    throw new Error(`Conectou em ${alvo} mas o contexto nao tem aba nenhuma. Aba alguma no navegador?`);
+  }
+  const versao = browser.version ? ` (${browser.version()})` : "";
+  return { browser, ctx, versao };
+}
+
+
+// --------------------------------------------------------------------------
 // Validação de celular/fixo (espelha lib/phone-gate.ts ehTelefoneValido)
 // --------------------------------------------------------------------------
 // Precisa ser exato, porque o campo vem LIDO À MÃO do site da imobiliária. Dois
