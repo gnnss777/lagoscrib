@@ -10,7 +10,9 @@ BASE = "public/imoveis"
 FONTE = {"zap": "Zap Imóveis", "viva": "VivaReal", "apolar": "Apolar"}
 DOC = "docs/manifesto-fotos.md"
 
-ids = [x["id"] for x in json.load(open("data/coleta/merge-normalizado.json", encoding="utf-8"))]
+itens = json.load(open("data/coleta/merge-normalizado.json", encoding="utf-8"))
+ids = [x["id"] for x in itens]
+telefones = {x["id"]: x.get("phone", "") for x in itens}
 linhas = [
     "# Manifesto de fotos — leva S008 (27/09/2026)",
     "",
@@ -20,8 +22,8 @@ linhas = [
     "",
     f"**{len(ids)} imóveis · fontes ativas: Zap, VivaReal, Apolar**",
     "",
-    "| imóvel | fonte | fotos | peso |",
-    "|---|---|---|---|",
+    "| imóvel | fonte | fotos | peso | telefone |",
+    "|---|---|---|---|---|",
 ]
 total_arq = 0
 total_bytes = 0
@@ -36,11 +38,26 @@ for i in sorted(ids):
         peso += sum(os.path.getsize(f"{galeria}/{f}") for f in arquivos)
     total_arq += n
     total_bytes += peso
-    linhas.append(f"| {i} | {FONTE.get(i.split('-')[0], i.split('-')[0])} | {n} | {peso / 1024:.0f}KB ({peso / 1024 / 1024:.2f}MB) |")
+    linhas.append(f"| {i} | {FONTE.get(i.split('-')[0], i.split('-')[0])} | {n} | {peso / 1024:.0f}KB ({peso / 1024 / 1024:.2f}MB) | {telefones.get(i, '') or '—'} |")
+
+# Cobertura de telefone da leva. O aviso de zero é o ponto: o ADR-001 §5 assumiu
+# que os portais mascaram o telefone e que "quem não tem é porque não tem", o
+# que escondeu um coletor quebrado por meses (postmortem ERRO-2: falha
+# silenciosa é pior que erro). Zero telefone em TODA a leva = o portal mudou
+# o botão, ou a leva rodou sem --cdp=.
+com_tel = sum(1 for i in ids if telefones.get(i))
+pct = round(com_tel / len(ids) * 100) if ids else 0
+aviso = (
+    ""
+    if com_tel
+    else "  \n> ⚠️ **Zero telefone em toda a leva.** O scraper quebrou ou o portal mudou o botão — rode com `--cdp=`."
+)
 
 linhas += [
     "",
     f"**Total: {len(ids)} imóveis · {total_arq} arquivos · {total_bytes / 1024 / 1024:.1f} MB.**",
+    "",
+    f"**Telefone: {com_tel}/{len(ids)} imóveis ({pct}%).**{aviso}",
     "",
     "Download: `python data/coleta/download.py` (delay 1,5s, retry com backoff, `Referer`",
     "por portal). Normalização de pixel/bytes: `python data/coleta/download.py --corrigir`.",
@@ -49,4 +66,6 @@ linhas += [
     "órfãs (fora do gate do audit, que segue os ids de `lib/data.ts`).",
 ]
 open(DOC, "w", encoding="utf-8", newline="\n").write("\n".join(linhas) + "\n")
-print(f"{DOC}: {len(ids)} imóveis, {total_arq} arquivos, {total_bytes / 1024 / 1024:.1f} MB")
+print(f"{DOC}: {len(ids)} imóveis, {total_arq} arquivos, {total_bytes / 1024 / 1024:.1f} MB, telefone {com_tel}/{len(ids)} ({pct}%)")
+if ids and not com_tel:
+    print("AVISO: zero telefone na leva — scraper quebrado ou leva sem --cdp=")

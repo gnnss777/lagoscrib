@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { apartments, saleApartments } from "@/lib/data";
 import { TETO_TOTAL_ALUGUEL } from "@/lib/constants";
 import { totalAllIn } from "@/lib/pricing";
+import { ehTelefoneValido } from "@/lib/phone-gate";
 
 // Expansão da base (5 fontes, 22/09/2026): invariantes de toda a base,
 // originais + novos. Regras: sem contato, link verbatim, total consistente,
@@ -9,11 +10,34 @@ import { totalAllIn } from "@/lib/pricing";
 describe("expansao base", () => {
   const all = [...apartments, ...saleApartments];
 
-  it("test_expansao_sem_telefone_email", () => {
+  it("test_expansao_telefone_valido_quando_publicado", () => {
+    // O assert antigo era `expect(a.phone).toBe("")` — travava a base inteira
+    // no vazio por causa do ADR-001 §5, que assumiu que os portais mascaram o
+    // número. Estava errado: o número aparece no Zap/VivaReal depois do clique
+    // em "mostrar telefone" e vem no campo lojacelular da API do Apolar
+    // (ADR-004). Vazio continua válido — imóvel sem telefone publicado é
+    // legítimo — mas o que EXISTE tem que ser um número brasileiro de verdade.
+    // Sem este check, um coletor quebrado grava lixo e o app exibe lixo.
     for (const a of all) {
-      expect(a.phone).toBe("");
-      expect(a.email).toBe("");
+      if (a.phone) expect(ehTelefoneValido(a.phone), `${a.id} phone=${a.phone}`).toBe(true);
     }
+  });
+
+  it("test_expansao_sem_email", () => {
+    // Nenhum dos 4 portais publica e-mail do anunciante no payload que o
+    // coletor lê. Segue vazio por decisão, não por esquecimento.
+    for (const a of all) {
+      expect(a.email, a.id).toBe("");
+    }
+  });
+
+  it("test_expansao_tem_telefone_na_base", () => {
+    // Trava contra a regressão que o ADR-001 §5 produziu: 64 imóveis, todos
+    // com phone vazio, e nada no repo reclamando. Se a base inteira voltar a
+    // zero telefone, o coletor quebrou (ou rodou sem --cdp=) e este teste
+    // falha. Erro explícito, não `[]` silencioso (postmortem ERRO-2).
+    const comTel = all.filter((a) => a.phone).length;
+    expect(comTel, "nenhum imóvel tem telefone — rode a coleta com --cdp=").toBeGreaterThan(0);
   });
 
   it("test_expansao_links_verbatim_por_fonte", () => {

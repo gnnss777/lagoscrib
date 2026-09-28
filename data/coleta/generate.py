@@ -55,7 +55,14 @@ def entry_ts(x, photos):
         f"    condo: {x['condo']},",
         f"    iptu: {x['iptu']},",
         f"    total: {x['total']},",
-        '    phone: "",',
+        # phone vem do coletor (Zap/VivaReal: clique em "mostrar telefone";
+        # Apolar: campo lojacelular da API). Antes era literal "" aqui, e era
+        # essa linha que apagava o telefone mesmo com o dado no JSON.
+        # Anti-apagão: seguro por construção — main() pula id já presente em
+        # lib/data.ts, então entrada existente nunca é reescrita.
+        f"    phone: {js(x.get('phone', ''))},",
+        # Nenhum dos 4 portais publica e-mail do anunciante no payload que
+        # usamos. Segue vazio de propósito, não por esquecimento.
         '    email: "",',
         f'    link: {js(x["link"])},',
         f'    image: {js(cover)},',
