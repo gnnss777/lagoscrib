@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { REMOVED_IDS_STORAGE_KEY } from "@/lib/constants";
+import {
+  REMOVED_IDS_STORAGE_KEY,
+  // Sem esta constante o applySnapshot gravava `version: 1` fixo e o leitor em
+  // lib/pool.ts descarta a chave quando a versão não bate — o excluído chegava
+  // no navegador e era ignorado. Testado: version 2 em disco, 1 escrito.
+  REMOVED_IDS_STORAGE_VERSION,
+} from "@/lib/constants";
 import { USER_ADDED_KEY } from "@/lib/pool";
 import type { Apartment } from "@/lib/data";
 import type { ApartmentStatus, FollowUp } from "@/lib/kanban";
@@ -164,23 +170,44 @@ export function emptySnapshot(now: Date = new Date()): OwnerSnapshot {
 /* ------------------------------------------------------------------ merge */
 
 /**
- * Last-write-wins no documento inteiro, comparado por `updatedAt`.
+ * Decide o que um aparelho faz ao abrir: adota o servidor ou sobe o local.
  *
- * Escolha deliberada: um dono só, dois ou três aparelhos. Merge por campo
- * (união de removidos, card mais novo por imóvel) darialicts que ninguém
- * consegue prever; LWW dá uma regra que o dono entende — "o último aparelho que
- * mexeu manda". O custo é perder a edição de um aparelho offline depois que o
- * outro synchonizou, e isso é aceitável para uso pessoal.
+ * O erro que motivou isto: comparar por `updatedAt` do CLIENTE faz qualquer
+ * aparelho recém-aberto parecer o mais novo — `buildSnapshot()` carimba `new
+ * Date()`, que sempre vence o documento do servidor. Resultado: todo
+ * dispositivo novo empurrava o estado vazio por cima do que o dono tinha feito
+ * (last-write-wins não protege nada quando o relógio é do cliente).
+ *
+ * Por isso o primeiro sync de um aparelho é SEMPRE leitura: o servidor é o
+ * acumulado. Só depois que o aparelho tem uma base comparada é que o relógio
+ * local vale, e ainda assim só quando o conteúdo mudou de verdade
+ * (`samePayload`).
  */
-export function mergeSnapshots(
+export function reconcileOnLoad(
   local: OwnerSnapshot,
   remote: OwnerSnapshot | null,
 ): { snapshot: OwnerSnapshot; adoptedRemote: boolean } {
   if (!remote) return { snapshot: local, adoptedRemote: false };
-  if (remote.updatedAt > local.updatedAt) {
-    return { snapshot: remote, adoptedRemote: true };
-  }
-  return { snapshot: local, adoptedRemote: false };
+  return { snapshot: remote, adoptedRemote: true };
+}
+
+/**
+ * Dois documentos têm o mesmo conteúdo? Compara sem `updatedAt`, que é
+ * carimbo de escrita e muda a cada `buildSnapshot()`.
+ *
+ * É isto que segura o aparelho que só lê: ele monta um snapshot idêntico ao que
+ * acabou de puxar, o payload bate e o push é cancelado. Sem essa comparação, um
+ * aparelho que abre o app sobrescreve o dono no servidor (last-write-wins) e o
+ * que ele mexeu some.
+ */
+export function samePayload(
+  a: OwnerSnapshot | null,
+  b: OwnerSnapshot,
+): boolean {
+  if (!a) return false;
+  const { updatedAt: _a, ...restA } = a;
+  const { updatedAt: _b, ...restB } = b;
+  return JSON.stringify(restA) === JSON.stringify(restB);
 }
 
 /** Grava o documento nos três lugares de onde o app lê. */
@@ -200,7 +227,7 @@ export function applySnapshot(s: OwnerSnapshot): void {
     );
     localStorage.setItem(
       REMOVED_IDS_STORAGE_KEY,
-      JSON.stringify({ version: 1, ids: s.removedIds }),
+      JSON.stringify({ version: REMOVED_IDS_STORAGE_VERSION, ids: s.removedIds }),
     );
     localStorage.setItem(USER_ADDED_KEY, JSON.stringify(s.userAdded));
   } catch {

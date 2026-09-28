@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   useCallback,
   type ReactNode,
@@ -30,11 +31,13 @@ import {
   applySnapshot,
   buildSnapshot,
   clearSyncToken,
-  mergeSnapshots,
+  reconcileOnLoad,
   pullSnapshot,
   pushSnapshot,
   readSyncToken,
+  samePayload,
   writeSyncToken,
+  type OwnerSnapshot,
   type SyncStatus,
 } from "@/lib/ownerState";
 import { SYNC_DEBOUNCE_MS } from "@/lib/constants";
@@ -148,6 +151,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // O push só liga DEPOIS do pull: senão um dispositivo novo empurraria o
   // documento vazio por cima do estado bom do dono.
   const [syncReady, setSyncReady] = useState(false);
+  // Última carga que este aparelho sincronizou (puxada ou empurrada), sem
+  // `updatedAt` — é a base do "isso mudou de verdade?".
+  const lastSyncedRef = useRef<OwnerSnapshot | null>(null);
 
   // Load from localStorage on mount. Hidratação SSR-safe: localStorage só
   // existe no client; ler no initializer causaria hydration mismatch.
@@ -213,7 +219,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return;
       }
       const local = buildSnapshot();
-      const { snapshot: winner, adoptedRemote } = mergeSnapshots(local, snapshot);
+      const { snapshot: winner, adoptedRemote } = reconcileOnLoad(local, snapshot);
       if (adoptedRemote && snapshot) {
         applySnapshot(winner);
         setState((prev) => ({
@@ -236,10 +242,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
           ),
         }));
       } else {
-        // Local mais novo que o servidor: manda o nosso.
+        // Servidor vazio (primeira vez): o local vira a base. Numa carga com
+        // servidor preenchido isto nunca roda — reconcileOnLoad sempre adota o
+        // remoto, senão o aparelho novo sobe o estado vazio e apaga o dono.
         await pushSnapshot(token, winner);
       }
       if (cancelled) return;
+      // Qual dos dois venceu, é o que este aparelho passa a considerar em
+      // sincronia — é o que impede o push-gratuito de apagar a mudança de outro.
+      lastSyncedRef.current = winner;
       setSyncStatus("idle");
       setSyncReady(true);
     })();
@@ -251,11 +262,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Push com debounce. O snapshot é montado na hora (lê as 3 chaves), não do
   // estado React, porque removidos e imóveis adicionados vivem fora do
   // AppContext.
+  //
+  // Guarda a última carga que este aparelho sincronizou e só empurra quando o
+  // documento realmente mudou. Sem essa checagem, um aparelho que só ABRE o app
+  // dispara um push do estado vazio no primeiro tique do debounce e, como o
+  // merge é last-write-wins, apaga o que o dono mexeu no outro aparelho. Foi
+  // exatamente o que o teste de dois PCs pegou: o PC2 abriu depois do PC1
+  // excluir e sobrescreveu a exclusão com `removedIds: []`.
   useEffect(() => {
     if (!isHydrated || !syncReady || !syncToken) return;
     const t = setTimeout(() => {
+      const snapshot = buildSnapshot();
+      if (samePayload(lastSyncedRef.current, snapshot)) return;
       setSyncStatus("syncing");
-      void pushSnapshot(syncToken, buildSnapshot()).then((r) => {
+      void pushSnapshot(syncToken, snapshot).then((r) => {
+        if (r.ok) lastSyncedRef.current = snapshot;
         setSyncStatus(r.ok ? "idle" : "error");
       });
     }, SYNC_DEBOUNCE_MS);

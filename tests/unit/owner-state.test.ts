@@ -5,12 +5,14 @@ import {
   buildSnapshot,
   clearSyncToken,
   emptySnapshot,
-  mergeSnapshots,
+  reconcileOnLoad,
   readSyncToken,
+  samePayload,
   snapshotSchema,
   writeSyncToken,
   type OwnerSnapshot,
 } from "@/lib/ownerState";
+import { REMOVED_IDS_STORAGE_VERSION } from "@/lib/constants";
 
 /**
  * O sync inteiro depende destas funções puras: o que entra no documento, o que
@@ -77,31 +79,47 @@ describe("owner state", () => {
     expect(snapshotSchema.safeParse({ ...emptySnapshot(), v: 2 }).success).toBe(false);
   });
 
-  it("test_ownerstate_merge_adota_remoto_mais_novo", () => {
+  it("test_ownerstate_reconcile_adota_remoto_mais_novo", () => {
     const local = snap({ updatedAt: "2026-09-28T10:00:00.000Z", removedIds: ["a"] });
     const remote = snap({ updatedAt: "2026-09-28T11:00:00.000Z", removedIds: ["a", "b"] });
-    const r = mergeSnapshots(local, remote);
+    const r = reconcileOnLoad(local, remote);
     expect(r.adoptedRemote).toBe(true);
     expect(r.snapshot.removedIds).toEqual(["a", "b"]);
   });
 
-  it("test_ownerstate_merge_mantem_local_mais_novo", () => {
-    const local = snap({ updatedAt: "2026-09-28T12:00:00.000Z", removedIds: ["z"] });
-    const remote = snap({ updatedAt: "2026-09-28T11:00:00.000Z", removedIds: ["a"] });
-    const r = mergeSnapshots(local, remote);
-    expect(r.adoptedRemote).toBe(false);
-    expect(r.snapshot.removedIds).toEqual(["z"]);
+  it("test_ownerstate_reconcile_adota_remoto_mesmo_com_relogio_local_mais_novo", () => {
+    // O bug real: `updatedAt` é carimbado pelo CLIENTE, então um aparelho
+    // recém-aberto sempre parece o mais novo e subia o estado vazio por cima do
+    // dono. A carga é sempre leitura, independentemente do relógio local.
+    const local = snap({ updatedAt: "2026-09-28T23:59:59.000Z", removedIds: [] });
+    const remote = snap({ updatedAt: "2026-09-28T10:00:00.000Z", removedIds: ["do-dono"] });
+    const r = reconcileOnLoad(local, remote);
+    expect(r.adoptedRemote).toBe(true);
+    expect(r.snapshot.removedIds).toEqual(["do-dono"]);
   });
 
-  it("test_ownerstate_merge_sem_remoto_ou_com_empate_mantem_local", () => {
+  it("test_ownerstate_reconcile_sem_remoto_mantem_local", () => {
     const local = snap({ updatedAt: "2026-09-28T10:00:00.000Z", removedIds: ["a"] });
-    expect(mergeSnapshots(local, null).adoptedRemote).toBe(false);
-    const mesmo = snap({ updatedAt: "2026-09-28T10:00:00.000Z", removedIds: ["b"] });
-    expect(mergeSnapshots(local, mesmo).adoptedRemote).toBe(false);
+    const r = reconcileOnLoad(local, null);
+    expect(r.adoptedRemote).toBe(false);
+    expect(r.snapshot.removedIds).toEqual(["a"]);
+  });
+
+  it("test_ownerstate_apply_escreve_a_versao_que_o_leitor_aceita", () => {
+    // Regressão real: applySnapshot gravava `version: 1` fixo enquanto o leitor
+    // em lib/pool.ts exige REMOVED_IDS_STORAGE_VERSION (2). O excluído chegava
+    // ao navegador e era descartado na leitura. Este teste pega a regressão
+    // mesmo que a constante mude de novo.
+    localStorage.clear();
+    applySnapshot(snap({ removedIds: ["apolar-x"] }));
+    const gravado = JSON.parse(
+      localStorage.getItem("apartamentos-app-removed") ?? "{}",
+    ) as { version?: number; ids?: string[] };
+    expect(gravado.version).toBe(REMOVED_IDS_STORAGE_VERSION);
+    expect(gravado.ids).toEqual(["apolar-x"]);
   });
 
   it("test_ownerstate_apply_escreve_as_tres_chaves", () => {
-    // jsdom: o vitest roda com localStorage.
     localStorage.clear();
     applySnapshot(
       snap({
@@ -148,8 +166,18 @@ describe("owner state", () => {
     expect(readSyncToken()).toBe("");
   });
 
-  it("test_ownerstate_token_ausente_nao_quebra", () => {
-    // localStorage indisponível (SSR, modo privado sem storage) não pode
+  it("test_ownerstate_samepayload_ignora_updatedat", () => {
+    // Bug real pego pelo teste de dois PCs: um aparelho que só abre o app
+    // montava um snapshot igual ao que acabou de puxar e empurrava, apagando o
+    // que o dono mexeu no outro (last-write-wins). samePayload é o que cancela.
+    const a = snap({ updatedAt: "2026-09-28T10:00:00.000Z", removedIds: ["x"] });
+    const b = snap({ updatedAt: "2026-09-28T11:00:00.000Z", removedIds: ["x"] });
+    expect(samePayload(a, b)).toBe(true);
+    expect(samePayload(a, snap({ updatedAt: a.updatedAt, removedIds: ["y"] }))).toBe(false);
+    expect(samePayload(null, b)).toBe(false);
+  });
+
+  it("test_ownerstate_token_ausente_nao_quebra", () => {    // localStorage indisponível (SSR, modo privado sem storage) não pode
     // derrubar o app: tudo vira "" e o sync fica desligado.
     vi.stubGlobal("localStorage", undefined);
     expect(readSyncToken()).toBe("");
