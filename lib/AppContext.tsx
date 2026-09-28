@@ -79,13 +79,16 @@ interface AppContextValue extends AppState {
   getFollowUp: (apartmentId: string) => FollowUp | undefined;
 }
 
-// Bypass do gate client-side: com NEXT_PUBLIC_OPEN_ACCESS=1 o app abre direto
-// no Dashboard, sem digitar usuário/senha. Login continua disponível ("Sair" no
-// cabeçalho leva ao LoginPage). NÃO afeta a API: /api/* segue exigindo sessão
-// (requireAuth/auth) — o Dashboard não consome essas rotas, é client-side.
+// Bypass do gate client-side: o app abre direto no Dashboard, sem digitar
+// usuário/senha. LIGADO por padrão (NEXT_PUBLIC_* é embutido no bundle no
+// build, então default-on é o que funciona sem mexer no painel da Vercel);
+// opt-out com NEXT_PUBLIC_OPEN_ACCESS=0. Login continua disponível ("Sair"
+// no cabeçalho leva ao LoginPage). NÃO afeta a API: /api/* segue exigindo
+// sessão (requireAuth/auth) — o Dashboard não consome essas rotas, é
+// client-side.
 // Declarado aqui ANTES de defaultState: usa OPEN_ACCESS abaixo, e `const` na
 // zona morta temporal derrubava o app com ReferenceError em dev.
-const OPEN_ACCESS = process.env.NEXT_PUBLIC_OPEN_ACCESS === "1";
+const OPEN_ACCESS = process.env.NEXT_PUBLIC_OPEN_ACCESS !== "0";
 const OPEN_ACCESS_USER = process.env.NEXT_PUBLIC_OPEN_ACCESS_USER ?? "local";
 
 const defaultState: AppState = {
