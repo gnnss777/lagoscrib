@@ -4,6 +4,7 @@ import { compare } from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { getDatabaseUrl } from "./db-url";
+import { buildLegacyUsers } from "./legacy-users";
 import { checkLoginAttempt, clearLoginAttempts, recordLoginFailure } from "./login-throttle";
 
 declare module "next-auth" {
@@ -39,6 +40,27 @@ export const authOptions = {
         // (IP, e-mail). Falha silenciosa (mesmo retorno null do fluxo normal).
         const attempt = checkLoginAttempt(ip, email);
         if (!attempt.allowed) return null;
+
+        // Sem Postgres configurado, valida contra o mesmo par do modo legado
+        // (lib/legacy-users.ts) em vez de tentar o Prisma. Sem isso o
+        // authorize estoura em getDatabaseUrl() undefined e o login por
+        // NextAuth nunca acontece — que é o que trava as rotas /api/*.
+        // AVISO: com NEXT_PUBLIC_APP_* o par é público (está no bundle do
+        // cliente), então isso não é barreira real. Ver lib/legacy-users.ts.
+        if (!getDatabaseUrl()) {
+          const legacy = buildLegacyUsers()[email];
+          if (!legacy || legacy !== String(credentials.password)) {
+            recordLoginFailure(ip, email);
+            return null;
+          }
+          clearLoginAttempts(ip, email);
+          return {
+            id: "legacy-local",
+            name: email,
+            email,
+            role: "ADMIN",
+          };
+        }
 
         const adapter = new PrismaPg({
           connectionString: getDatabaseUrl(),

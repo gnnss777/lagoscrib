@@ -81,7 +81,14 @@ export default function AddApartmentForm() {
       });
       const j = await r.json();
       if (!r.ok) {
-        setImportErro(j?.error ?? `Falha no import (HTTP ${r.status})`);
+        // 401 = sem sessão do NextAuth. O app abre sem login, então quem nunca
+        // entrou não tem cookie: nesse caso a rota /api/import responde 401 e o
+        // import por link não é possível. "Sair" no cabeçalho leva ao login.
+        setImportErro(
+          r.status === 401
+            ? "Faça login para importar (botão “Sair” no cabeçalho) — a importação usa a sessão, e o app abre direto sem ela."
+            : (j?.error ?? `Falha no import (HTTP ${r.status})`),
+        );
         return;
       }
       const a = j.imovel;

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { type Apartment } from "@/lib/data";
+import { buildLegacyUsers } from "@/lib/legacy-users";
 import {
   CHECKLIST_STORAGE_VERSION,
   REMOVED_IDS_STORAGE_KEY,
@@ -112,14 +113,10 @@ const isDev = process.env.NODE_ENV !== "production";
 if (isDev) {
   console.warn("[auth] modo legado local ativo — migrar para backend (NextAuth)");
 }
-function buildLegacyUsers(): Record<string, string> {
-  const users: Record<string, string> = {};
-  const user = (process.env.NEXT_PUBLIC_APP_USER ?? (isDev ? "guinness" : "")).toLowerCase();
-  const pass = process.env.NEXT_PUBLIC_APP_PASS ?? (isDev ? "curitiba2026" : "");
-  // Fail-closed: sem usuário/senha configurados, ninguém entra (nem ""/"").
-  if (user && pass) users[user] = pass;
-  return users;
-}
+// O mapa de credenciais vive em lib/legacy-users.ts porque o authorize do
+// NextAuth precisa do MESMO par para validar a senha e assinar a sessão das
+// rotas /api/*; duas cópias divergiriam e o login aceitaria no cliente e
+// recusaria no servidor.
 const USERS: Record<string, string> = buildLegacyUsers();
 
 export function AppProvider({ children }: { children: ReactNode }) {

@@ -16,13 +16,23 @@ export default function LoginPage() {
   const [info, setInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [backend, setBackend] = useState(false);
+  // Só com Postgres o identificador é um e-mail (linha de `User`). No modo
+  // legado é o par de lib/legacy-users.ts, cujo usuário pode ser "guinness" —
+  // e `type="email"` barraria justamente quem pode entrar.
+  const [comBanco, setComBanco] = useState(false);
   const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
 
   useEffect(() => {
     fetch("/api/public/auth/status")
       .then((r) => r.json())
-      .then((d) => setBackend(Boolean(d?.backend)))
-      .catch(() => setBackend(false));
+      .then((d) => {
+        setBackend(Boolean(d?.backend));
+        setComBanco(Boolean(d?.comBanco));
+      })
+      .catch(() => {
+        setBackend(false);
+        setComBanco(false);
+      });
   }, []);
 
   function redirectNext() {
@@ -157,11 +167,11 @@ export default function LoginPage() {
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
                 />
                 <input
-                  type={backend ? "email" : "text"}
+                  type={comBanco ? "email" : "text"}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="input-field pl-12"
-                  placeholder={backend ? "voce@exemplo.com" : "Digite seu usuário"}
+                  placeholder={comBanco ? "voce@exemplo.com" : "Digite seu usuário"}
                   autoComplete="username"
                 />
               </div>
