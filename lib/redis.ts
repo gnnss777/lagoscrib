@@ -13,11 +13,36 @@ import { logger } from "@/lib/logger";
  * previsto para o rate limit distribuído.
  */
 
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const REDIS_URL = env("UPSTASH_REDIS_REST_URL");
+const REDIS_TOKEN = env("UPSTASH_REDIS_REST_TOKEN");
+
+/**
+ * Lê env var tirando aspas em volta.
+ *
+ * Não é preciosismo: um `.env.local` escrito à mão como
+ * `UPSTASH_REDIS_REST_URL="https://x.upstash.io"` entrega a aspa como parte do
+ * valor, e aí `fetch` estoura com "Invalid URL" — 500 em vez do 503 que este
+ * arquivo promete. O mesmo formato quebrava o `SYNC_TOKEN`, que passava a
+ * nunca casar com o código que o dono digita.
+ */
+function env(name: string): string | undefined {
+  const raw = process.env[name]?.trim();
+  if (!raw) return undefined;
+  const t = raw.replace(/^["']|["']$/g, "").trim();
+  return t || undefined;
+}
 
 export function redisConfigured(): boolean {
-  return Boolean(REDIS_URL && REDIS_TOKEN);
+  return Boolean(REDIS_URL && REDIS_TOKEN && isHttpUrl(REDIS_URL));
+}
+
+function isHttpUrl(u: string): boolean {
+  try {
+    const p = new URL(u);
+    return p.protocol === "https:" || p.protocol === "http:";
+  } catch {
+    return false;
+  }
 }
 
 export class RedisNotConfiguredError extends Error {
@@ -28,7 +53,9 @@ export class RedisNotConfiguredError extends Error {
 }
 
 async function command(parts: (string | number)[]): Promise<unknown> {
-  if (!REDIS_URL || !REDIS_TOKEN) throw new RedisNotConfiguredError();
+  // Check inline (e não via redisConfigured) para o TypeScript estreitar REDIS_URL
+  // para string: é o mesmo teste, mas aqui ele serve de type guard.
+  if (!REDIS_URL || !REDIS_TOKEN || !isHttpUrl(REDIS_URL)) throw new RedisNotConfiguredError();
   const res = await fetch(REDIS_URL, {
     method: "POST",
     headers: {

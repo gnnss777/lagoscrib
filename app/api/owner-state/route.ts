@@ -23,7 +23,9 @@ import {
 
 /** Compara por hash para não vazar o tamanho do token, e em tempo constante. */
 function tokenOk(presented: string | null): boolean {
-  const expected = process.env.SYNC_TOKEN;
+  // Tira aspas em volta: um `SYNC_TOKEN="abc"` no ambiente entrega a aspa como
+  // parte do valor, e o código que o dono digita nunca casaria — 401 eterno.
+  const expected = (process.env.SYNC_TOKEN ?? "").trim().replace(/^["']|["']$/g, "").trim();
   if (!expected) return false;
   if (!presented) return false;
   const a = createHash("sha256").update(presented).digest();

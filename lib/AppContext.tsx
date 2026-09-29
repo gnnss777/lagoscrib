@@ -40,7 +40,7 @@ import {
   type OwnerSnapshot,
   type SyncStatus,
 } from "@/lib/ownerState";
-import { SYNC_DEBOUNCE_MS } from "@/lib/constants";
+import { SYNC_DEBOUNCE_MS, SYNC_POLL_MS } from "@/lib/constants";
 
 // Re-exports (back-compat): STATUS_LABELS/StatusType moram em lib/kanban.ts
 // (fonte única das colunas, LL-006). Importadores existentes não quebram.
@@ -198,6 +198,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   /* ------------------------------------------------------- sync entre PCs */
 
+  // Aplica um documento vindo do servidor nas três chaves que o dono mexe, e
+  // grava no localStorage. Extraído porque o pull do mount e o pull do poll
+  // adotam exatamente do mesmo jeito — duas cópias divergem na primeira vez
+  // que alguém acrescenta um campo.
+  const adotaRemoto = useCallback((winner: OwnerSnapshot) => {
+    applySnapshot(winner);
+    setState((prev) => ({
+      ...prev,
+      notes: winner.notes,
+      // `scheduledDate` chega como `string | null` (o schema tolera null de
+      // versões antigas) e o tipo do app é `string | undefined` — a limpeza
+      // em moveCard remove o campo, então null vira undefined.
+      statuses: winner.statuses.map((s) => ({
+        ...s,
+        scheduledDate: s.scheduledDate ?? undefined,
+      })),
+      checklist: winner.checklist,
+      // `lastContactAt` idem: null no schema, `string | undefined` no app.
+      followUps: Object.fromEntries(
+        Object.entries(winner.followUps).map(([id, f]) => [
+          id,
+          { ...f, lastContactAt: f.lastContactAt ?? undefined },
+        ]),
+      ),
+    }));
+  }, []);
+
   // Monta: lê o token e puxa o documento do dono. Roda depois da hidratação
   // do localStorage, senão o merge compararia um local vazio com o remoto.
   useEffect(() => {
@@ -221,26 +248,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const local = buildSnapshot();
       const { snapshot: winner, adoptedRemote } = reconcileOnLoad(local, snapshot);
       if (adoptedRemote && snapshot) {
-        applySnapshot(winner);
-        setState((prev) => ({
-          ...prev,
-          notes: winner.notes,
-          // `scheduledDate` chega como `string | null` (o schema tolera null de
-          // versões antigas) e o tipo do app é `string | undefined` — a limpeza
-          // em moveCard remove o campo, então null vira undefined.
-          statuses: winner.statuses.map((s) => ({
-            ...s,
-            scheduledDate: s.scheduledDate ?? undefined,
-          })),
-          checklist: winner.checklist,
-          // `lastContactAt` idem: null no schema, `string | undefined` no app.
-          followUps: Object.fromEntries(
-            Object.entries(winner.followUps).map(([id, f]) => [
-              id,
-              { ...f, lastContactAt: f.lastContactAt ?? undefined },
-            ]),
-          ),
-        }));
+        adotaRemoto(winner);
       } else {
         // Servidor vazio (primeira vez): o local vira a base. Numa carga com
         // servidor preenchido isto nunca roda — reconcileOnLoad sempre adota o
@@ -257,7 +265,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [isHydrated]);
+  }, [isHydrated, adotaRemoto]);
 
   // Push com debounce. O snapshot é montado na hora (lê as 3 chaves), não do
   // estado React, porque removidos e imóveis adicionados vivem fora do
@@ -283,8 +291,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, [state, isHydrated, syncReady, syncToken]);
 
-  const enableSync = useCallback((token: string) => {
-    if (!token.trim()) return;
+  // Pull periódico + ao voltar pra aba.
+  //
+  // O push é de um lado só: o dono mexe no PC1, o PC2 continua aberto e não faz
+  // nada. Sem este efeito o outro aparelho só descobre a mudança recarregando a
+  // página — que era o sintoma relatado. O foco/visibility dá o quase-imediato
+  // (o dono volta pra uma aba que estava em background e já vê o card movido);
+  // o intervalo cobre a aba que fica na frente o tempo todo.
+  useEffect(() => {
+    if (!isHydrated || !syncReady || !syncToken) return;
+    let cancelled = false;
+
+    const puxar = async () => {
+      // Trava do last-write-wins: se este aparelho tem mudança local que ainda
+      // não subiu, NÃO adota o remoto. O push com debounce tem prioridade, e
+      // adotar aqui devolveria ao dono uma edição que ele acabou de fazer.
+      if (!samePayload(lastSyncedRef.current, buildSnapshot())) return;
+      const { ok, snapshot } = await pullSnapshot(syncToken);
+      if (cancelled || !ok || !snapshot) return;
+      // Nada mudou no servidor desde a última carga deste aparelho.
+      if (samePayload(lastSyncedRef.current, snapshot)) return;
+      // Mudou aqui no meio da ida: de novo, a edição local vence.
+      if (!samePayload(lastSyncedRef.current, buildSnapshot())) return;
+      adotaRemoto(snapshot);
+      lastSyncedRef.current = snapshot;
+    };
+
+    const t = setInterval(() => void puxar(), SYNC_POLL_MS);
+    const aoVoltar = () => {
+      if (document.visibilityState === "visible") void puxar();
+    };
+    document.addEventListener("visibilitychange", aoVoltar);
+    window.addEventListener("focus", aoVoltar);
+    return () => {
+      cancelled = true;
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", aoVoltar);
+      window.removeEventListener("focus", aoVoltar);
+    };
+  }, [isHydrated, syncReady, syncToken, adotaRemoto]);
+
+  const enableSync = useCallback((token: string) => {    if (!token.trim()) return;
     writeSyncToken(token);
     setSyncToken(token.trim());
     setSyncReady(false);

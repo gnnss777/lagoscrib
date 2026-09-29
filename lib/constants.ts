@@ -107,6 +107,12 @@ export const FILTER_DEBOUNCE_MS = 300;
 // vale um request por frame.
 export const SYNC_DEBOUNCE_MS = 2500;
 
+// Pull periódico do estado do dono (ms). O push é de um lado só: sem um pull
+// recorrente, o aparelho que fica aberto nunca enxerga o que o outro mexeu, e o
+// sintoma é "só vejo o que eu mexo, no meu PC". 20s é barato contra o rate
+// limit da rota (60 req/min) e curto o bastante para não parecer quebrado.
+export const SYNC_POLL_MS = 20_000;
+
 // Valor "tanto faz" nos dropdowns de bairro.
 export const NEIGHBORHOOD_ALL = "Todos";
 
