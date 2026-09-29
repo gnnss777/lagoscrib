@@ -166,7 +166,33 @@ export function reconcileOnLoad(
   remote: OwnerSnapshot | null,
 ): { snapshot: OwnerSnapshot; adoptedRemote: boolean } {
   if (!remote) return { snapshot: local, adoptedRemote: false };
+  // Rede de segurança, não estratégia: um aparelho COM estado nunca adota um
+  // servidor vazio, porque servidor vazio na prática significa "um aparelho
+  // sem localStorage empurrou o dele".
+  //
+  // Como aconteceu: abrir o site numa aba anônima monta um snapshot vazio, o
+  // reconcile (que antes era "adota o remoto sempre") jogava esse vazio no
+  // servidor, e o aparelho que tinha o kanban real o adotava no próximo pull —
+  // apagando o trabalho do dono. O sintoma era "entro e o kanban está vazio".
+  //
+  // Aqui só se inverte quando o local tem conteúdo e o remoto não. Se os dois
+  // têm conteúdo, o remoto continua mandando (last-write-wins normal) e se os
+  // dois estão vazios, tanto faz.
+  if (vazio(remote) && !vazio(local)) return { snapshot: local, adoptedRemote: false };
   return { snapshot: remote, adoptedRemote: true };
+}
+
+/** O documento não carrega nada que o dono tenha feito? */
+function vazio(s: OwnerSnapshot): boolean {
+  return (
+    s.removedIds.length === 0 &&
+    s.userAdded.length === 0 &&
+    s.notes.length === 0 &&
+    s.statuses.length === 0 &&
+    // `followUps` é mapa de id -> objeto de histórico, não lista.
+    Object.keys(s.followUps).length === 0 &&
+    Object.keys(s.checklist).length === 0
+  );
 }
 
 /**

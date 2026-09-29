@@ -249,9 +249,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (adoptedRemote && snapshot) {
         adotaRemoto(winner);
       } else {
-        // Servidor vazio (primeira vez): o local vira a base. Numa carga com
-        // servidor preenchido isto nunca roda — reconcileOnLoad sempre adota o
-        // remoto, senão o aparelho novo sobe o estado vazio e apaga o dono.
+        // O local venceu: servidor vazio na primeira vez, ou servidor vazio
+        // porque alguma aba sem localStorage passou por aqui. Nos dois casos o
+        // local sobe. Sem esta distinção, o aparelho novo sobe o estado vazio e
+        // apaga o dono — foi o que aconteceu com a aba anônima.
         await pushSnapshot(winner);
       }
       if (cancelled) return;
@@ -281,6 +282,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const t = setTimeout(() => {
       const snapshot = buildSnapshot();
       if (samePayload(lastSyncedRef.current, snapshot)) return;
+      // Um aparelho que acabou de abrir não tem `lastSyncedRef` porque o pull
+      // não rodou (sem sessão ainda, ou erro). Sem esta trava ele empurra o
+      // estado vazio do navegador por cima do que o dono tem no servidor, e o
+      // pull de outro aparelho adota o vazio. É o mesmo estrago do reconcile,
+      // pelo caminho do push.
+      if (!lastSyncedRef.current) return;
       setSyncStatus("syncing");
       void pushSnapshot(snapshot).then((r) => {
         if (r.ok) lastSyncedRef.current = snapshot;
