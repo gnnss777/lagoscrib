@@ -1,0 +1,394 @@
+{
+ "_regra": "celular tem prioridade, fixo é fallback (imobiliarias-telefone.json _regra); so entra o que passa em ehTelefoneValido; nenhum dígito é inventado",
+ "total": 64,
+ "mudou": 8,
+ "mesmo": 56,
+ "semPagina": 0,
+ "zerados": 0,
+ "relatorio": [
+  {
+   "id": "chavesnamao-centro-60-2700-40277979",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-centro-RS2700/id-40277979/",
+   "antes": "+5541999942224",
+   "depois": "+5541999942224"
+  },
+  {
+   "id": "chavesnamao-centro-56-2700-2615759",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-centro-56m2-RS2700/id-2615759/",
+   "antes": "+5541987783206",
+   "depois": "+5541987783206"
+  },
+  {
+   "id": "chavesnamao-agua-verde-63-2200-32076815",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-agua-verde-63m2-RS2200/id-32076815/",
+   "antes": "+554192350200",
+   "depois": "+5541992350200"
+  },
+  {
+   "id": "chavesnamao-agua-verde-48-2500-47005457",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-agua-verde-62m2-RS2500/id-47005457/",
+   "antes": "+5541996990773",
+   "depois": "+5541996990773"
+  },
+  {
+   "id": "chavesnamao-agua-verde-70-2300-46220093",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-agua-verde-102m2-RS2300/id-46220093/",
+   "antes": "+5541984263200",
+   "depois": "+5541984263200"
+  },
+  {
+   "id": "chavesnamao-agua-verde-123-2350-41808114",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-agua-verde-135m2-RS2350/id-41808114/",
+   "antes": "+5541999600906",
+   "depois": "+5541999600906"
+  },
+  {
+   "id": "chavesnamao-agua-verde-74-2380-45284321",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-agua-verde-125m2-RS2380/id-45284321/",
+   "antes": "+5541992648972",
+   "depois": "+5541992648972"
+  },
+  {
+   "id": "chavesnamao-agua-verde-48-2800-46873406",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-agua-verde-58m2-RS2800/id-46873406/",
+   "antes": "+554163477844",
+   "depois": "+554163477844"
+  },
+  {
+   "id": "chavesnamao-agua-verde-74-1700-45397669",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-agua-verde-74m2-RS1700/id-45397669/",
+   "antes": "+5541991033332",
+   "depois": "+5541991033332"
+  },
+  {
+   "id": "chavesnamao-batel-66-2800-42730880",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-batel-86m2-RS2800/id-42730880/",
+   "antes": "+5541998881999",
+   "depois": "+5541998881999"
+  },
+  {
+   "id": "chavesnamao-batel-104-3500-46288817",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-pr-curitiba-batel-110m2-RS3500/id-46288817/",
+   "antes": "+5541996361012",
+   "depois": "+5541996361012"
+  },
+  {
+   "id": "chavesnamao-batel-72-2490-17874624",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-batel-115m2-RS2490/id-17874624/",
+   "antes": "+554130162829",
+   "depois": "+5541991795373"
+  },
+  {
+   "id": "chavesnamao-bigorrilho-55-2800-41133725",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-83m2-RS2800/id-41133725/",
+   "antes": "+5541992421191",
+   "depois": "+5541992421191"
+  },
+  {
+   "id": "chavesnamao-bigorrilho-40-1900-45695351",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-bigorrilho-51m2-RS1900/id-45695351/",
+   "antes": "+554130723999",
+   "depois": "+5541935004464"
+  },
+  {
+   "id": "chavesnamao-bigorrilho-66-2450-26071262",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-bigorrilho-98m2-RS2450/id-26071262/",
+   "antes": "+5541997255790",
+   "depois": "+5541997255790"
+  },
+  {
+   "id": "chavesnamao-bigorrilho-53-2599-45044683",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-bigorrilho-74m2-RS2599/id-45044683/",
+   "antes": "+5541992537564",
+   "depois": "+5541992537564"
+  },
+  {
+   "id": "chavesnamao-portao-67-2600-46878889",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-77m2-RS2600/id-46878889/",
+   "antes": "+5541998207022",
+   "depois": "+5541998207022"
+  },
+  {
+   "id": "chavesnamao-portao-52-2000-45921295",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-63m2-RS2000/id-45921295/",
+   "antes": "+554199640154",
+   "depois": "+554130292011"
+  },
+  {
+   "id": "chavesnamao-portao-54-2300-46935635",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-portao-RS2300/id-46935635/",
+   "antes": "+5541987464427",
+   "depois": "+5541987464427"
+  },
+  {
+   "id": "chavesnamao-portao-74-2600-45530614",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-portao-74m2-RS2600/id-45530614/",
+   "antes": "+551150280245",
+   "depois": "+551150280245"
+  },
+  {
+   "id": "chavesnamao-portao-57-2250-45480576",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-99m2-RS2250/id-45480576/",
+   "antes": "+554132336025",
+   "depois": "+554132336025"
+  },
+  {
+   "id": "chavesnamao-portao-52-2250-41898081",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-89m2-RS2250/id-41898081/",
+   "antes": "+554133281000",
+   "depois": "+554133281000"
+  },
+  {
+   "id": "chavesnamao-portao-55-2500-47000949",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-69m2-RS2500/id-47000949/",
+   "antes": "+5541987291818",
+   "depois": "+5541987291818"
+  },
+  {
+   "id": "chavesnamao-portao-85-2800-33502721",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-portao-102m2-RS2800/id-33502721/",
+   "antes": "+5541998300073",
+   "depois": "+5541998300073"
+  },
+  {
+   "id": "chavesnamao-portao-64-2200-46286390",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-pr-curitiba-portao-64m2-RS2200/id-46286390/",
+   "antes": "+554121050405",
+   "depois": "+554121050405"
+  },
+  {
+   "id": "chavesnamao-portao-52-2500-21249596",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-83m2-RS2500/id-21249596/",
+   "antes": "+5541992421191",
+   "depois": "+5541992421191"
+  },
+  {
+   "id": "chavesnamao-portao-68-2590-23792884",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-68m2-RS2590/id-23792884/",
+   "antes": "+5541997670472",
+   "depois": "+5541997670472"
+  },
+  {
+   "id": "chavesnamao-portao-52-2700-32431511",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-portao-81m2-RS2700/id-32431511/",
+   "antes": "+5541935005704",
+   "depois": "+5541935005704"
+  },
+  {
+   "id": "chavesnamao-portao-62-1980-2597781",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-portao-101m2-RS1980/id-2597781/",
+   "antes": "+554130162829",
+   "depois": "+5541991795373"
+  },
+  {
+   "id": "chavesnamao-reboucas-45-2200-44409092",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-reboucas-53m2-RS2200/id-44409092/",
+   "antes": "+554191768889",
+   "depois": "+554131147888"
+  },
+  {
+   "id": "chavesnamao-reboucas-78-3500-45555417",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-reboucas-RS3500/id-45555417/",
+   "antes": "+5541996842751",
+   "depois": "+5541996842751"
+  },
+  {
+   "id": "chavesnamao-reboucas-48-2350-44901127",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-reboucas-RS2350/id-44901127/",
+   "antes": "+554130446017",
+   "depois": "+554130446017"
+  },
+  {
+   "id": "chavesnamao-reboucas-74-1590-28593454",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-reboucas-74m2-RS1590/id-28593454/",
+   "antes": "+554132043333",
+   "depois": "+554132043333"
+  },
+  {
+   "id": "chavesnamao-reboucas-70-1500-46078656",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-reboucas-70m2-RS1500/id-46078656/",
+   "antes": "+554130105040",
+   "depois": "+554130105040"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-58-2100-46038955",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cristo-rei-75m2-RS2100/id-46038955/",
+   "antes": "+5541992421191",
+   "depois": "+5541992421191"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-61-2300-38689586",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cristo-rei-109m2-RS2300/id-38689586/",
+   "antes": "+554130723999",
+   "depois": "+5541935004464"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-53-2200-2631486",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-cristo-rei-66m2-RS2200/id-2631486/",
+   "antes": "+554130452304",
+   "depois": "+554130452304"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-63-2500-960683",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cristo-rei-92m2-RS2500/id-960683/",
+   "antes": "+5541999676767",
+   "depois": "+5541999676767"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-75-2300-47169377",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cristo-rei-75m2-RS2300/id-47169377/",
+   "antes": "+5541997515314",
+   "depois": "+5541997515314"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-66-2300-46978478",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cristo-rei-108m2-RS2300/id-46978478/",
+   "antes": "+5541987010407",
+   "depois": "+5541987010407"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-125-2300-40470213",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-cristo-rei-79m2-RS2300/id-40470213/",
+   "antes": "+554133403258",
+   "depois": "+554133403258"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-32-1500-5803354",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-cristo-rei-48m2-RS1500/id-5803354/",
+   "antes": "+5541997569814",
+   "depois": "+5541997569814"
+  },
+  {
+   "id": "chavesnamao-cristo-rei-91-2400-44777967",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-cristo-rei-91m2-RS2400/id-44777967/",
+   "antes": "+5541991210405",
+   "depois": "+5541991210405"
+  },
+  {
+   "id": "chavesnamao-sao-francisco-55-2600-45909725",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-sao-francisco-81m2-RS2600/id-45909725/",
+   "antes": "+5541988677101",
+   "depois": "+5541988677101"
+  },
+  {
+   "id": "chavesnamao-sao-francisco-71-1850-38227626",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-sao-francisco-71m2-RS1850/id-38227626/",
+   "antes": "+551150280245",
+   "depois": "+551150280245"
+  },
+  {
+   "id": "chavesnamao-sao-francisco-80-2933-10448361",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-sao-francisco-RS2933/id-10448361/",
+   "antes": "+5541997973864",
+   "depois": "+5541997973864"
+  },
+  {
+   "id": "chavesnamao-sao-francisco-76-2572-46605409",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-sao-francisco-76m2-RS2572/id-46605409/",
+   "antes": "+551150280245",
+   "depois": "+551150280245"
+  },
+  {
+   "id": "chavesnamao-cabral-84-2200-32835516",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cabral-108m2-RS2200/id-32835516/",
+   "antes": "+5541992537564",
+   "depois": "+5541992537564"
+  },
+  {
+   "id": "chavesnamao-cabral-77-3000-15424440",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-cabral-100m2-RS3000/id-15424440/",
+   "antes": "+554132502000",
+   "depois": "+554132502000"
+  },
+  {
+   "id": "chavesnamao-cabral-97-2700-47169355",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cabral-97m2-RS2700/id-47169355/",
+   "antes": "+5541997515314",
+   "depois": "+5541997515314"
+  },
+  {
+   "id": "chavesnamao-cabral-45-2300-44982446",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cabral-50m2-RS2300/id-44982446/",
+   "antes": "+5541987010407",
+   "depois": "+5541987010407"
+  },
+  {
+   "id": "chavesnamao-cabral-48-2200-335640",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cabral-76m2-RS2200/id-335640/",
+   "antes": "+554132336025",
+   "depois": "+554132336025"
+  },
+  {
+   "id": "chavesnamao-cabral-65-2700-45373096",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cabral-99m2-RS2700/id-45373096/",
+   "antes": "+554132093246",
+   "depois": "+554132093246"
+  },
+  {
+   "id": "chavesnamao-cabral-72-2750-46632716",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cabral-95m2-RS2750/id-46632716/",
+   "antes": "+5541999462020",
+   "depois": "+5541999462020"
+  },
+  {
+   "id": "chavesnamao-cabral-86-2200-37216405",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cabral-86m2-RS2200/id-37216405/",
+   "antes": "+554132502000",
+   "depois": "+554132502000"
+  },
+  {
+   "id": "chavesnamao-merces-67-2700-44827676",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-merces-RS2700/id-44827676/",
+   "antes": "+5541988834272",
+   "depois": "+5541988834272"
+  },
+  {
+   "id": "chavesnamao-merces-52-2800-32527000",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-merces-106m2-RS2800/id-32527000/",
+   "antes": "+5541992421191",
+   "depois": "+5541992421191"
+  },
+  {
+   "id": "chavesnamao-merces-77-1850-4340536",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-pr-curitiba-merces-77m2-RS1850/id-4340536/",
+   "antes": "+5541991685828",
+   "depois": "+5541991685828"
+  },
+  {
+   "id": "chavesnamao-alto-da-gloria-72-2900-47177717",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-alto-da-gloria-72m2-RS2900/id-47177717/",
+   "antes": "+554131235100",
+   "depois": "+5541936181498"
+  },
+  {
+   "id": "chavesnamao-alto-da-gloria-100-2700-46953030",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-3-quartos-com-garagem-pr-curitiba-alto-da-gloria-RS2700/id-46953030/",
+   "antes": "+5541995555559",
+   "depois": "+5541995555559"
+  },
+  {
+   "id": "chavesnamao-juveve-63-2750-44253182",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-juveve-75m2-RS2750/id-44253182/",
+   "antes": "+554133532552",
+   "depois": "+554133532552"
+  },
+  {
+   "id": "chavesnamao-juveve-70-2300-44962334",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-juveve-89m2-RS2300/id-44962334/",
+   "antes": "+5541984263200",
+   "depois": "+5541984263200"
+  },
+  {
+   "id": "chavesnamao-juveve-102-2750-9892208",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-juveve-102m2-RS2750/id-9892208/",
+   "antes": "+5541996818805",
+   "depois": "+5541996818805"
+  },
+  {
+   "id": "chavesnamao-juveve-75-2850-15238791",
+   "link": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-juveve-75m2-RS2850/id-15238791/",
+   "antes": "+5541991210405",
+   "depois": "+5541991210405"
+  }
+ ]
+}

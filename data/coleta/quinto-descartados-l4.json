@@ -1,0 +1,1691 @@
+{
+ "resumo": {
+  "batel": {
+   "bairro": "Batel",
+   "ids": 24,
+   "vettidos": 24,
+   "passou": 0,
+   "mapa": 160,
+   "repetidos": 0,
+   "motivos": {
+    "tipo": 10,
+    "quartos": 10,
+    "acima-teto": 4
+   }
+  },
+  "centro": {
+   "bairro": "Centro",
+   "ids": 24,
+   "vettidos": 23,
+   "passou": 1,
+   "mapa": 210,
+   "repetidos": 1,
+   "motivos": {
+    "quartos": 10,
+    "acima-teto": 4,
+    "tipo": 8
+   }
+  },
+  "agua-verde": {
+   "bairro": "Água Verde",
+   "ids": 24,
+   "vettidos": 23,
+   "passou": 0,
+   "mapa": 185,
+   "repetidos": 1,
+   "motivos": {
+    "acima-teto": 9,
+    "tipo": 8,
+    "quartos": 5,
+    "condo-zero": 1
+   }
+  },
+  "bigorrilho": {
+   "bairro": "Bigorrilho",
+   "ids": 24,
+   "vettidos": 23,
+   "passou": 0,
+   "mapa": 115,
+   "repetidos": 1,
+   "motivos": {
+    "acima-teto": 9,
+    "condo-zero": 1,
+    "quartos": 8,
+    "tipo": 5
+   }
+  },
+  "cabral": {
+   "bairro": "Cabral",
+   "ids": 24,
+   "vettidos": 24,
+   "passou": 1,
+   "mapa": 28,
+   "repetidos": 0,
+   "motivos": {
+    "tipo": 13,
+    "acima-teto": 8,
+    "quartos": 2
+   }
+  },
+  "portao": {
+   "bairro": "Portão",
+   "ids": 24,
+   "vettidos": 23,
+   "passou": 0,
+   "mapa": 88,
+   "repetidos": 1,
+   "motivos": {
+    "quartos": 7,
+    "tipo": 8,
+    "acima-teto": 8
+   }
+  },
+  "cristo-rei": {
+   "bairro": "Cristo Rei",
+   "ids": 24,
+   "vettidos": 21,
+   "passou": 2,
+   "mapa": 66,
+   "repetidos": 3,
+   "motivos": {
+    "acima-teto": 6,
+    "quartos": 4,
+    "tipo": 9
+   }
+  },
+  "juveve": {
+   "bairro": "Juvevê",
+   "ids": 24,
+   "vettidos": 9,
+   "passou": 0,
+   "mapa": 55,
+   "repetidos": 15,
+   "motivos": {
+    "tipo": 7,
+    "quartos": 2
+   }
+  },
+  "reboucas": {
+   "bairro": "Rebouças",
+   "ids": 24,
+   "vettidos": 16,
+   "passou": 1,
+   "mapa": 181,
+   "repetidos": 8,
+   "motivos": {
+    "acima-teto": 3,
+    "quartos": 6,
+    "tipo": 6
+   }
+  },
+  "merces": {
+   "bairro": "Mercês",
+   "ids": 24,
+   "vettidos": 12,
+   "passou": 0,
+   "mapa": 97,
+   "repetidos": 12,
+   "motivos": {
+    "acima-teto": 5,
+    "tipo": 6,
+    "quartos": 1
+   }
+  },
+  "alto-da-gloria": {
+   "bairro": "Alto da Glória",
+   "ids": 24,
+   "vettidos": 5,
+   "passou": 1,
+   "mapa": 73,
+   "repetidos": 19,
+   "motivos": {
+    "tipo": 1,
+    "quartos": 2,
+    "acima-teto": 1
+   }
+  },
+  "sao-francisco": {
+   "bairro": "São Francisco",
+   "ids": 24,
+   "vettidos": 12,
+   "passou": 1,
+   "mapa": 142,
+   "repetidos": 12,
+   "motivos": {
+    "acima-teto": 2,
+    "quartos": 5,
+    "tipo": 4
+   }
+  },
+  "centro-civico": {
+   "bairro": "Centro Cívico",
+   "ids": 24,
+   "vettidos": 1,
+   "passou": 0,
+   "mapa": 62,
+   "repetidos": 23,
+   "motivos": {
+    "tipo": 1
+   }
+  },
+  "alto-da-rua-xv": {
+   "bairro": "Alto da Rua XV",
+   "ids": 24,
+   "vettidos": 3,
+   "passou": 0,
+   "mapa": 95,
+   "repetidos": 21,
+   "motivos": {
+    "quartos": 2,
+    "tipo": 1
+   }
+  }
+ },
+ "total": {
+  "ids": 336,
+  "vettidos": 219,
+  "imoveis": 7,
+  "telefone": "0/7",
+  "telefoneMedido": false
+ },
+ "esqueleto": {
+  "vezes": 9,
+  "resolvidos": 9,
+  "persistentes": 0
+ },
+ "tipos": {
+  "StudioOuKitchenette": 64,
+  "Apartamento": 132,
+  "Casa": 20,
+  "CasaCondominio": 3
+ },
+ "deltaAllIn": {
+  "0": 219
+ },
+ "descartados": [
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893975833",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894080917",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895660812",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "4 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894364925",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "4 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894131828",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894302357",
+   "busca": "batel",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$3925 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895656214",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893775650",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "4 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893948656",
+   "busca": "batel",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$6671 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895539539",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895609651",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893527379",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894124498",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893880014",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895528841",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "4 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894823371",
+   "busca": "batel",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$9397 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894080922",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895479936",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "5 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893545674",
+   "busca": "batel",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$9583 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894725661",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894339264",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895696650",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "4 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895548987",
+   "busca": "batel",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895731937",
+   "busca": "batel",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894488435",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893202155",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894472250",
+   "busca": "centro",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$7831 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895662455",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895689169",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895721844",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895703913",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894275687",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895718807",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895664494",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894221127",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895696387",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892883061",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893924756",
+   "busca": "centro",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5320 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895523423",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895735913",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895554497",
+   "busca": "centro",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4932 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895743145",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895037725",
+   "busca": "centro",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$3818 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895514474",
+   "busca": "centro",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894112770",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895662099",
+   "busca": "centro",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893595090",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5511 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895695335",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895666994",
+   "busca": "agua-verde",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893134277",
+   "busca": "agua-verde",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893203542",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$7345 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895646933",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895677124",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$9863 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895710625",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$12276 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895735552",
+   "busca": "agua-verde",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895481632",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4306 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893612257",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5285 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893981152",
+   "busca": "agua-verde",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894415683",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895735652",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894801637",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895648604",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894508142",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4849 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895408598",
+   "busca": "agua-verde",
+   "codigo": "condo-zero",
+   "motivo": "condoPrice 0 = servido/não residencial (sem nome)"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894186935",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5683 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894145621",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894971622",
+   "busca": "agua-verde",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895666992",
+   "busca": "agua-verde",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895699198",
+   "busca": "agua-verde",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5151 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895252545",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$13440 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895609918",
+   "busca": "bigorrilho",
+   "codigo": "condo-zero",
+   "motivo": "condoPrice 0 = servido/não residencial (Hotel Ampiezza)"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895462208",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$7852 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895609445",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895740134",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$10016 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893767383",
+   "busca": "bigorrilho",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893412872",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894640345",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$6628 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894494309",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895346813",
+   "busca": "bigorrilho",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893701874",
+   "busca": "bigorrilho",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893678477",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4487 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893224148",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895354535",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "5 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894436177",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$10182 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895728451",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895670474",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$7760 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892974027",
+   "busca": "bigorrilho",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895216343",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$11987 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895567877",
+   "busca": "bigorrilho",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$6437 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894772496",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "5 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895201113",
+   "busca": "bigorrilho",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892923788",
+   "busca": "bigorrilho",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895270221",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895483202",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895705440",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893817880",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895413171",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$7428 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895651892",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$3780 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893038618",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$6910 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895694737",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4638 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895671023",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$13702 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895744783",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895744785",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895744786",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895588889",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo CasaCondominio fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895670226",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895433648",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893315803",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894996613",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5570 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894084814",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$7679 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895272949",
+   "busca": "cabral",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$13962 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893011598",
+   "busca": "cabral",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895378296",
+   "busca": "cabral",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893385510",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895392111",
+   "busca": "cabral",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894961244",
+   "busca": "portao",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895739630",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo CasaCondominio fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895735655",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895716790",
+   "busca": "portao",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895733136",
+   "busca": "portao",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894675071",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895397297",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$20598 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895739067",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$3805 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894351312",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$7068 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893310099",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$6993 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895055624",
+   "busca": "portao",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892885335",
+   "busca": "portao",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895725019",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4226 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895670893",
+   "busca": "portao",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892976379",
+   "busca": "portao",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894853196",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4119 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895659947",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894358742",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5541 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894700965",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895733942",
+   "busca": "portao",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$3805 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895735550",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895728585",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895474732",
+   "busca": "portao",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895704292",
+   "busca": "cristo-rei",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5193 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894504850",
+   "busca": "cristo-rei",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$6087 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894091497",
+   "busca": "cristo-rei",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893466144",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895744277",
+   "busca": "cristo-rei",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5157 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895588868",
+   "busca": "cristo-rei",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4553 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894709467",
+   "busca": "cristo-rei",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895271002",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895723719",
+   "busca": "cristo-rei",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895304848",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895553332",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892880903",
+   "busca": "cristo-rei",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$16463 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893291152",
+   "busca": "cristo-rei",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895669222",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894899832",
+   "busca": "cristo-rei",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$3932 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895387216",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894496232",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895618468",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895675378",
+   "busca": "cristo-rei",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894738535",
+   "busca": "juveve",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894889898",
+   "busca": "juveve",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893929191",
+   "busca": "juveve",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894424094",
+   "busca": "juveve",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895727433",
+   "busca": "juveve",
+   "codigo": "quartos",
+   "motivo": "4 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893516723",
+   "busca": "juveve",
+   "codigo": "tipo",
+   "motivo": "tipo CasaCondominio fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895348797",
+   "busca": "juveve",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894793881",
+   "busca": "juveve",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893594777",
+   "busca": "juveve",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894480851",
+   "busca": "reboucas",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4139 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895748792",
+   "busca": "reboucas",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893252415",
+   "busca": "reboucas",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894756920",
+   "busca": "reboucas",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895087488",
+   "busca": "reboucas",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894354459",
+   "busca": "reboucas",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892920643",
+   "busca": "reboucas",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895386413",
+   "busca": "reboucas",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5383 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893246540",
+   "busca": "reboucas",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895665133",
+   "busca": "reboucas",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894725677",
+   "busca": "reboucas",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894725665",
+   "busca": "reboucas",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894827733",
+   "busca": "reboucas",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895724771",
+   "busca": "reboucas",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4781 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893498881",
+   "busca": "reboucas",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892960246",
+   "busca": "merces",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5394 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893947613",
+   "busca": "merces",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895654561",
+   "busca": "merces",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894807390",
+   "busca": "merces",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893745520",
+   "busca": "merces",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4616 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893012585",
+   "busca": "merces",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$5753 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893428444",
+   "busca": "merces",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895529110",
+   "busca": "merces",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893466250",
+   "busca": "merces",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "892968210",
+   "busca": "merces",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895742281",
+   "busca": "merces",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$24137 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895741953",
+   "busca": "merces",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$24028 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894431178",
+   "busca": "alto-da-gloria",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894360991",
+   "busca": "alto-da-gloria",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895707656",
+   "busca": "alto-da-gloria",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$9046 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893008846",
+   "busca": "alto-da-gloria",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895237859",
+   "busca": "sao-francisco",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4677 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895122692",
+   "busca": "sao-francisco",
+   "codigo": "acima-teto",
+   "motivo": "all-in R$4952 acima do teto de R$3600"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895392634",
+   "busca": "sao-francisco",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895670872",
+   "busca": "sao-francisco",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895027062",
+   "busca": "sao-francisco",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894028528",
+   "busca": "sao-francisco",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894379050",
+   "busca": "sao-francisco",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893969346",
+   "busca": "sao-francisco",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895334254",
+   "busca": "sao-francisco",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895593454",
+   "busca": "sao-francisco",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893443792",
+   "busca": "sao-francisco",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894986663",
+   "busca": "centro-civico",
+   "codigo": "tipo",
+   "motivo": "tipo StudioOuKitchenette fora do produto"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "893409784",
+   "busca": "alto-da-rua-xv",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "894364257",
+   "busca": "alto-da-rua-xv",
+   "codigo": "quartos",
+   "motivo": "1 quartos fora do alvo"
+  },
+  {
+   "fonte": "QuintoAndar",
+   "ref": "895085157",
+   "busca": "alto-da-rua-xv",
+   "codigo": "tipo",
+   "motivo": "tipo Casa fora do produto"
+  }
+ ]
+}

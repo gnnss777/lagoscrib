@@ -1,0 +1,109 @@
+{
+  "_sonda": "quintoAndarAnunciante -> nome de imobiliaria (7 anuncios de quinto-2q-ate3600-14b-l4.json)",
+  "_data": "2026-09-29",
+  "_metodo": "fetch puro, sem sessao, sem clique, sem burla. Delay 3s entre requisicoes. User-Agent de navegador. Nenhum endpoint fora do robots.txt foi acessado: /busca, /parceiros, /inquilino, /equipe, /auth sao Disallow e nao foram pedidos.",
+  "_resultado": "0/7 com telefone. NENHUM item foi alterado em quinto-2q-ate3600-14b-l4.json. NENHUMA entrada foi adicionada a imobiliarias-telefone.json.",
+
+  "_achado_central": "quintoAndarAnunciante NAO e o ID de uma imobiliaria. E houseInfo.displayId, a referencia publica do PROPRIO IMOVEL. Duas provas medidas: (1) o HTML do servidor renderiza a string 'Imovel 767747' — o portal mostra esse numero ao usuario como identificacao do imovel, no breadcrumb e no selo ao lado da data de publicacao; (2) as duas unidades do mesmo imovel anunciadas em andares diferentes tem displayId DIFERENTE (892907800 -> 207800, 892907822 -> 207822), logo o numero e por anuncio, nao por anunciante. No payload inteiro o id aparece UMA unica vez, em houseInfo.displayId, e nenhum objeto o referencia.",
+  "_nota_de_codigo": "scripts/coleta/quintoandar.mjs:468 escreve `quintoAndarAnunciante: String(hi.displayId)`. O nome do campo esta errado: o valor e o imovel. Renomear exige merge.py, que esta fora do escopo desta tarefa.",
+
+  "_contexto_do_contrato": "Nos 7, listings[0].listingRentModel.rentalAdministrator = \"QUINTOANDAR\": quem administra o contrato de locacao e o proprio QuintoAndar, nao uma imobiliaria parceira. houseInfo.publisherWhatsapp = \"\" em 7/7. houseInfo.houseAgent = {isDialogOpen:false, alreadyOpenedByQueryParam:false} — sem identidade em 7/7. regionParameters.RENT.talkToAgentEnabled = false. Nao existe telefone no servidor; o unico caminho de numero no portal e o clique em 'mostrar telefone', que REGISTRA LEAD (AGENTS.md regra 5).",
+
+  "anuncios": [
+    {
+      "quintoAndarAnunciante": "767747",
+      "quintoAndarId": "893467747",
+      "bairro": "Centro",
+      "displayIdConfirmado": "767747",
+      "nomePublicado": null,
+      "quemEColocado": null,
+      "rentalAdministrator": "QUINTOANDAR",
+      "casamentoComBanco": "nenhum",
+      "telefone": "",
+      "motivo": "Payload nao publica nenhum nome de anunciante. Varredura profunda do __NEXT_DATA__: 1 ocorrencia do id (houseInfo.displayId), 0 campos de contato, 0 'CRECI' no HTML, 0 'Publicado por', 0 logo de imobiliaria."
+    },
+    {
+      "quintoAndarAnunciante": "1985646",
+      "quintoAndarId": "894685646",
+      "bairro": "Alto da Gloria",
+      "displayIdConfirmado": "1985646",
+      "nomePublicado": null,
+      "quemEColocado": null,
+      "rentalAdministrator": "QUINTOANDAR",
+      "casamentoComBanco": "nenhum",
+      "telefone": "",
+      "motivo": "Idem 767747. listings[0] deste imovel e businessContext SALE (a listagem de aluguel e listings[1]) — ainda sem nome."
+    },
+    {
+      "quintoAndarAnunciante": "3041446",
+      "quintoAndarId": "895741446",
+      "bairro": "Cristo Rei",
+      "displayIdConfirmado": "3041446",
+      "nomePublicado": "Elisandra Patricia Costa de Oliveira",
+      "quemEColocado": "listings[0].houseAgents[0] + listings[0].keyHolderAgent, relationType=KEY_HOLDER, id=6615817, agentId=45986",
+      "rentalAdministrator": "QUINTOANDAR",
+      "casamentoComBanco": "nenhum",
+      "creci": null,
+      "telefone": "",
+      "motivo": "Unico nome publicado no payload, e PESSOA FISICA: relationType KEY_HOLDER e a pessoa que detem a chave (proprietaria), nao uma imobiliaria. agentId=45986 e id interno do QuintoAndar, nao CRECI. Nome nao casa com nenhuma entrada de imobiliarias-telefone.json nem de creci-telefone.json, que so contem razao social."
+    },
+    {
+      "quintoAndarAnunciante": "472067",
+      "quintoAndarId": "893172067",
+      "bairro": "Jardim Botanico",
+      "displayIdConfirmado": "472067",
+      "nomePublicado": "Leandro Dias Barbosa",
+      "quemEColocado": "listings[0].houseAgents[0] + listings[0].keyHolderAgent, relationType=KEY_HOLDER, id=4653349, agentId=14333",
+      "rentalAdministrator": "QUINTOANDAR",
+      "casamentoComBanco": "nenhum",
+      "creci": null,
+      "telefone": "",
+      "motivo": "KEY_HOLDER pessoa fisica. Descricao do anuncio diz 'No terreo ha um outro apartamento no qual mora o proprietario' e 'taxa de condominio inclui...' — ou seja, o proprio proprietario e quem fala, o que bate com KEY_HOLDER. Nome nao casa com o banco."
+    },
+    {
+      "quintoAndarAnunciante": "329010",
+      "quintoAndarId": "893029010",
+      "bairro": "Centro",
+      "displayIdConfirmado": "329010",
+      "nomePublicado": null,
+      "quemEColocado": null,
+      "rentalAdministrator": "QUINTOANDAR",
+      "casamentoComBanco": "nenhum",
+      "telefone": "",
+      "motivo": "Idem 767747."
+    },
+    {
+      "quintoAndarAnunciante": "503196",
+      "quintoAndarId": "893203196",
+      "bairro": "Centro",
+      "displayIdConfirmado": "503196",
+      "nomePublicado": "Sandra Ferraz de Lima",
+      "quemEColocado": "listings[0].houseAgents[0], relationType=KEY_HOLDER, id=6575930 (sem keyHolderAgent neste listing)",
+      "rentalAdministrator": "QUINTOANDAR",
+      "casamentoComBanco": "nenhum",
+      "creci": null,
+      "telefone": "",
+      "motivo": "KEY_HOLDER pessoa fisica. Nome nao casa com o banco."
+    },
+    {
+      "quintoAndarAnunciante": "207800",
+      "quintoAndarId": "892907800",
+      "bairro": "Sao Francisco",
+      "displayIdConfirmado": "207800",
+      "nomePublicado": null,
+      "quemEColocado": null,
+      "rentalAdministrator": "QUINTOANDAR",
+      "casamentoComBanco": "nenhum",
+      "telefone": "",
+      "motivo": "Idem 767747. O gemeo 892907822 (mesma unidade, outro andar) tem displayId 207822 — prova de que displayId e por anuncio, nao por anunciante."
+    }
+  ],
+
+  "_endpoints_que_nao_existem": {
+    "graphql": "Nenhuma URL de graphql nos 98 chunks JS de /imovel/893467747 (grep por https://*.quintoandar*, /graphql, graphql*).",
+    "paginaDeImobiliaria": "Nao existe /imobiliaria/{id}/ no QuintoAndar (ao contrario do Zap e do VivaReal, que tem). O link de rodape 'imobiliarias parceiras' aponta para /parceiros, que e Disallow no robots.txt e nao foi acessado.",
+    "busca": "Nao usada (/busca e Disallow). A pagina de busca por slug foi usada so para conferir a forma dos cards: sao arrays de ids em string ('893202155'), sem objeto de anunciante — 0 campos de nome em 24 cards."
+  },
+
+  "_veredito": "Esta via NAO da telefone para o QuintoAndar. Zero dos 7 anuncios tem imobiliaria anunciante resolvivel, porque o QuintoAndar nao e um portal de imoveis de imobiliarias: ele e o ADMINISTRADOR do contrato (rentalAdministrator=QUINTOANDAR em 7/7) e publica o proprietario pessoa fisica como KEY_HOLDER, sem CRECI, sem telefone e sem razao social. Um ID de anunciante de 6-7 digitos que se parece com o do Zap nao existe no QuintoAndar. O unico caminho de telefone e o clique em 'mostrar telefone', que registra lead no painel do anunciante (AGENTS.md regra 5) — via que esta proibida nesta tarefa e que o dono nao pediu."
+}

@@ -55,6 +55,39 @@ export function telApolar(bruto) {
   return "";
 }
 
+/**
+ * Escolhe o telefone de uma lista de BRUTOS do MESMO anunciante.
+ *
+ * A regra está em `data/coleta/imobiliarias-telefone.json` `_regra`: celular tem
+ * prioridade e fixo é fallback. O que NÃO vale é o RÓTULO do portal — medido no
+ * Chaves na Mão (`id-32076815`, mesma imobiliária nos dois campos):
+ *
+ *   "cellphone":{"number":"(41) 9235-0200","whatsapp":true}   <- 8 dígitos, sem o 9
+ *   "landline": {"number":"(41) 99235-0200","whatsapp":false}  <- o celular REAL
+ *
+ * Ler pelo rótulo pegava o quebrado, e `telApolar` não segurava: ele só mede
+ * comprimento, então "(41) 9235-0200" saía como `+554192350200` — 10 dígitos, o
+ * que `ehTelefoneValido` reprova justamente por ser celular com um dígito a
+ * menos. Não é adivinhação que conserta isso; é medir o NONO dígito.
+ *
+ * Por isso: normaliza tudo, descarta o que não passa em `ehCelular`/`ehFixo` (a
+ * mesma regra de `lib/phone.ts`, pra nunca gravar o que o app rejeita) e só então
+ * prefere o celular. Nenhum dígito é inventado — bruto que não fecha em 10/11
+ * simplesmente não entra, e sem nenhum válido o retorno é vazio.
+ *
+ * @param {Array<string|null|undefined>} brutos
+ * @returns {{ phone: string, celular: string, fixo: string }}
+ */
+export function melhorTelefone(brutos) {
+  const validos = [...new Set((brutos || []).map(telApolar).filter(Boolean))].filter(
+    (t) => ehCelular(t) || ehFixo(t),
+  );
+  const celular = validos.find(ehCelular) ?? "";
+  const fixo = validos.find(ehFixo) ?? "";
+  if (!celular && !fixo) return { phone: "", celular: "", fixo: "" };
+  return { phone: celular || fixo, celular, fixo };
+}
+
 /** Textos de botão que liberam o número. Variam por anúncio e por portal. */
 export const BOTOES_TELEFONE = ['button:has-text("mostrar telefone")', 'button:has-text("WhatsApp")'];
 
