@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createHash, timingSafeEqual } from "node:crypto";
+import { auth } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { redisConfigured, redisGet, redisSet, RedisNotConfiguredError } from "@/lib/redis";
@@ -12,34 +12,31 @@ import {
 /**
  * Estado compartilhado do dono (KISS, uso pessoal).
  *
- * Um único documento JSON no Redis, protegido por um token que o dono digita uma
- * vez por dispositivo. Sem isso o estado vivia só no localStorage e abrir em
- * outro PC mostrava a base inteira como se nada tivesse sido mexido.
+ * Um único documento JSON no Redis. Sem isso o estado vivia só no localStorage e
+ * abrir em outro PC mostrava a base inteira como se nada tivesse sido mexido.
+ *
+ * A credencial é a sessão do NextAuth, não um código: o dono já faz login para
+ * usar o app, então exigir um segundo segredo por aparelho só criava atrito. É
+ * a mesma regra das outras rotas `/api/*` — mesma sessão, mesmo portão.
  *
  * Isso é single-tenant de propósito: o dono pediu o caminho simples, e o ADR-001
  * recusou inventar multiusuário. O preço é que existe um único documento — se
  * algum dia forem duas pessoas, isto é o primeiro lugar a refazer.
  */
 
-/** Compara por hash para não vazar o tamanho do token, e em tempo constante. */
-function tokenOk(presented: string | null): boolean {
-  // Tira aspas em volta: um `SYNC_TOKEN="abc"` no ambiente entrega a aspa como
-  // parte do valor, e o código que o dono digita nunca casaria — 401 eterno.
-  const expected = (process.env.SYNC_TOKEN ?? "").trim().replace(/^["']|["']$/g, "").trim();
-  if (!expected) return false;
-  if (!presented) return false;
-  const a = createHash("sha256").update(presented).digest();
-  const b = createHash("sha256").update(expected).digest();
-  return timingSafeEqual(a, b);
+/** Há sessão válida? Autorização das duas rotas. */
+async function temSessao(): Promise<boolean> {
+  const session = await auth();
+  return Boolean(session?.user?.email);
 }
 
 function unauthorized() {
-  // 401 genérico: não distingue "token errado" de "não configurado".
   return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 }
 
+
 export async function GET(request: Request) {
-  if (!tokenOk(request.headers.get("x-sync-token"))) return unauthorized();
+  if (!(await temSessao())) return unauthorized();
   if (!redisConfigured()) {
     return NextResponse.json(
       { error: "Sync não configurado (UPSTASH_REDIS_REST_URL/TOKEN)" },
@@ -75,7 +72,7 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  if (!tokenOk(request.headers.get("x-sync-token"))) return unauthorized();
+  if (!(await temSessao())) return unauthorized();
 
   // Payload primeiro, Redis depois: entrada inválida é erro da requisição (400)
   // e vale saber disso mesmo com a infra fora do ar. O contrário faria todo

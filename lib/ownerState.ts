@@ -28,8 +28,7 @@ import type { Note } from "@/lib/AppContext";
 
 /** Chave do estado do AppContext no localStorage (fonte canônica). */
 export const APP_STATE_KEY = "apartamentos-app-state";
-/** Token de sync, guardado só neste dispositivo. */
-export const SYNC_TOKEN_KEY = "apartamentos-app-sync-token";
+
 
 export const SNAPSHOT_VERSION = 1;
 export const OWNER_STATE_KEY = "lagoscrib:owner-state:v1";
@@ -86,34 +85,13 @@ export interface SyncResult {
 export type SyncStatus = "off" | "idle" | "syncing" | "error" | "denied";
 
 /* ------------------------------------------------------------------ token */
+//
+// O token de sync foi removido. A credencial é agora o cookie de sessão do
+// NextAuth: quem está logado no app já está autorizado a ler e escrever o
+// estado do dono, então uma segunda senha só criava atrito (digitar um código em
+// cada aparelho) sem adicionar proteção. O que protegia era o segredo de uma
+// tela que fica logada de qualquer jeito.
 
-export function readSyncToken(): string {
-  if (typeof localStorage === "undefined") return "";
-  try {
-    return localStorage.getItem(SYNC_TOKEN_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
-
-export function writeSyncToken(token: string): void {
-  try {
-    // Trim aqui e não no chamador: código colado costuma vir com espaço ou
-    // quebra de linha no fim, e a comparação do servidor é exata — sem isso o
-    // aparelho ficaria em "Código inválido" para sempre sem motivo visível.
-    localStorage.setItem(SYNC_TOKEN_KEY, token.trim());
-  } catch {
-    // sem localStorage = sem sync, sem quebrar o app
-  }
-}
-
-export function clearSyncToken(): void {
-  try {
-    localStorage.removeItem(SYNC_TOKEN_KEY);
-  } catch {
-    // ignore
-  }
-}
 
 /* --------------------------------------------------------------- montagem */
 
@@ -237,22 +215,19 @@ export function applySnapshot(s: OwnerSnapshot): void {
 
 /* ------------------------------------------------------------------- rede */
 
-async function request(
-  path: "GET" | "PUT",
-  token: string,
-  body?: OwnerSnapshot,
-): Promise<SyncResult> {
+async function request(path: "GET" | "PUT", body?: OwnerSnapshot): Promise<SyncResult> {
   const url = process.env.NEXT_PUBLIC_SYNC_URL ?? "/api/owner-state";
   try {
     const res = await fetch(url, {
       method: path,
-      headers: {
-        "x-sync-token": token,
-        ...(body ? { "content-type": "application/json" } : {}),
-      },
+      // A sessão vai no cookie; o antigo header x-sync-token foi removido junto
+      // com a UI que pedia o código. `include` é o que faz o cookie viajar numa
+      // rota /api do mesmo domínio.
+      credentials: "include",
+      headers: body ? { "content-type": "application/json" } : {},
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
-    if (res.status === 401) return { ok: false, reason: "Código inválido" };
+    if (res.status === 401) return { ok: false, reason: "Sessão expirada" };
     if (res.status === 503) return { ok: false, reason: "Sync não configurado" };
     if (!res.ok) return { ok: false, reason: `HTTP ${res.status}` };
     return { ok: true };
@@ -262,16 +237,16 @@ async function request(
 }
 
 /** Estado do servidor, ou null se nunca foi gravado. */
-export async function pullSnapshot(token: string): Promise<{
+export async function pullSnapshot(): Promise<{
   ok: boolean;
   snapshot: OwnerSnapshot | null;
   reason?: string;
 }> {
-  if (!token) return { ok: false, snapshot: null, reason: "Sem código" };
   const url = process.env.NEXT_PUBLIC_SYNC_URL ?? "/api/owner-state";
   try {
-    const res = await fetch(url, { headers: { "x-sync-token": token } });
-    if (res.status === 401) return { ok: false, snapshot: null, reason: "Código inválido" };
+    // A credencial é o cookie de sessão, não um código: quem está logado já tem.
+    const res = await fetch(url, { credentials: "include" });
+    if (res.status === 401) return { ok: false, snapshot: null, reason: "Sessão expirada" };
     if (res.status === 503) return { ok: false, snapshot: null, reason: "Sync não configurado" };
     if (!res.ok) return { ok: false, snapshot: null, reason: `HTTP ${res.status}` };
     const json = (await res.json()) as { data?: unknown };
@@ -285,7 +260,6 @@ export async function pullSnapshot(token: string): Promise<{
   }
 }
 
-export function pushSnapshot(token: string, snapshot: OwnerSnapshot): Promise<SyncResult> {
-  if (!token) return Promise.resolve({ ok: false, reason: "Sem código" });
-  return request("PUT", token, snapshot);
+export function pushSnapshot(snapshot: OwnerSnapshot): Promise<SyncResult> {
+  return request("PUT", snapshot);
 }

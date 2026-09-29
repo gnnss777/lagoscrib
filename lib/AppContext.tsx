@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { type Apartment } from "@/lib/data";
-import { buildLegacyUsers } from "@/lib/legacy-users";
+import { signIn, signOut } from "next-auth/react";
 import {
   CHECKLIST_STORAGE_VERSION,
   REMOVED_IDS_STORAGE_KEY,
@@ -30,13 +30,10 @@ import {
 import {
   applySnapshot,
   buildSnapshot,
-  clearSyncToken,
   reconcileOnLoad,
   pullSnapshot,
   pushSnapshot,
-  readSyncToken,
   samePayload,
-  writeSyncToken,
   type OwnerSnapshot,
   type SyncStatus,
 } from "@/lib/ownerState";
@@ -67,8 +64,8 @@ interface AppState {
 }
 
 interface AppContextValue extends AppState {
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
   /** Sincroniza sessão do NextAuth (backend) com o estado local. */
   setSessionUser: (username: string | null) => void;
   /* Sync entre dispositivos (lib/ownerState): o código é digitado uma vez por
@@ -76,8 +73,6 @@ interface AppContextValue extends AppState {
      pessoa que abrisse o app leria e poderia reescrever o estado do dono. */
   syncStatus: SyncStatus;
   syncEnabled: boolean;
-  enableSync: (token: string) => void;
-  disableSync: () => void;
   addApartment: (apartment: Apartment) => void;
   /** Remove imóvel da visualização local. */
   removeApartment: (apartmentId: string) => void;
@@ -111,8 +106,13 @@ interface AppContextValue extends AppState {
 // client-side.
 // Declarado aqui ANTES de defaultState: usa OPEN_ACCESS abaixo, e `const` na
 // zona morta temporal derrubava o app com ReferenceError em dev.
-const OPEN_ACCESS = process.env.NEXT_PUBLIC_OPEN_ACCESS !== "0";
-const OPEN_ACCESS_USER = process.env.NEXT_PUBLIC_OPEN_ACCESS_USER ?? "local";
+// A flag aceita os dois nomes porque a Vercel passou a guardar o valor com um
+// prefixo de display (`eyJ2IjoidjIi...`) quando a variável é criada pela CLI, e
+// esse prefixo nunca é igual a "0" — o bypass ficava ligado sem querer. `0` é o
+// único valor que desliga; qualquer outra coisa liga, que é o comportamento de
+// antes e o fail-open do opt-out.
+const OPEN_ACCESS = (process.env.OPEN_ACCESS ?? process.env.NEXT_PUBLIC_OPEN_ACCESS) !== "0";
+const OPEN_ACCESS_USER = process.env.OPEN_ACCESS_USER ?? "local";
 
 const defaultState: AppState = {
   isAuthenticated: OPEN_ACCESS,
@@ -135,18 +135,16 @@ const isDev = process.env.NODE_ENV !== "production";
 if (isDev) {
   console.warn("[auth] modo legado local ativo — migrar para backend (NextAuth)");
 }
-// O mapa de credenciais vive em lib/legacy-users.ts porque o authorize do
-// NextAuth precisa do MESMO par para validar a senha e assinar a sessão das
-// rotas /api/*; duas cópias divergiriam e o login aceitaria no cliente e
-// recusaria no servidor.
-const USERS: Record<string, string> = buildLegacyUsers();
+// O mapa de credenciais NÃO vem para cá. Ele vive só no servidor
+// (lib/legacy-users.ts, lido pelo authorize do NextAuth) e o prefixo
+// NEXT_PUBLIC_ saiu de propósito: com ele, a senha viajavaScript do bundle.
+// Aqui quem decide se está autenticado é a sessão, via SessionBridge
+// (app/components/AuthProvider.tsx) -> setSessionUser.
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(defaultState);
   const [isHydrated, setIsHydrated] = useState(false);
   // Sync entre dispositivos (lib/ownerState). `null` = desligado neste
-  // dispositivo; o dono liga digitando o código uma vez (SyncGate).
-  const [syncToken, setSyncToken] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("off");
   // O push só liga DEPOIS do pull: senão um dispositivo novo empurraria o
   // documento vazio por cima do estado bom do dono.
@@ -167,20 +165,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // StoredState tem índice [k: string]: unknown e não declara auth, então
         // estreita aqui. Só aceita literal `true` (fail-closed, como o resto do
         // arquivo): truthy vindo de storage não autentica ninguém.
-        const savedAuth = migrated["isAuthenticated"] === true;
-        const savedUser = typeof migrated["username"] === "string" ? migrated["username"] : null;
+        // `isAuthenticated` e `username` são deliberadamente IGNORADOS aqui: um
+        // `true` no localStorage não é sessão, e aceitar isso seria um login
+        // que qualquer um fabricate no console. Quem decide é o SessionBridge
+        // (setSessionUser) a partir do cookie, e o bypass de OPEN_ACCESS.
         // eslint-disable-next-line react-hooks/set-state-in-effect -- ver comentário acima
         setState((prev) => ({
           ...prev,
           ...migrated,
           version: CHECKLIST_STORAGE_VERSION,
-          // Bypass não pode ser sobrescrito por um estado antigo salvo no
-          // localStorage (quem já deu "Sair" ficaria preso no LoginPage).
-          // Base no estado salvo (`savedAuth`), não em `prev` (que é o
-          // defaultState): usar prev apagava o login salvo em todo load, e o
-          // reload voltava para a tela de login.
-          isAuthenticated: savedAuth || OPEN_ACCESS,
-          username: savedAuth ? savedUser : OPEN_ACCESS_USER,
+          isAuthenticated: prev.isAuthenticated,
+          username: prev.username,
         }));
       }
     } catch {
@@ -225,23 +220,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  // Monta: lê o token e puxa o documento do dono. Roda depois da hidratação
-  // do localStorage, senão o merge compararia um local vazio com o remoto.
+  // Monta: puxa o documento do dono. Só faz sentido logado — sem sessão a
+  // rota devolve 401 e não há estado compartilhado para este aparelho. Roda
+  // depois da hidratação do localStorage, senão o merge compararia um local
+  // vazio com o remoto.
   useEffect(() => {
     if (!isHydrated) return;
-    const token = readSyncToken();
-    // Sem token, o estado inicial já é o certo ("off"/null) — setar aqui seria
-    // ruído e forçaria um segundo render.
-    if (!token) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratação pós-mount de preferência de aparelho, mesmo padrão do efeito de localStorage acima
-    setSyncToken(token);
+    // Sem sessão não há estado compartilhado para este aparelho, e o efeito
+    // inteiro não roda — o `syncStatus` fica no default ("off") sem precisar
+    // de setState síncrono aqui, que o lint recusa dentro de efeito.
+    if (!state.isAuthenticated) return;
     let cancelled = false;
-    setSyncStatus("syncing");
+    // "syncing" entra no estado do próximo render, não neste efeito: setState
+    // síncrono dentro de efeito dispara render em cascata (regra do lint).
+    queueMicrotask(() => {
+      if (!cancelled) setSyncStatus("syncing");
+    });
     void (async () => {
-      const { ok, snapshot, reason } = await pullSnapshot(token);
+      const { ok, snapshot, reason } = await pullSnapshot();
       if (cancelled) return;
       if (!ok) {
-        setSyncStatus(reason === "Código inválido" ? "denied" : "error");
+        setSyncStatus(reason === "Sessão expirada" ? "denied" : "error");
         setSyncReady(true);
         return;
       }
@@ -253,7 +252,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // Servidor vazio (primeira vez): o local vira a base. Numa carga com
         // servidor preenchido isto nunca roda — reconcileOnLoad sempre adota o
         // remoto, senão o aparelho novo sobe o estado vazio e apaga o dono.
-        await pushSnapshot(token, winner);
+        await pushSnapshot(winner);
       }
       if (cancelled) return;
       // Qual dos dois venceu, é o que este aparelho passa a considerar em
@@ -265,7 +264,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [isHydrated, adotaRemoto]);
+  }, [isHydrated, state.isAuthenticated, adotaRemoto]);
 
   // Push com debounce. O snapshot é montado na hora (lê as 3 chaves), não do
   // estado React, porque removidos e imóveis adicionados vivem fora do
@@ -278,18 +277,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // exatamente o que o teste de dois PCs pegou: o PC2 abriu depois do PC1
   // excluir e sobrescreveu a exclusão com `removedIds: []`.
   useEffect(() => {
-    if (!isHydrated || !syncReady || !syncToken) return;
+    if (!isHydrated || !syncReady || !state.isAuthenticated) return;
     const t = setTimeout(() => {
       const snapshot = buildSnapshot();
       if (samePayload(lastSyncedRef.current, snapshot)) return;
       setSyncStatus("syncing");
-      void pushSnapshot(syncToken, snapshot).then((r) => {
+      void pushSnapshot(snapshot).then((r) => {
         if (r.ok) lastSyncedRef.current = snapshot;
         setSyncStatus(r.ok ? "idle" : "error");
       });
     }, SYNC_DEBOUNCE_MS);
     return () => clearTimeout(t);
-  }, [state, isHydrated, syncReady, syncToken]);
+  }, [state, isHydrated, syncReady, state.isAuthenticated]);
 
   // Pull periódico + ao voltar pra aba.
   //
@@ -299,7 +298,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // (o dono volta pra uma aba que estava em background e já vê o card movido);
   // o intervalo cobre a aba que fica na frente o tempo todo.
   useEffect(() => {
-    if (!isHydrated || !syncReady || !syncToken) return;
+    if (!isHydrated || !syncReady || !state.isAuthenticated) return;
     let cancelled = false;
 
     const puxar = async () => {
@@ -307,7 +306,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // não subiu, NÃO adota o remoto. O push com debounce tem prioridade, e
       // adotar aqui devolveria ao dono uma edição que ele acabou de fazer.
       if (!samePayload(lastSyncedRef.current, buildSnapshot())) return;
-      const { ok, snapshot } = await pullSnapshot(syncToken);
+      const { ok, snapshot } = await pullSnapshot();
       if (cancelled || !ok || !snapshot) return;
       // Nada mudou no servidor desde a última carga deste aparelho.
       if (samePayload(lastSyncedRef.current, snapshot)) return;
@@ -329,40 +328,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
       document.removeEventListener("visibilitychange", aoVoltar);
       window.removeEventListener("focus", aoVoltar);
     };
-  }, [isHydrated, syncReady, syncToken, adotaRemoto]);
+  }, [isHydrated, syncReady, state.isAuthenticated, adotaRemoto]);
 
-  const enableSync = useCallback((token: string) => {    if (!token.trim()) return;
-    writeSyncToken(token);
-    setSyncToken(token.trim());
-    setSyncReady(false);
-    setSyncStatus("syncing");
-  }, []);
-
-  const disableSync = useCallback(() => {
-    clearSyncToken();
-    setSyncToken(null);
-    setSyncReady(false);
-    setSyncStatus("off");
-  }, []);
-
-  const login = useCallback((username: string, password: string): boolean => {
-    if (USERS[username.toLowerCase()] === password) {
-      setState((prev) => ({
-        ...prev,
-        isAuthenticated: true,
-        username: username.toLowerCase(),
-      }));
+  /**
+   * Autentica contra o servidor. Devolve Promise porque o NextAuth só responde
+   * depois do round-trip do `authorize` — a versão anterior comparava a senha
+   * no browser e devolvia boolean, que é o que permitia o site funcionar sem
+   * ever validar nada no servidor.
+   */
+  const login = useCallback(async (username: string, password: string): Promise<boolean> => {
+    const res = await signIn("credentials", { email: username, password, redirect: false });
+    if (res?.ok) {
+      setState((prev) => ({ ...prev, isAuthenticated: true, username: username.toLowerCase() }));
       return true;
     }
     return false;
   }, []);
 
-  const logout = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      isAuthenticated: false,
-      username: null,
-    }));
+  const logout = useCallback(async () => {
+    await signOut({ redirect: false });
+    setState((prev) => ({ ...prev, isAuthenticated: false, username: null }));
   }, []);
 
   const setSessionUser = useCallback((username: string | null) => {
@@ -572,9 +557,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         logout,
         setSessionUser,
         syncStatus,
-        syncEnabled: syncToken !== null,
-        enableSync,
-        disableSync,
+    syncEnabled: state.isAuthenticated,
         addApartment,
         removeApartment,
         addNote,

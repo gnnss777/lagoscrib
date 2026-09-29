@@ -3,13 +3,10 @@ import {
   APP_STATE_KEY,
   applySnapshot,
   buildSnapshot,
-  clearSyncToken,
   emptySnapshot,
   reconcileOnLoad,
-  readSyncToken,
   samePayload,
   snapshotSchema,
-  writeSyncToken,
   type OwnerSnapshot,
 } from "@/lib/ownerState";
 import { REMOVED_IDS_STORAGE_VERSION } from "@/lib/constants";
@@ -158,14 +155,6 @@ describe("owner state", () => {
     expect(s.statuses).toEqual([]);
   });
 
-  it("test_ownerstate_token_so_neste_aparelho", () => {
-    expect(readSyncToken()).toBe("");
-    writeSyncToken("  abc-123  ");
-    expect(readSyncToken()).toBe("abc-123");
-    clearSyncToken();
-    expect(readSyncToken()).toBe("");
-  });
-
   it("test_ownerstate_samepayload_ignora_updatedat", () => {
     // Bug real pego pelo teste de dois PCs: um aparelho que só abre o app
     // montava um snapshot igual ao que acabou de puxar e empurrava, apagando o
@@ -180,8 +169,10 @@ describe("owner state", () => {
   it("test_ownerstate_token_ausente_nao_quebra", () => {    // localStorage indisponível (SSR, modo privado sem storage) não pode
     // derrubar o app: tudo vira "" e o sync fica desligado.
     vi.stubGlobal("localStorage", undefined);
-    expect(readSyncToken()).toBe("");
-    expect(() => writeSyncToken("x")).not.toThrow();
+    // Sem localStorage o app não quebra e não há estado para montar — é o
+    // comportamento de quem abriu sem-storage. O token de sync foi removido
+    // (a credencial agora é o cookie de sessão), então não há mais nada a
+    // gravar aqui.
     expect(buildSnapshot().removedIds).toEqual([]);
   });
 });

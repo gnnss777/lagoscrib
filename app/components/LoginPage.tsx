@@ -48,17 +48,10 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      if (!backend) {
-        // Modo legado local (sem backend configurado, apenas dev).
-        await new Promise((r) => setTimeout(r, 400));
-        if (login(username, password)) {
-          redirectNext();
-        } else {
-          setError("Usuário ou senha incorretos");
-        }
-        return;
-      }
-
+      // `login` fala com o NextAuth (o `authorize` no servidor valida a senha) e
+      // devolve Promise. A versão anterior comparava a senha no browser e
+      // aceitava sem nunca consultar o servidor — e como a senha vivia no
+      // bundle (NEXT_PUBLIC_), isso era um login que qualquer um podia ler.
       if (mode === "register") {
         const res = await fetch("/api/public/auth/register", {
           method: "POST",
@@ -82,13 +75,9 @@ export default function LoginPage() {
         return;
       }
 
-      const result = await signIn("credentials", {
-        email: username,
-        password,
-        redirect: false,
-      });
-      if (result?.ok) {
-        setSessionUser(username.toLowerCase());
+      // Único caminho de login agora: o `login` do AppContext, que é o mesmo
+      // signIn do NextAuth e já seta isAuthenticated quando o servidor aceita.
+      if (await login(username, password)) {
         redirectNext();
       } else {
         setError("Usuário ou senha incorretos");
