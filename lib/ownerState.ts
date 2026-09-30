@@ -7,6 +7,10 @@ import {
   REMOVED_IDS_STORAGE_VERSION,
 } from "@/lib/constants";
 import { USER_ADDED_KEY } from "@/lib/pool";
+import {
+  USER_ADDED_REMOVED_KEY,
+  USER_ADDED_REMOVED_VERSION,
+} from "@/lib/constants";
 import type { Apartment } from "@/lib/data";
 import type { ApartmentStatus, FollowUp } from "@/lib/kanban";
 import { ALL_STATUSES } from "@/lib/kanban";
@@ -131,6 +135,11 @@ export const snapshotSchema = z.object({
   updatedAt: z.string().min(1).max(40),
   removedIds: z.array(z.string().min(1).max(120)).max(5_000),
   userAdded: z.array(z.unknown()).max(5_000),
+  // `.default([])` e não campo obrigatório: documentos gravados antes desta
+  // versão não têm a chave, e um campo obrigatório reprovaria o parse
+  // inteiro — o `GET` devolveria `data: null` e o aparelho subiria o estado
+  // vazio por cima do do dono. Ausente = vazio = comportamento antigo.
+  deletedUserAdded: z.array(z.string().min(1).max(120)).max(5_000).default([]),
   notes: z.array(noteSchema).max(20_000),
   statuses: z.array(statusSchema).max(5_000),
   checklist: checklistMap,
@@ -183,11 +192,13 @@ export function buildSnapshot(now: Date = new Date()): OwnerSnapshot {
   }>(APP_STATE_KEY, {});
   const removed = readJson<{ ids?: string[] }>(REMOVED_IDS_STORAGE_KEY, {});
   const userAdded = readJson<Apartment[]>(USER_ADDED_KEY, []);
+  const deletedUserAdded = readJson<{ ids?: string[] }>(USER_ADDED_REMOVED_KEY, {});
   return {
     v: SNAPSHOT_VERSION,
     updatedAt: now.toISOString(),
     removedIds: Array.isArray(removed.ids) ? removed.ids : [],
     userAdded: Array.isArray(userAdded) ? userAdded : [],
+    deletedUserAdded: Array.isArray(deletedUserAdded.ids) ? deletedUserAdded.ids : [],
     notes: Array.isArray(appState.notes) ? appState.notes : [],
     statuses: Array.isArray(appState.statuses) ? appState.statuses : [],
     checklist: appState.checklist ?? {},
@@ -202,6 +213,7 @@ export function emptySnapshot(now: Date = new Date()): OwnerSnapshot {
     updatedAt: now.toISOString(),
     removedIds: [],
     userAdded: [],
+    deletedUserAdded: [],
     notes: [],
     statuses: [],
     checklist: {},
@@ -348,11 +360,30 @@ function mesclarPorMaisNovo<T extends { updatedAt: string }>(
  * do dono em vez de vazio.
  */
 function mergeSnapshots(local: OwnerSnapshot, remote: OwnerSnapshot): OwnerSnapshot {
+  // A lápide é UNIONADA e aplicada SOBRE o `userAdded`. Sem isso a exclusão não
+  // sobrevive ao sync: `userAdded` é união (o servidor não pode apagar o que
+  // só existe num aparelho), então um imóvel excluído no PC1 voltava no load do
+  // PC2. Filtrar depois de unir — e não antes — é o que importa: a lápide do
+  // remoto tem que conseguir derrubar o `userAdded` do local, senão o aparelho
+  // que já tinha o imóvel continua vendo.
+  const deletedUserAdded = unionById(
+    remote.deletedUserAdded,
+    local.deletedUserAdded,
+    (id) => id,
+  );
+  const lapide = new Set(deletedUserAdded);
+
   return {
     v: SNAPSHOT_VERSION,
     updatedAt: remote.updatedAt,
     removedIds: unionById(remote.removedIds, local.removedIds, (id) => id),
-    userAdded: unionById(remote.userAdded, local.userAdded, idDeImovel),
+    userAdded: unionById(remote.userAdded, local.userAdded, idDeImovel).filter(
+      (a) => {
+        const id = idDeImovel(a);
+        return id === null || !lapide.has(id);
+      },
+    ),
+    deletedUserAdded,
     notes: unionById(remote.notes, local.notes, (n) => n.id),
     statuses: mesclarPorMaisNovo(local.statuses, remote.statuses, (s) => s.apartmentId),
     // remote por cima de local: a chave que o servidor conhece fica com o
@@ -366,8 +397,13 @@ function mergeSnapshots(local: OwnerSnapshot, remote: OwnerSnapshot): OwnerSnaps
 
 /** O documento não carrega nada que o dono tenha feito? */
 function vazio(s: OwnerSnapshot): boolean {
+  // `deletedUserAdded` conta como conteúdo. Um remoto que só carrega lápide
+  // parece vazio por qualquer critério que olhasse só as listas visíveis — e
+  // então a trava anti-apagão devolveria o local inteiro, jogando fora a
+  // exclusão que o outro aparelho fez. Era o que o teste pegou.
   return (
     s.removedIds.length === 0 &&
+    s.deletedUserAdded.length === 0 &&
     s.userAdded.length === 0 &&
     s.notes.length === 0 &&
     s.statuses.length === 0 &&
@@ -416,6 +452,13 @@ export function applySnapshot(s: OwnerSnapshot): void {
       JSON.stringify({ version: REMOVED_IDS_STORAGE_VERSION, ids: s.removedIds }),
     );
     localStorage.setItem(USER_ADDED_KEY, JSON.stringify(s.userAdded));
+    localStorage.setItem(
+      USER_ADDED_REMOVED_KEY,
+      JSON.stringify({
+        version: USER_ADDED_REMOVED_VERSION,
+        ids: s.deletedUserAdded,
+      }),
+    );
   } catch {
     // ignore
   }

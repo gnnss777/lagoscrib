@@ -15,7 +15,10 @@ import {
   CHECKLIST_STORAGE_VERSION,
   REMOVED_IDS_STORAGE_KEY,
   REMOVED_IDS_STORAGE_VERSION,
+  USER_ADDED_REMOVED_KEY,
+  USER_ADDED_REMOVED_VERSION,
 } from "@/lib/constants";
+import { USER_ADDED_KEY } from "@/lib/pool";
 import {
   KANBAN_COLUMNS,
   STATUS_LABELS,
@@ -420,12 +423,37 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const removeApartment = useCallback((apartmentId: string) => {
     if (apartmentId.startsWith("new-")) {
       try {
-        const stored = localStorage.getItem("apartamentos-app-new");
+        const stored = localStorage.getItem(USER_ADDED_KEY);
         const list: import("@/lib/data").Apartment[] = stored ? JSON.parse(stored) : [];
         localStorage.setItem(
-          "apartamentos-app-new",
+          USER_ADDED_KEY,
           JSON.stringify(list.filter((a) => a.id !== apartmentId)),
         );
+        // Lápide NA CHAVE DO PRÓPRIO IMÓVEL MANUAL, não em `removedIds`.
+        // Imóvel digitado à mão não está em `lib/data.ts`, então ele não pode
+        // entrar na lista de removidos da base — e sem lápide a exclusão não
+        // sobrevive ao sync, porque `userAdded` é união no merge e o imóvel
+        // excluído voltaria no próximo pull de outro aparelho.
+        const prev = localStorage.getItem(USER_ADDED_REMOVED_KEY);
+        const parsed = prev
+          ? (JSON.parse(prev) as { version?: unknown; ids?: unknown })
+          : null;
+        const ids =
+          parsed &&
+          typeof parsed === "object" &&
+          parsed.version === USER_ADDED_REMOVED_VERSION &&
+          Array.isArray(parsed.ids)
+            ? (parsed.ids as string[])
+            : [];
+        if (!ids.includes(apartmentId)) {
+          localStorage.setItem(
+            USER_ADDED_REMOVED_KEY,
+            JSON.stringify({
+              version: USER_ADDED_REMOVED_VERSION,
+              ids: [...ids, apartmentId],
+            }),
+          );
+        }
       } catch {
         // ignore
       }

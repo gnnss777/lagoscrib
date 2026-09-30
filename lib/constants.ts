@@ -202,6 +202,19 @@ export const KANBAN_COLS_STORAGE_VERSION = 2;
 export const REMOVED_IDS_STORAGE_KEY = "apartamentos-app-removed";
 export const REMOVED_IDS_STORAGE_VERSION = 2;
 
+// Lápide dos imóveis que o DONO cadastrou à mão (USER_ADDED_KEY), e não dos
+// imóveis da base. São namespaces diferentes de propósito: um imóvel digitado
+// no aparelho não existe em `lib/data.ts`, então ele não pode entrar na lista de
+// removidos da base — e o teste `test_delete_new_remove_fisico_sem_removed_ids`
+// exige exatamente que `apartamentos-app-removed` continue nulo quando alguém
+// exclui um imóvel manual.
+//
+// Sem lápide própria, a exclusão não viajava o sync: o `userAdded` é união no
+// merge (o servidor não pode apagar o que só existe aqui), então o imóvel
+// excluído no PC1 voltava no load do PC2. Uma chave separada resolve os dois.
+export const USER_ADDED_REMOVED_KEY = "apartamentos-app-new-removed";
+export const USER_ADDED_REMOVED_VERSION = 1;
+
 // Rótulos da UI do kanban (AC4: grep acha só aqui + importadores).
 export const KANBAN_ONLY_STALE_LABEL = "Só sem retorno";
 export const KANBAN_SHOW_ALL_LABEL = "Mostrar todos";
