@@ -144,10 +144,12 @@ def main():
     for x in items:
         iid = x["id"]
         got = []
+        # Antes de QUALQUER request, inclusive o da capa (i=0): a pasta do
+        # imóvel precisa existir para a capa, e deixar isso dentro de `if i > 0`
+        # fazia o primeiro item estourar FileNotFoundError em diretório novo.
+        os.makedirs(os.path.join(BASE, iid), exist_ok=True)
         for i, url in enumerate(x["photoUrls"][:11]):
             path = caminho_fotos(BASE, iid, i)
-            if i > 0:
-                os.makedirs(os.path.dirname(path), exist_ok=True)
             # Já existe e tem peso plausível: não refaz request. O
             # `download.py --corrigir` normaliza px/bytes do que já está no disco.
             if os.path.exists(path) and os.path.getsize(path) > 5000:
