@@ -247,10 +247,18 @@ export const THEME_PALETTE = {
   ink: "#1A1A1A", // texto principal (16.53:1 no paper)
   "ink-soft": "#4B5563", // texto secundário (7.18:1 no paper, 7.56 no card)
   muted: "#57534E", // placeholder/label (7.25:1 no paper, 7.63 no card)
-  // Voz da marca: amarelo táxi (texto sempre ink por cima — nunca branco)
-  taxi: "#F5C518", // CTA, seleção, logo (10.68:1 com ink)
-  "taxi-strong": "#E0B400", // hover do CTA (8.87:1 com ink)
-  pastel: "#FDF096", // chip/badge de destaque (14.99:1 com ink)
+  // Voz da marca: amarelo táxi (texto por cima é `on-accent` — que NESTE tema
+  // é o mesmo `ink`; no escuro diverge, e é por isso que o token existe)
+  taxi: "#F5C518", // CTA, seleção, logo (10.68:1 com ink/on-accent)
+  "taxi-strong": "#E0B400", // hover do CTA (8.87:1 com ink/on-accent)
+  pastel: "#FDF096", // chip/badge de destaque (14.99:1 com ink/on-accent)
+  // Texto POR CIMA de um acento — o par `on-primary` de qualquer design system.
+  // No tema CLARO os acentos são claros e a tinta é escura, então on-accent = ink
+  // e nada muda na tela (zero diff visual no perfil `dono`). No tema escuro os
+  // acentos continuam claros e a tinta é clara, então on-accent vira um tom
+  // escuro: é o que salva os 5 pares de acento que o ink invertido quebraria
+  // (medidos: ink #F0E6D2 sobre taxi #E8A317 = 1.75:1 — proibido).
+  "on-accent": "#1A1A1A",
   // Pastéis de status (fundo + texto escuro calibrado, nunca só por cor)
   peach: "#FFE3D1",
   water: "#DDF3F0",
@@ -273,6 +281,133 @@ export const THEME_PALETTE = {
 
 export type ThemeToken = keyof typeof THEME_PALETTE;
 
+// --- Tema "Dungeon Quest" (perfil `thais`) ---
+// Mesmo conjunto de chaves do tema claro, MESMA direção de marca (âmbar de
+// tocha) sobre pedra e noite. Escolhido em build-time por NEXT_PUBLIC_PERFIL
+// (ver app/layout.tsx): os valores vão para o atributo `style` do <html>, e as
+// 504 classes utilitárias (`bg-paper`, `text-ink`, `border-line`...) passam a
+// resolver o token novo sem nenhuma classe precisar ser renomeada. Os hexes
+// vivem AQUI e não em globals.css de propósito: o CSS é um arquivo só para os
+// dois perfis, então um hex da dungeon em `@theme` entraria no bundle do dono.
+// Todos os pares foram medidos com lib/contrast.ts e travados no mesmo teste do
+// tema claro (texto ≥ 7:1, UI ≥ 3:1) — ver DESIGN.md §1.1.
+export const THEME_PALETTE_DUNGEON: Record<ThemeToken, string> = {
+  // Superfícies escuras: pedra e noite
+  paper: "#0D0B08", // fundo do app (pedra quase preta)
+  card: "#1A1611", // cards, modais, inputs (pedra levantada)
+  sand: "#2A241C", // superfície de apoio (badge "novo" — só com texto ink)
+  // Tinta clara (a tinta vira pergaminho, não breu)
+  ink: "#F0E6D2", // texto principal (15.87:1 no paper)
+  "ink-soft": "#C9BC9B", // texto secundário (10.44:1 no paper, 9.56 no card)
+  muted: "#BCAE90", // placeholder/label (8.98:1 no paper, 8.22 no card)
+  // Voz da marca: âmbar de tocha (texto SEMPRE on-accent por cima)
+  taxi: "#E8A317", // CTA, seleção, logo (8.67:1 no night, 8.30 no card)
+  "taxi-strong": "#CE9410", // hover do CTA (7.35:1 com on-accent)
+  pastel: "#F2D9A0", // chip/badge de destaque (14.20:1 com on-accent)
+  // Texto por cima do acento: tinta de breu (o `ink` claro daria 1.75:1 aqui)
+  "on-accent": "#0F0B06",
+  // Pastéis de status (fundo escuro + texto claro calibrado, nunca só por cor)
+  peach: "#E8C3A4",
+  water: "#BFD9D6",
+  amberink: "#E0B878", // links/texto âmbar (9.68:1 no card, 8.26 na sand)
+  "st-blue-bg": "#16233F",
+  "st-blue": "#8FB6F5", // 7.56:1 no próprio bg
+  "st-purple-bg": "#261B3D",
+  "st-purple": "#C3A6F0", // 7.68:1 no próprio bg
+  "st-green-bg": "#13291B",
+  "st-green": "#77D69B", // 8.73:1 no próprio bg
+  "st-red-bg": "#331618",
+  "st-red": "#F5A19C", // 8.24:1 no próprio bg
+  // Linhas e foco
+  // `line` no escuro precisa de MAIS luminância que no claro: ele é o trilho do
+  // slider de preço (`bg-line`, PriceRangeSlider) e é a única pista de borda do
+  // card. Medido: 3.36:1 no paper / 3.07:1 no card — acima do piso de UI 3:1,
+  // e ainda abaixo da `inputbd` (5.06:1) para a hierarquia de bordas ficar.
+  line: "#6F6353",
+  inputbd: "#948670", // borda de input (5.06:1 no card — piso UI 3:1)
+  // Exceção foto: scrim SÓ sobre imagens (mesmo azul-noite do app/icon.svg)
+  night: "#0B1121",
+};
+
+/**
+ * Converte uma paleta no formato de custom properties do Tailwind (`@theme`),
+ * para o atributo `style` do <html>. Só o perfil ativo recebe isso: o `dono`
+ * fica com os valores do `@theme` de globals.css, sem toque nenhum.
+ * Retorna um mapa (e não uma string) porque `style` do React só aceita objeto —
+ * e objeto também é o que sobrevive ao SSR dentro do HTML.
+ */
+export function themeCssVars(
+  palette: Record<string, string>,
+): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(palette).map(([token, hex]) => [`--color-${token}`, hex]),
+  );
+}
+
+// --- Identidade por perfil (mesmo app, dois clientes isolados) ---
+// Escolhido em build-time por NEXT_PUBLIC_PERFIL (ver app/layout.tsx e
+// next.config.js). `dono` é o default: sem a env, o comportamento é o de sempre.
+export type AppProfile = "dono" | "thais";
+
+export interface AppProfileMeta {
+  appName: string;
+  appTitle: string;
+  appDescription: string;
+  ogDescription: string;
+  keywords: string[];
+  // Domínio do contato do encarregado (LGPD art. 41) quando não há
+  // PRIVACY_CONTACT_EMAIL no ambiente — o texto legal de um cliente não pode
+  // citar a marca do outro (ver lib/privacy.ts).
+  contactDomain: string;
+}
+
+export const APP_PROFILES: Record<AppProfile, AppProfileMeta> = {
+  dono: {
+    appName: "Lagoscrib",
+    appTitle: "Lagoscrib — Curitiba Apartamentos: Aluguel e Venda",
+    appDescription:
+      "Curadoria de apartamentos em Curitiba para alugar e comprar: busca por bairro, filtros de facilidades, comparação lado a lado, estimativa de entrada/mudança e kanban de prospecção para acompanhar visitas e negociações.",
+    ogDescription:
+      "Curadoria de apartamentos em Curitiba para alugar e comprar, com comparação lado a lado e kanban de prospecção.",
+    keywords: [
+      "apartamentos Curitiba",
+      "alugar apartamento Curitiba",
+      "comprar apartamento Curitiba",
+      "prospecção imobiliária",
+      "kanban imóveis",
+    ],
+    contactDomain: "lagoscrib.local",
+  },
+  thais: {
+    appName: "Dungeon Quest Igor e Thaís Tales",
+    appTitle:
+      "Dungeon Quest Igor e Thaís Tales — Curitiba Casas: Aluguel e Venda",
+    appDescription:
+      "Curadoria de casas em Curitiba para alugar e comprar: busca por bairro, filtros de facilidades, comparação lado a lado, estimativa de entrada/mudança e kanban de prospecção para acompanhar visitas e negociações.",
+    ogDescription:
+      "Curadoria de casas em Curitiba para alugar e comprar, com comparação lado a lado e kanban de prospecção.",
+    keywords: [
+      "casas Curitiba",
+      "alugar casa Curitiba",
+      "comprar casa Curitiba",
+      "casas 3 quartos Curitiba",
+      "Chaves na Mão",
+    ],
+    contactDomain: "dungeonquest.local",
+  },
+};
+
+/** Perfil do deploy, lido da env pública (fallback = dono, o comportamento de sempre). */
+export function resolveAppProfile(
+  env: Record<string, string | undefined> = {},
+): AppProfile {
+  return (
+    env.NEXT_PUBLIC_PERFIL ??
+    env.NEXT_PUBLIC_BASE_ARQUIVO ??
+    "dono"
+  ) as AppProfile;
+}
+
 export interface ThemeContrastPair {
   fg: ThemeToken;
   bg: ThemeToken;
@@ -282,45 +417,105 @@ export interface ThemeContrastPair {
 
 // Texto normal: piso AAA (7:1). Cada par tem redundância de estado onde há cor
 // (ícone/label/aria) — camada AAA existente do projeto, preservada.
+//
+// A lista é COMPARTILHADA pelos dois temas: todo par aqui tem de passar nas
+// duas paletas. É por isso que o texto sobre acento é `on-accent` e nunca `ink`
+// — `ink` é escuro no tema claro e claro no escuro, e nenhum dos dois valores
+// funciona nos dois lados do acento.
 export const THEME_CONTRAST_TEXT: ThemeContrastPair[] = [
   { fg: "ink", bg: "paper", floor: 7, label: "texto principal no fundo" },
   { fg: "ink", bg: "card", floor: 7, label: "texto principal no card" },
+  { fg: "ink", bg: "sand", floor: 7, label: "texto no badge areia" },
   { fg: "ink-soft", bg: "paper", floor: 7, label: "texto secundário no fundo" },
   { fg: "ink-soft", bg: "card", floor: 7, label: "texto secundário no card" },
   { fg: "muted", bg: "paper", floor: 7, label: "placeholder no fundo" },
   { fg: "muted", bg: "card", floor: 7, label: "placeholder no card" },
-  { fg: "ink", bg: "taxi", floor: 7, label: "texto no CTA táxi" },
-  { fg: "ink", bg: "taxi-strong", floor: 7, label: "texto no hover do CTA" },
-  { fg: "ink", bg: "pastel", floor: 7, label: "texto no chip pastel" },
-  { fg: "ink", bg: "sand", floor: 7, label: "texto no badge areia" },
-  { fg: "ink", bg: "peach", floor: 7, label: "texto no pastel pêssego" },
-  { fg: "ink", bg: "water", floor: 7, label: "texto no pastel água" },
+  { fg: "on-accent", bg: "taxi", floor: 7, label: "texto no CTA táxi" },
+  {
+    fg: "on-accent",
+    bg: "taxi-strong",
+    floor: 7,
+    label: "texto no hover do CTA",
+  },
+  { fg: "on-accent", bg: "pastel", floor: 7, label: "texto no chip pastel" },
+  { fg: "on-accent", bg: "peach", floor: 7, label: "texto no pastel pêssego" },
+  { fg: "on-accent", bg: "water", floor: 7, label: "texto no pastel água" },
   { fg: "amberink", bg: "card", floor: 7, label: "link âmbar no card" },
   { fg: "amberink", bg: "sand", floor: 7, label: "link âmbar na areia" },
+  { fg: "amberink", bg: "paper", floor: 7, label: "link âmbar no fundo" },
   { fg: "st-blue", bg: "st-blue-bg", floor: 7, label: "badge agendado" },
   { fg: "st-purple", bg: "st-purple-bg", floor: 7, label: "badge visita feita" },
   { fg: "st-green", bg: "st-green-bg", floor: 7, label: "badge aprovado" },
   { fg: "st-red", bg: "st-red-bg", floor: 7, label: "badge recusado" },
   // Kanban (leva kanban-prospeccao): selo de retorno + alerta de coluna.
-  { fg: "ink", bg: "pastel", floor: 7, label: "selo sem retorno no card" },
+  { fg: "on-accent", bg: "pastel", floor: 7, label: "selo sem retorno no card" },
   { fg: "amberink", bg: "card", floor: 7, label: "alerta sem retorno na coluna" },
+  // Status desenhado como TEXTO (não badge) sobre superfície do app:
+  // VisitChecklist/KanbanBoard escrevem "ok"/"erro" direto no card e na areia.
+  { fg: "st-green", bg: "card", floor: 7, label: "texto de ok no card" },
+  { fg: "st-red", bg: "card", floor: 7, label: "texto de erro no card" },
+  { fg: "st-green", bg: "sand", floor: 7, label: "texto de ok na areia" },
+  { fg: "st-red", bg: "sand", floor: 7, label: "texto de erro na areia" },
 ];
 
 // UI não-textual: piso WCAG 2.2 de componente gráfico (3:1).
 export const THEME_CONTRAST_UI: ThemeContrastPair[] = [
   { fg: "inputbd", bg: "card", floor: 3, label: "borda de input" },
+  { fg: "inputbd", bg: "paper", floor: 3, label: "borda de input no painel" },
   { fg: "ink", bg: "paper", floor: 3, label: "anel de foco no fundo" },
   { fg: "ink", bg: "card", floor: 3, label: "anel de foco no card" },
 ];
 
+// UI do tema ESCURO só. Existe porque a pedra precisa de pistas visuais que o
+// papel já dava de graça: `line` é o trilho do slider e a única borda do card,
+// e o thumb do slider é um disco táxi dentro de uma pedra escura. No tema claro
+// nenhum destes pares é problema (o contraste nasce da sombra e da borda
+// escura), então a lista é do dungeon e não da compartilhada — botar `line`
+// na lista comum reprovaria o dono em 1.23:1 sem poder consertá-lo sem mexer
+// no visual dele.
+export const THEME_CONTRAST_UI_DUNGEON: ThemeContrastPair[] = [
+  { fg: "line", bg: "paper", floor: 3, label: "trilho do slider no fundo" },
+  { fg: "line", bg: "card", floor: 3, label: "hairline no card" },
+  { fg: "taxi", bg: "paper", floor: 3, label: "CTA e thumb do slider no fundo" },
+  { fg: "taxi", bg: "card", floor: 3, label: "thumb do slider no card" },
+  {
+    fg: "on-accent",
+    bg: "taxi",
+    floor: 3,
+    label: "anel do thumb sobre o disco táxi",
+  },
+];
+
 // Pares proibidos pelo DESIGN.md v2 (documentados para ninguém reintroduzir).
+// Lista do tema CLARO: a cor de superfície clara (`card` = branco) sobre acento
+// quebra, porque o acento já é claro e a CTA leva tinta escura por cima.
 export const THEME_FORBIDDEN_PAIRS: ThemeContrastPair[] = [
   // Branco sobre táxi = 1.63:1 — CTA leva tinta preta, sem exceção.
-  { fg: "card", bg: "taxi", floor: 4.5, label: "branco sobre táxi (usar ink)" },
+  { fg: "card", bg: "taxi", floor: 4.5, label: "branco sobre táxi (usar on-accent)" },
   {
     fg: "card",
     bg: "taxi-strong",
     floor: 4.5,
-    label: "branco sobre táxi-strong (usar ink)",
+    label: "branco sobre táxi-strong (usar on-accent)",
+  },
+];
+
+// Mesma proibição, medida na paleta escura. O token que quebra aqui é o
+// `ink`: no tema dungeon a tinta é clara e o acento também, então ink sobre
+// acento dá 1.75:1 (o bug que o `on-accent` existe para impedir). Já `card`
+// (pedra) sobre acento DÁ contraste — por isso a lista é por tema, e não uma
+// só: cada tema proíbe o seu próprio "texto errado" no acento.
+export const THEME_FORBIDDEN_PAIRS_DUNGEON: ThemeContrastPair[] = [
+  {
+    fg: "ink",
+    bg: "taxi",
+    floor: 4.5,
+    label: "tinta clara sobre táxi (usar on-accent)",
+  },
+  {
+    fg: "ink",
+    bg: "pastel",
+    floor: 4.5,
+    label: "tinta clara sobre pastel (usar on-accent)",
   },
 ];

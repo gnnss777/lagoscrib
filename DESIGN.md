@@ -1,7 +1,7 @@
 ---
-version: 2.0
+version: 2.1
 name: lagoscrib
-description: Gestor pessoal de imóveis (aluguel + venda) em Curitiba — dashboard claro "Lightbox Analógico" (papel creme + amarelo táxi), contraste AAA, extremamente intuitivo, zero atrito. UI exibe estado; nunca é dona do estado.
+description: Gestor pessoal de imóveis (aluguel + venda) em Curitiba — dois temas de marca no mesmo app: dashboard claro "Lightbox Analógico" (papel creme + amarelo táxi, perfil `dono`) e escuro "Dungeon Quest" (pedra e noite + âmbar de tocha, perfil `thais`), contraste AAA nos dois, extremamente intuitivo, zero atrito. UI exibe estado; nunca é dona do estado.
 stack: Next.js 16 App Router + Tailwind 4 + motion/react + Phosphor + Geist
 colors:
   paper: "#FAF9F6"
@@ -10,9 +10,9 @@ colors:
   ink: "#1A1A1A"
   ink-soft: "#4B5563"
   muted: "#57534E"
-  accent: "#F5C518"
-  accent-strong: "#E0B400"
-  accent-soft: "#FDF096"
+  taxi: "#F5C518"
+  taxi-strong: "#E0B400"
+  pastel: "#FDF096"
 typography:
   display: { fontFamily: Geist, weight: 700 }
   body: { fontFamily: Geist, weight: 400 }
@@ -22,9 +22,13 @@ typography:
 # DESIGN.md — lagoscrib
 
 > Sistema de design para desenvolvimento assistido por IA. Fonte única de verdade visual.
-> Última revisão: 2026-09-22 (v2.0 "Lightbox Analógico" — virou claro) | Dono: Gabriel | Revisão trimestral: sim
+> Última revisão: 2026-09-30 (v2.1 — segundo tema por perfil, §1.1; `ProfileModal` removido da §3/§4) | Dono: Gabriel | Revisão trimestral: sim
 > O agente LÊ este arquivo antes de gerar qualquer UI (invariante #1). Diz o *como*; o plano de leva diz o *quê*.
 > Aprovado em review de PR (F0′ da leva dores-consumidor).
+>
+> **Multi-perfil:** as cores deste frontmatter são as do perfil `dono`. O perfil
+> `thais` tem a sua própria paleta, em §1.1. Não copie hex do frontmatter para
+> um componente novo sem decidir qual perfil ele serve.
 
 ## 0. Mandato do produto (regras claras — o Gabriel pediu, vira critério de review)
 
@@ -67,10 +71,11 @@ Estas 4 regras dominam TODA decisão de UI. Qualquer tela que as viole = erro de
 | `ink` | `#1A1A1A` | Texto principal | 16.53:1 no paper |
 | `ink-soft` | `#4B5563` | Texto secundário | 7.18:1 no paper |
 | `muted` | `#57534E` | Placeholder/label | 7.25:1 no paper |
-| `taxi` | `#F5C518` | **Accent** (CTA, seleção, logo — texto sempre `ink`) | 10.68:1 com ink |
-| `taxi-strong` | `#E0B400` | Accent hover/pressed | 8.87:1 com ink |
-| `pastel` | `#FDF096` | Chip/badge de destaque (texto `ink`) | 14.99:1 com ink |
-| `peach` / `water` | `#FFE3D1` / `#DDF3F0` | Pastéis reserva p/ status | 14.2–15.0:1 com ink |
+| `taxi` | `#F5C518` | **Accent** (CTA, seleção, logo — texto sempre `on-accent`) | 10.68:1 com on-accent |
+| `taxi-strong` | `#E0B400` | Accent hover/pressed | 8.87:1 com on-accent |
+| `pastel` | `#FDF096` | Chip/badge de destaque (texto `on-accent`) | 14.99:1 com on-accent |
+| `peach` / `water` | `#FFE3D1` / `#DDF3F0` | Pastéis reserva p/ status (texto `on-accent`) | 14.2–15.0:1 com on-accent |
+| `on-accent` | `#1A1A1A` | **Texto POR CIMA de um acento** (= `ink` no tema claro) | — |
 | `amberink` | `#5F4100` | Links/texto âmbar (card, sand, paper) | 7.78–9.36:1 |
 | `st-blue` / `st-blue-bg` | `#1E40AF` / `#DBEAFE` | Badge "agendado" | 7.15:1 |
 | `st-purple` / `st-purple-bg` | `#6B21A8` / `#F3E8FF` | Badge "visita feita" | 7.39:1 |
@@ -78,13 +83,81 @@ Estas 4 regras dominam TODA decisão de UI. Qualquer tela que as viole = erro de
 | `st-red` / `st-red-bg` | `#7F1D1D` / `#FEE2E2` | Badge "recusado" + erro de login | 8.20:1 |
 | `line` | `#E7E2D8` | Hairline decorativa (nunca único indicador) | — |
 | `inputbd` | `#78716C` | Borda de input/checkbox | 4.80:1 no card |
-| `night` | `#0B1121` | Scrim SÓ sobre fotos (texto `paper` por cima) | 18.81:1 com paper |
+| `night` | `#0B1121` | Scrim SÓ sobre fotos (texto claro por cima — `paper` no tema claro, `ink` no escuro) | 18.81:1 com paper |
 
 Regras:
 - **NUNCA hex solto fora desta tabela** (invariante #2). Nova cor? Adicionar token aqui + `THEME_PALETTE` + revisão no PR.
 - **AAA de verdade, com número:** texto normal ≥ 7:1, UI/borda ≥ 3:1 — travado em `tests/unit/lightbox-contrast.test.ts` (roda na suite; quebrou o piso = build vermelho, sem discussão).
 - **Proibições documentadas** (o teste prova que falham): branco sobre `taxi` (1.63:1) e sobre `taxi-strong` (1.96:1) — CTA leva tinta preta, sem exceção. Anel de foco é `ink` (táxi sobre creme = 1.55:1, falha UI).
+- **Texto sobre acento é `on-accent`, nunca `ink`** (§1.1). No tema claro os dois são o mesmo pixel; no escuro só um dos dois funciona.
 - Semânticas: `success`/`warning`/`danger` só em badge de status e validação — nunca reinventar por tela; badges pastel + texto escuro calibrado + label textual (estado nunca só por cor).
+
+## 1.1 Tema por perfil (o app serve dois clientes isolados)
+
+O mesmo código serve **dois** clientes, escolhidos em **build-time** pela env
+`NEXT_PUBLIC_PERFIL` (fallback `NEXT_PUBLIC_BASE_ARQUIVO`; sem env = `dono`).
+`next.config.js` já troca o **dado** (`lib/data.ts` ↔ `lib/data-thais.ts`); esta
+seção é o **visual** do mesmo mecanismo.
+
+| Perfil | Cliente | Dado | Teto | Identidade |
+|---|---|---|---|---|
+| `dono` | Igor | `lib/data.ts` — apartamentos 2–3 quartos | R$ 3.600 | Lagoscrib |
+| `thais` | Thaís | `lib/data-thais.ts` — casas 3+ quartos | R$ 8.000 | Dungeon Quest Igor e Thaís Tales |
+
+**"Dungeon Quest" = pedra e noite, com âmbar de tocha como voz da marca.**
+Mesmos nomes de token da §1, valores invertidos na superfície e a mesma direção
+de marca (`app/icon.svg`, `#0B1121` + dourado `#C8A66B`, é o mesmo nos dois perfis).
+
+| Token | Hex (dungeon) | Papel | Contraste medido |
+|---|---|---|---|
+| `paper` | `#0D0B08` | Fundo do app (pedra quase preta) | — |
+| `card` | `#1A1611` | Cards, modais, inputs | — |
+| `sand` | `#2A241C` | Superfície de apoio (badge "novo") | 12.40:1 com ink |
+| `ink` | `#F0E6D2` | Texto principal (pergaminho, não breu) | 15.87:1 no paper · 14.53:1 no card |
+| `ink-soft` | `#C9BC9B` | Texto secundário | 10.44:1 no paper · 9.56:1 no card |
+| `muted` | `#BCAE90` | Placeholder/label | 8.98:1 no paper · 8.22:1 no card |
+| `taxi` | `#E8A317` | **Accent** (CTA, seleção, logo) | 9.06:1 no paper · 9.04:1 com on-accent |
+| `taxi-strong` | `#CE9410` | Accent hover/pressed | 7.35:1 com on-accent |
+| `pastel` | `#F2D9A0` | Chip/badge de destaque | 14.20:1 com on-accent |
+| `on-accent` | `#0F0B06` | **Texto por cima de um acento** (tinta de breu) | 7.35–14.20:1 nos 5 acentos |
+| `peach` / `water` | `#E8C3A4` / `#BFD9D6` | Pastéis reserva p/ status | 11.93 / 13.18:1 com on-accent |
+| `amberink` | `#E0B878` | Links/texto âmbar | 10.57:1 no paper · 9.68:1 no card |
+| `st-blue` / `st-blue-bg` | `#8FB6F5` / `#16233F` | Badge "agendado" | 7.56:1 |
+| `st-purple` / `st-purple-bg` | `#C3A6F0` / `#261B3D` | Badge "visita feita" | 7.68:1 |
+| `st-green` / `st-green-bg` | `#77D69B` / `#13291B` | Badge "aprovado" + "ok" no card | 8.73:1 · 10.18:1 no card |
+| `st-red` / `st-red-bg` | `#F5A19C` / `#331618` | Badge "recusado" + erro | 8.24:1 · 8.97:1 no card |
+| `line` | `#6F6353` | Hairline **e** trilho do slider | 3.36:1 no paper · 3.07:1 no card (piso UI) |
+| `inputbd` | `#948670` | Borda de input/checkbox | 5.06:1 no card |
+| `night` | `#0B1121` | Scrim de foto (mesmo do claro) | — |
+
+Regras do tema por perfil (todas travadas em `tests/unit/lightbox-contrast.test.ts`):
+
+1. **`on-accent` é o único texto legal sobre um acento.** No tema claro ele
+   resolve para `ink`, então o `dono` não muda um pixel. No escuro, `ink` sobre
+   `taxi` daria **1.75:1** e sobre `pastel` **1.11:1** — proibido (o teste mede
+   a falha em `THEME_FORBIDDEN_PAIRS_DUNGEON`). A lista de pares de texto é
+   **compartilhada** pelos dois temas: é isso que impede a regressão.
+2. **Os tokens do escuro NÃO entram em `globals.css`.** O `@theme` é a paleta do
+   `dono`, token a token (travado por teste). O escuro é serializado em tempo de
+   render no atributo `style` do `<html>` (`themeCssVars(THEME_PALETTE_DUNGEON)`
+   em `app/layout.tsx`), então `bg-paper`/`text-ink`/`border-line` resolvem o tom
+   novo sem renomear uma classe das 504 referências. Build do `dono` não carrega
+   nenhum hex da dungeon — gate de build.
+3. **`data-perfil` no `<html>` é o gancho do CSS.** Regras que a tinta clara
+   quebrava vão em `[data-perfil="thais"]` no fim de `globals.css` (§1.1 do CSS,
+   sem hex, só resolve-token). Hoje são três: texto sobre acento
+   (`.bg-taxi`/`.bg-pastel`/…), `--color-paper: var(--color-ink)` dentro de
+   qualquer `[class*="bg-night"]` (texto sobre foto, que senão cai para 1.04:1)
+   e `::selection` âmbar cheio.
+4. **Nunca renomear token** e nunca quebrar par antigo: a paleta escura tem os
+   mesmos nomes por construção (`Record<ThemeToken, string>`) e o teste compara
+   os `Object.keys`.
+5. **Toda identidade passa por `APP_PROFILES`** (`lib/constants.ts`): title,
+   description, applicationName, OG e o contato do encarregado na política de
+   privacidade. Nada de "Lagoscrib" hardcoded fora do perfil `dono`.
+6. **Elevação:** sombra quase preta sobre pedra não existe. No escuro a
+   separação vem de `line` (3.07:1 no card) e do brilho âmbar no hover, não de
+   `box-shadow` — por isso `line` é o token que precisou de mais luminância.
 
 ## 2. Typography (Geist + Geist Mono — já no `layout.tsx`)
 
@@ -101,8 +174,8 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 ## 3. Spacing & shapes
 
 - Base: 4px. Escala: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 — valor fora = erro de review.
-- Raios: inputs/buttons `rounded-lg` (8px), cards/panels `rounded-2xl` (16px), badges/pills `rounded-full`, thumbnails `rounded-xl` (12px); kanban full-viewport (`ProfileModal`) ocupa a tela cheia sem raio externo.
-- Largura: conteúdo `max-w-7xl` no dashboard; modal `max-w-2xl`; kanban em tela cheia (`ProfileModal` full-viewport, board estático sem scroll em lg+ com scroll de fallback abaixo de lg); lightbox full screen escuro; shells mobile-first (colunas empilham < 640px).
+- Raios: inputs/buttons `rounded-lg` (8px), cards/panels `rounded-2xl` (16px), badges/pills `rounded-full`, thumbnails `rounded-xl` (12px); colunas do kanban são trilhos (`rounded-xl`), sem moldura externa.
+- Largura: conteúdo `max-w-7xl` no dashboard; modal `max-w-2xl`; kanban como **modo de visualização da mesma página** (`ViewMode = "busca" | "quadro"`, `KanbanSection` + `KanbanBoard`), sem modal próprio: board estático sem scroll em lg+ com scroll de fallback abaixo de lg; lightbox full screen escuro; shells mobile-first (colunas empilham < 640px).
 
 ## 4. Components (nomes oficiais do Glossário + novos registrados)
 
@@ -110,10 +183,10 @@ Regras: escala fixa (5 papeis, nada de tamanho arbitrário); valores monetários
 
 | Componente | Variantes | Anatomia (tokens) | Estados obrigatórios |
 |---|---|---|---|
-| Button | primary / secondary / ghost | primary: `bg-taxi text-ink` (hover `taxi-strong`); ghost: `border-inputbd text-ink` | default, hover, active, disabled (+motivo), loading, focus-visible ring ink |
+| Button | primary / secondary / ghost | primary: `bg-taxi text-on-accent` (hover `taxi-strong`); ghost: `border-inputbd text-ink` | default, hover, active, disabled (+motivo), loading, focus-visible ring ink |
 | Input + Select | default / error | `bg-card border-inputbd rounded-lg px-3 h-11` | default, focus (borda ink + sombra ink/12), error (+mensagem inline), disabled |
 | Toggle (kit #4) | Alugar\|Comprar | pill 48×28, knob branco, accent quando on, `role="switch"` | checked/unchecked, focus-visible, reduced-motion |
-| StatusBadge (kit #2) | tom ok/warn/accent por status | pill 13px semibold pastel + texto escuro calibrado (todos ≥ 7:1) | estático; acessível via `aria-label` quando só-icone |
+| StatusBadge (kit #2) | tom ok/warn/accent por status | pill 13px semibold pastel + texto `on-accent` calibrado (todos ≥ 7:1 nos dois temas) | estático; acessível via `aria-label` quando só-icone |
 | VerifiedBadge | "Verificado em {data} · {origem}" | texto `amberink` + ícone ✓ | estático; tooltip com data exata |
 | Card (ApartmentCard) | mínimo: foto + badge + preço + bairro + 4 stats + Comparar | `bg-card`, `rounded-2xl`, borda `line`, hover translateY(-4px) + brilho táxi; SEM links/endereço/facilidades/Prospectar (vivem no modal) | default, hover (clicável), focus-visible; **loading = skeleton com a MESMA geometria** |
 | KanbanCard (pílula) | miniatura 40px + título/bairro 1 linha + preço mono + selo; menu Mover…/Contatei/Retornou | `bg-card`, `rounded-xl`, borda `line`; selo `bg-pastel`/`bg-st-green-bg` (pares travados); coluna trava em `KANBAN_VISIBLE_CAP` + rodapé "+N restantes" (dialog jump-list) | default, focus-visible; teclado `,`/`.`/`<`/`>` + Enter/Esc; board estático sem scroll (lg+) |
@@ -143,6 +216,11 @@ Regras de componentes:
 | 1 | `0 1px 2px rgba(26,26,26,.05)` + `shadow-sm` | Cards (default), toggles |
 | 2 | `0 20px 40px -15px rgba(26,26,26,.18)` | Cards hover, painéis |
 | 3 | `shadow-xl` / `shadow-2xl` | Dialog, login card, CompareBar (sticky) |
+
+No tema escuro (§1.1 regra 6) a sombra não é o mecanismo de separação: quase
+preto sobre pedra não aparece. A borda `line` (3.07:1 no card) e o brilho âmbar
+do hover carregam a elevação — por isso os mesmos níveis de sombra são
+inofensivos ali, e ninguém deve "corrigir" criando sombra clara.
 
 ## 6. Motion (motion/react — já no projeto)
 
@@ -186,7 +264,8 @@ Regras de componentes:
 
 ## 10. QC (checklist com números — roda na F7)
 
-- [ ] Contraste AAA automatizado: `tests/unit/lightbox-contrast.test.ts` verde — texto ≥ 7:1, UI ≥ 3:1, pares proibidos documentados. Zero falhas.
+- [ ] Contraste AAA automatizado: `tests/unit/lightbox-contrast.test.ts` verde — texto ≥ 7:1, UI ≥ 3:1, pares proibidos documentados. Zero falhas. **Nos DOIS temas** (o mesmo arquivo valida `THEME_PALETTE` e `THEME_PALETTE_DUNGEON`).
+- [ ] Isolamento de perfil: `npm run build` sem env → `grep` nenhum hex da dungeon em `.next/static`; com `NEXT_PUBLIC_PERFIL=thais` → os tokens aparecem. `git diff lib/data.ts lib/data-thais.ts` vazio.
 - [ ] `prefers-reduced-motion`: nenhum efeito anima quando ativo (kill-switch global em `globals.css` + `useReducedMotion`).
 - [ ] Zero CLS: toda imagem com dimensões/`aspect-ratio`; `grep` sem `img` sem width/height.
 - [ ] Fotos: galeria ≤ 350KB/arquivo; peso total por imóvel ≤ 3,5MB; lado maior ≥ 800px e lado menor ≥ 500px (orientation-aware: retrato usa a altura como eixo — S002 provou que o CDN entrega fit-in); 1ª `priority`, demais `lazy`.

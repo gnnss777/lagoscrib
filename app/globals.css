@@ -4,7 +4,11 @@
   /* Tema "Lightbox Analógico" (DESIGN.md v2 §cores).
      Fonte única de verdade: THEME_PALETTE em lib/constants.ts.
      Todos os pares texto/fundo ≥ 7:1 (AAA) — trava em
-     tests/unit/lightbox-contrast.test.ts. Hex fora daqui = erro de review. */
+     tests/unit/lightbox-contrast.test.ts. Hex fora daqui = erro de review.
+     ESTE BLOCO É O PERFIL `dono`, E SÓ O `dono`. A paleta do perfil `thais`
+     ("Dungeon Quest") vive em THEME_PALETTE_DUNGEON e é aplicada em tempo de
+     render no atributo `style` do <html> (app/layout.tsx) — ver §1.1 no fim
+     deste arquivo. Nenhum hex da dungeon entra neste arquivo de propósito. */
   --color-paper: #FAF9F6;
   --color-card: #FFFFFF;
   --color-sand: #F3E9D7;
@@ -30,6 +34,8 @@
   --color-inputbd: #78716C;
   /* Exceção foto: scrim escuro SÓ sobre imagens (texto sempre paper por cima). */
   --color-night: #0B1121;
+  /* Texto por cima de um acento (= `ink` no tema claro; ver §1.1). */
+  --color-on-accent: #1A1A1A;
 
   --font-sans: "Geist", system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, monospace;
@@ -144,7 +150,9 @@
 
   .btn-primary {
     background: linear-gradient(135deg, var(--color-taxi) 0%, var(--color-taxi-strong) 100%);
-    color: var(--color-ink);
+    /* `on-accent`, não `ink`: a CTA fica sobre acento, e `on-accent` É `ink` no
+       tema do dono (zero diff) e tinta de breu no perfil escuro. Ver §1.1. */
+    color: var(--color-on-accent);
     font-weight: 600;
     padding: 12px 24px;
     border-radius: 9999px;
@@ -233,7 +241,7 @@
 
   .status-negociacao {
     background: var(--color-pastel);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
   }
 
   .status-aprovado {
@@ -304,7 +312,9 @@
     height: 24px;
     border-radius: 9999px;
     background: var(--color-taxi);
-    border: 2px solid var(--color-ink);
+    /* Anel em `on-accent` (o `ink` do dono): a tinta clara do tema escuro
+       sobre o disco táxi daria 1.75:1 e o thumb perderia a borda. */
+    border: 2px solid var(--color-on-accent);
     cursor: grab;
   }
 
@@ -314,7 +324,7 @@
     height: 20px;
     border-radius: 9999px;
     background: var(--color-taxi);
-    border: 2px solid var(--color-ink);
+    border: 2px solid var(--color-on-accent);
     cursor: grab;
   }
 
@@ -334,4 +344,61 @@
     background: color-mix(in srgb, var(--color-night) 60%, transparent);
     backdrop-filter: blur(12px);
   }
+}
+
+/* ---------------------------------------------------------------------------
+   §1.1 — Perfil `thais` ("Dungeon Quest": pedra e noite).
+
+   Os TOKENS desse perfil não vivem aqui: chegam em tempo de render no atributo
+   `style` do <html> (app/layout.tsx → themeCssVars(THEME_PALETTE_DUNGEON)).
+   globals.css é arquivo único e compartilhado pelos dois clientes, então um
+   hex da dungeon em `@theme` entraria no bundle do dono — o perfil `dono`
+   precisa sair do build sem nenhuma marca da dungeon (gate do build).
+
+   O que fica aqui são as REGRAS que a tinta clara do tema escuro quebraria.
+   Sem elas um botão âmbar com `text-ink` (padrão em 22 pontos de JSX) sai
+   com 1.75:1 e as 18 legendas/contadores de foto saem com 1.04:1. Todas as
+   regras são escopadas em [data-perfil="thais"]: o dono não muda nem de
+   computed style. NENHUMA delas pode sair do escopo — cada uma só é verdadeira
+   porque o perfil é o dungeon, não porque o componente é o mesmo.
+
+   Não é necessário adicionar regra aqui para token novo: só para par
+   texto-sobre-acento ou texto-sobre-scrim que a paleta invertida quebra.
+   --------------------------------------------------------------------------- */
+
+/* 1. Texto por cima de acento (CTA, chip pastel, badge, thumb do slider).
+      `text-ink` é a tinta do tema, e na pedra ela é clara: sobre táxi daria
+      1.75:1 e sobre pastel 1.11:1. O token certo é `on-accent` (9.04:1 e
+      14.20:1). A regra é mais específica que `.text-ink`/`.text-amberink`
+      (0,2,0 contra 0,1,0), então vence sem precisar de !important — e como
+      fica fora de @layer, vence também as utilitárias do Tailwind.
+      Cobre o JSX que não pode ser editado: "bg-taxi text-ink" em 16 pontos,
+      "bg-pastel text-ink" nos badges (6) e o "text-amberink bg-pastel" da
+      regra de ouro no DetailModal, que daria 1.35:1. */
+[data-perfil="thais"] :is(.bg-taxi, .bg-taxi-strong, .bg-pastel, .bg-peach, .bg-water) {
+  color: var(--color-on-accent);
+}
+
+/* 2. Texto por cima do scrim de foto. `night` é o azul-noite do app/icon.svg
+      nos DOIS temas (exceção foto, DESIGN.md §1), mas `paper` deixa de ser a
+      cor do texto sobre ele: no claro, papel = creme claro (17.87:1); na
+      pedra, papel = quase preto, e o "text-paper" da legenda da foto, do
+      contador do lightbox e das setas da galeria cairia para 1.04:1.
+      Redefinir a variável localmente arrasta junto o `text-paper/70`,
+      `text-paper/80` e o `border-paper/20` das pills sobre a foto, porque o
+      modificador de opacidade do Tailwind é `color-mix(... var(--color-paper)
+      N%, transparent)`. O seletor casa `bg-night` e `bg-night/60..95` — daí o
+      seletor de atributo em vez de uma lista de classes com escape. */
+[data-perfil="thais"] [class*="bg-night"] {
+  --color-paper: var(--color-ink);
+}
+
+/* 3. Seleção de texto. No tema claro o fundo da seleção é 45% de táxi sobre a
+      superfície e o texto continua sendo o da superfície. Na pedra, o mesmo
+      mix vira âmbar escuro e a tinta clara passa; sobre a própria CTA âmbar
+      daria 1.75:1. Seleção cheia de âmbar + `on-accent` funciona nos dois
+      contextos (9.04:1), então no escuro ela é cheia. */
+[data-perfil="thais"] ::selection {
+  background-color: var(--color-taxi);
+  color: var(--color-on-accent);
 }

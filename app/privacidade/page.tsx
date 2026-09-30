@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
 import { PRIVACY_POLICY_VERSION, PRIVACY_CONTACT_EMAIL } from "@/lib/privacy";
+import { APP_PROFILES, resolveAppProfile } from "@/lib/constants";
+
+// Mesmo app, dois clientes: o texto legal é o do perfil do build (nome e
+// contato do encarregado). O conteúdo das cláusulas não muda — a lei é a mesma
+// para os dois; só a identidade citada é a de quem está pagando o deploy.
+const identidade = APP_PROFILES[resolveAppProfile(process.env)];
 
 export const metadata: Metadata = {
-  title: "Política de Privacidade — lagoscrib",
+  // `absolute`: a página nomeia o app por perfil e não quer o template do
+  // layout somando o nome de novo no fim do título.
+  title: { absolute: `Política de Privacidade — ${identidade.appName}` },
   description: "Como tratamos seus dados pessoais (LGPD — Lei nº 13.709/2018)",
   robots: { index: false, follow: false },
 };
@@ -13,6 +21,7 @@ export default function PrivacidadePage() {
       <h1 className="text-2xl font-bold mb-2">Política de Privacidade</h1>
       <p className="text-sm opacity-70 mb-8">
         Versão {PRIVACY_POLICY_VERSION} — em conformidade com a LGPD (Lei nº 13.709/2018).
+        Este documento descreve o tratamento de dados no {identidade.appName}.
       </p>
 
       <section className="space-y-6 text-sm leading-relaxed">
