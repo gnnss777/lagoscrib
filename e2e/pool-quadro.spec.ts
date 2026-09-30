@@ -1,14 +1,17 @@
 import { test, expect, type Page } from "@playwright/test";
-import { collectConsoleErrors, openApp } from "./open-app";
+import { collectConsoleErrors, openApp, signInIfNeeded } from "./open-app";
 
 // Busca e quadro são dois modos de visualização do MESMO pool (lib/pool.ts
 // getAllApartments). A prova aqui é behavior, não arquitetura: excluir na
 // busca tem que baixar a contagem do funil no quadro, e mover no quadro tem que
 // trocar a badge de status na busca.
 //
-// Sem login: o gate client-side está em open access (NEXT_PUBLIC_OPEN_ACCESS),
-// então o app abre direto no Dashboard. Se voltar a exigir login, este spec
-// precisa readicionar o passo de autenticação.
+// Login: o gate client-side está DESLIGADO neste projeto
+// (NEXT_PUBLIC_OPEN_ACCESS=0 no .env.local), então todo spec passa por
+// `openApp`/`signInIfNeeded`. O passo é obrigatório depois de cada reload: sem
+// DATABASE_URL o `AuthProvider` não monta o `SessionBridge`, e o AppContext
+// ignora de propósito o `isAuthenticated` do storage — logo, sem backend, o
+// login não sobrevive a um F5 (achado de QA, ver relatório).
 //
 // O contador do header é a fonte boa de "quantos imóveis o modo atual mostra"
 // (Dashboard.tsx:250) — vale mais que contar cards, que sofre com coluna
@@ -70,6 +73,7 @@ test("test_pool_compartilhado_excluir_na_busca_some_no_quadro", async ({ page })
 
   // E persiste: a remoção é filtro do pool (REMOVED_IDS), não estado de UI.
   await page.reload();
+  await signInIfNeeded(page);
   expect(await poolCount(page, "quadro")).toBe(quadroAntes - 1);
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);

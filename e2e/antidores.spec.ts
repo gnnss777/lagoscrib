@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { openApp } from "./open-app";
+import { openApp, signInIfNeeded } from "./open-app";
+import { apartmentById, expectedCards } from "./pool-count";
 
 // S004 (AC-ALLIN-01 + AC-WA-01 + AC-CHECK-01 + AC-PLANTA-01): AllInPanel com
 // faixas, WhatsApp com as 4 perguntas, checklist persiste/recarrega/copia,
@@ -18,11 +19,14 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
   await openApp(page);
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
 
   // O total vem do card, não de literal: a base muda a cada leva e um valor
   // fixo aqui quebrava o teste sem aviso.
   const card = page.locator(".card-apartment").first();
+  const cardId = (await card.getAttribute("data-id")) ?? "";
+  const imovel = apartmentById(cardId);
+  expect(imovel, `id ${cardId} não está na base do perfil ativo`).toBeTruthy();
   const total = (await card.getByTestId("card-total").textContent())?.trim() ?? "";
   expect(total).toMatch(/^R\$/);
   await card.locator("h3").click();
@@ -45,9 +49,11 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
   await expect(allin).toContainText("estimativa — confirmar com a imobiliária");
 
   // Verificação + regra de ouro + WhatsApp com as 4 perguntas.
-  await expect(page.getByTestId("verified-badge")).toContainText(
-    "Zap Imóveis"
-  );
+  // A fonte do selo vem do IMÓVEL (o mesmo id que o card mostrou), não de um
+  // literal de portal: a ordenação default é por `verifiedAt`, e o 1º card já
+  // mudou de "Zap Imóveis" para "Chaves na Mão" quando a leva 6 entrou — o
+  // literal "Zap Imóveis" quebrou sem que nada do produto mudasse.
+  await expect(page.getByTestId("verified-badge")).toContainText(imovel!.source!);
   await expect(page.getByTestId("golden-rule")).toHaveText(
     "Não pague nada antes de visitar o imóvel pessoalmente"
   );
@@ -93,7 +99,8 @@ test("test_antidores_allin_whatsapp_checklist_planta", async ({ page }) => {
     "Checklist copiado!",
   );
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await signInIfNeeded(page);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
   await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: "Checklist" }).click();
   await expect(

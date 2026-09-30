@@ -1,4 +1,6 @@
 import { test, expect } from "@playwright/test";
+import { signInIfNeeded } from "./open-app";
+import { expectedCards } from "./pool-count";
 
 // S004 (ADR-002 decisão 2): estado v1 (sem version/checklist) continua legível
 // após o schema versionado v2 — notas/status antigos sobrevivem, checklist novo
@@ -6,9 +8,14 @@ import { test, expect } from "@playwright/test";
 test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
   const errors: string[] = [];
 
-  // Semeia autenticação sem `version` (estado v1). O guard é essencial: este
-  // script roda a CADA navegação, e sem ele o reload apagaria a nota que o
-  // teste acabou de semear.
+  // Semeia o estado v1 direto (sem `version`). O guard é essencial: este script
+  // roda a CADA navegação, e sem ele o reload apagaria a nota que o teste
+  // acabou de semear.
+  //
+  // O `isAuthenticated: true` do seeding NÃO autentica (lib/AppContext.tsx
+  // ignora o flag vindo do storage, por decisão de segurança) — quem entra é o
+  // form, via signInIfNeeded. Sem esse passo o teste morria no gate de login
+  // com 0 cards, e a linha seguinte "vendo 89 em vez de 0" escondia a causa.
   await page.addInitScript(() => {
     const chave = "apartamentos-app-state";
     if (localStorage.getItem(chave)) return;
@@ -23,9 +30,9 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
     );
   });
 
-  // Já autenticado: dashboard direto, sem login.
   await page.goto("/");
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await signInIfNeeded(page);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
 
   // O id do primeiro card vem da própria base (muda a cada leva). Semear nota
   // e status nele e recarregar é o que prova a migração v1 -> v2.
@@ -60,7 +67,8 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
     );
   }, alvo!);
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await signInIfNeeded(page);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
 
   await page.locator(".card-apartment").first().locator("h3").click();
 
@@ -83,7 +91,8 @@ test("test_persistencia_estado_v1_sobrevive_v2", async ({ page }) => {
     .getByRole("checkbox", { name: "Tomadas e interruptores" })
     .check();
   await page.reload();
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await signInIfNeeded(page);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
   await page.locator(".card-apartment").first().locator("h3").click();
   await page.getByRole("button", { name: /Notas \(1\)/ }).click();
   await expect(page.locator("text=Nota antiga v1 — deve sobreviver")).toBeVisible();

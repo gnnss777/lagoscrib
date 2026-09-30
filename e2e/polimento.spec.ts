@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { signInIfNeeded } from "./open-app";
 
 // Polimento UX v2 (F1): card mínimo, stagger com cap e foco/Esc com
 // restauração do gatilho. Estado semeado via localStorage.
@@ -17,6 +18,7 @@ async function gotoAuthed(page: Page, state: object = {}) {
     );
   }, state);
   await page.goto("/");
+  await signInIfNeeded(page);
   await expect(page.locator(".card-apartment").first()).toBeVisible();
 }
 

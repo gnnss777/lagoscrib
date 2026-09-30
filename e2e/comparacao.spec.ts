@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { openApp } from "./open-app";
+import { expectedCards } from "./pool-count";
 
 // S005 (AC-COMP-01): 3 selecionados → tabela com totais e links; 5º bloqueado
 // com aviso; ordem default por custo total efetivo; zero erro de console.
@@ -16,10 +17,12 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
   });
 
   await openApp(page);
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
 
   const compareBoxes = page.getByRole("checkbox", { name: "Comparar" });
-  await expect(compareBoxes).toHaveCount(89);
+  // Uma caixa por card: o número deriva do mesmo pool (o `89` fixo aqui era o
+  // que o LIMITava a comparar os 5 primeiros com cards a menos).
+  await expect(compareBoxes).toHaveCount(expectedCards());
 
   // 3 primeiros cards. Total e metragem saem dos próprios cards: literal aqui
   // quebrava a cada leva da base.
@@ -58,7 +61,6 @@ test("test_comparacao_tabela_ordem_bloqueio_links", async ({ page }) => {
   }
 
   // Totais corretos + flags honestas + links originais clicáveis.
-  // (3 primeiros têm vaga — "sem garagem" é do Bufren, fora da seleção.)
   await expect(table).toContainText(porCusto[0].total);
   const links = table.getByRole("link", { name: "Ver anúncio" });
   await expect(links).toHaveCount(3);

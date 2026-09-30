@@ -1,4 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
+import { signInIfNeeded } from "./open-app";
+import { expectedCards } from "./pool-count";
 
 // Slider duplo de preço (leva kanban-tela-inteira-ui, AC-U4/U6): thumbs por
 // teclado, aria-valuetext em BRL, chips ao vivo e efeito real no filtro.
@@ -17,6 +19,7 @@ async function gotoAuthed(page: Page) {
     );
   });
   await page.goto("/");
+  await signInIfNeeded(page);
   await expect(page.locator(".card-apartment").first()).toBeVisible();
 }
 
@@ -28,8 +31,9 @@ async function openFilters(page: Page) {
 test("test_slider_teclado_valvetext_filtra_restaura", async ({ page }) => {
   const errors: string[] = [];
   await gotoAuthed(page);
-  const initial = await page.locator(".card-apartment").count();
-  expect(initial).toBeGreaterThan(1);
+  // Derivado do pool do perfil ativo (ver e2e/pool-count.ts): a base cresce a
+  // cada leva e um literal aqui quebrava sozinho.
+  const initial = expectedCards("alugar");
   await openFilters(page);
 
   const panel = page.getByTestId("filter-panel");

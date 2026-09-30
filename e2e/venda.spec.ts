@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { collectConsoleErrors, openApp } from "./open-app";
+import { expectedCards } from "./pool-count";
 
 // Toggle Alugar | Comprar. A leva 4 (27/09/2026) é só de aluguel — a coleta
 // foi dirigida para 2-3 quartos até R$ 3.000, então `saleApartments` está
@@ -12,8 +13,11 @@ test("test_venda_toggle_abas_com_pool_de_venda_vazio", async ({ page }) => {
 
   await openApp(page);
 
-  // Aba default: Alugar, com a base inteira e "/mês" no card.
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  // Aba default: Alugar, com a base inteira e "/mês" no card. Contagem derivada
+  // do pool do perfil ativo; a de "Comprar" vem do mesmo dado (`sale`).
+  const aluguel = expectedCards("alugar");
+  const compra = expectedCards("comprar");
+  await expect(page.locator(".card-apartment")).toHaveCount(aluguel);
   const toggle = page.getByTestId("transaction-toggle");
   await expect(toggle.getByRole("button", { name: "Alugar" })).toHaveAttribute(
     "aria-pressed",
@@ -24,24 +28,28 @@ test("test_venda_toggle_abas_com_pool_de_venda_vazio", async ({ page }) => {
 
   // 3 alternâncias seguidas sem erro nem estado preso.
   await toggle.getByRole("button", { name: "Comprar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(0);
+  await expect(page.locator(".card-apartment")).toHaveCount(compra);
   await toggle.getByRole("button", { name: "Alugar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await expect(page.locator(".card-apartment")).toHaveCount(aluguel);
   await toggle.getByRole("button", { name: "Comprar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(0);
+  await expect(page.locator(".card-apartment")).toHaveCount(compra);
   await expect(toggle.getByRole("button", { name: "Comprar" })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
 
   // Estado vazio honesto: mensagem de "nada encontrado", sem card e sem modal.
-  await expect(page.getByText("Nenhum apartamento encontrado")).toBeVisible();
-  await expect(page.getByText(/0 apartamentos encontrados/)).toBeVisible();
-  await page.screenshot({ path: "test-results/s006-comprar.png" });
+  // Só quando a base não tem venda — com imóvel de venda o estado não é vazio,
+  // e forçar a mensagem aqui seria mentir sobre o produto.
+  if (compra === 0) {
+    await expect(page.getByText("Nenhum apartamento encontrado")).toBeVisible();
+    await expect(page.getByText(/0 apartamentos encontrados/)).toBeVisible();
+    await page.screenshot({ path: "test-results/s006-comprar.png" });
+  }
 
   // Voltar para Alugar restaura a base inteira.
   await toggle.getByRole("button", { name: "Alugar" }).click();
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await expect(page.locator(".card-apartment")).toHaveCount(aluguel);
   await expect(page.locator(".card-apartment").first()).toContainText("/mês");
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);

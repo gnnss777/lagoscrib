@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { openApp } from "./open-app";
+import { openApp, signInIfNeeded } from "./open-app";
+import { apartmentById, expectedCards } from "./pool-count";
 
 // S003 (AC-GAL-01/02 + AC-ZOOM-01): galeria viewer-first navegável +
 // lightbox com zoom/pan + Esc + zero erro de console.
@@ -17,13 +18,22 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
 
   // Login (mesmo padrão do smoke: env ou fallbacks de dev).
   await openApp(page);
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
 
-  // Abrir o primeiro imóvel → galeria viewer-first.
-  await page.locator(".card-apartment").first().locator("h3").click();
+  // Abrir o primeiro imóvel → galeria viewer-first. O tamanho da galeria (11
+  // fotos) é do DADO, então vem do imóvel que o card mostrou — e o `1/11` /
+  // `11/11` abaixo são construídos a partir dele. Literal aqui quebrava a cada
+  // leva que trocasse o conjunto de fotos do 1º card.
+  const firstCard = page.locator(".card-apartment").first();
+  const firstId = (await firstCard.getAttribute("data-id")) ?? "";
+  const fotos = apartmentById(firstId)?.photos?.length ?? 0;
+  expect(fotos, `sem fotos no imóvel ${firstId}`).toBeGreaterThan(1);
+  const passo = (n: number) => `${n}/${fotos}`;
+
+  await firstCard.locator("h3").click();
   const gallery = page.getByTestId("gallery");
   await expect(gallery).toBeVisible();
-  await expect(page.getByTestId("gallery-counter")).toHaveText("1/11");
+  await expect(page.getByTestId("gallery-counter")).toHaveText(passo(1));
   await expect(page.getByTestId("gallery-caption")).toHaveText("Foto principal");
 
   // Principal carrega de verdade (naturalWidth > 0).
@@ -35,30 +45,30 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
   expect(naturalWidth).toBeGreaterThan(0);
   await page.screenshot({ path: "test-results/s003-galeria.png" });
 
-  // Seta → 2/11; teclado →/← percorre com wrap.
+  // Seta → 2/N; teclado →/← percorre com wrap.
   await page.getByTestId("gallery-next").click();
-  await expect(page.getByTestId("gallery-counter")).toHaveText("2/11");
+  await expect(page.getByTestId("gallery-counter")).toHaveText(passo(2));
   await page.getByTestId("gallery-main").focus();
   await page.keyboard.press("ArrowRight");
-  await expect(page.getByTestId("gallery-counter")).toHaveText("3/11");
+  await expect(page.getByTestId("gallery-counter")).toHaveText(passo(3));
   await page.keyboard.press("ArrowLeft");
-  await expect(page.getByTestId("gallery-counter")).toHaveText("2/11");
+  await expect(page.getByTestId("gallery-counter")).toHaveText(passo(2));
 
-  // Wrap: 1/11 → anterior → 11/11.
+  // Wrap: 1/N → anterior → N/N.
   await page.getByTestId("gallery-prev").click();
-  await expect(page.getByTestId("gallery-counter")).toHaveText("1/11");
+  await expect(page.getByTestId("gallery-counter")).toHaveText(passo(1));
   await page.getByTestId("gallery-prev").click();
-  await expect(page.getByTestId("gallery-counter")).toHaveText("11/11");
+  await expect(page.getByTestId("gallery-counter")).toHaveText(passo(fotos));
 
-  // Thumb nº 5 → 5/11.
+  // Thumb nº 5 → 5/N.
   await page.getByTestId("gallery-thumbs").getByRole("button").nth(4).click();
-  await expect(page.getByTestId("gallery-counter")).toHaveText("5/11");
+  await expect(page.getByTestId("gallery-counter")).toHaveText(passo(5));
 
   // Lightbox: abre, zoom 1x→2x, Esc fecha e devolve o foco.
   await page.getByRole("button", { name: "Abrir zoom da foto" }).click();
   const lightbox = page.getByTestId("lightbox");
   await expect(lightbox).toBeVisible();
-  await expect(page.getByTestId("lightbox-counter")).toHaveText("5/11");
+  await expect(page.getByTestId("lightbox-counter")).toHaveText(passo(5));
   await page.getByTestId("lightbox-zoom").click();
   await expect(page.getByTestId("lightbox-zoom")).toContainText("2x");
   await page.screenshot({ path: "test-results/s003-zoom.png" });
@@ -69,7 +79,7 @@ test("test_galeria_navegacao_zoom_esc_sem_erros", async ({ page }) => {
   // Esc fecha o modal.
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("gallery")).toBeHidden();
-  await expect(page.locator(".card-apartment")).toHaveCount(89);
+  await expect(page.locator(".card-apartment")).toHaveCount(expectedCards());
 
   expect(errors, `erros de console: ${errors.join(" | ")}`).toEqual([]);
 });

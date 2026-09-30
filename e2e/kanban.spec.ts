@@ -4,8 +4,10 @@ import {
   REMOVED_IDS_STORAGE_VERSION,
 } from "@/lib/constants";
 import { USER_ADDED_KEY } from "@/lib/pool";
+import { signInIfNeeded } from "./open-app";
+import { activePool, expectedCards } from "./pool-count";
 
-// Quadro de prospecção como MODO DE VISUALIZAÇÃO (leva unificacao-busca-quadro):
+// Quadro de prospecção como MODO de VISUALIZAÇÃO (leva unificacao-busca-quadro):
 // o board é o corpo da própria tela, trocado pelo seletor "Busca | Quadro" do
 // header — não abre modal nem tela cheia separada. Mover por teclado, prospectar
 // da busca, painel de configuração e filtro sem-retorno. Estado semeado via
@@ -25,6 +27,8 @@ async function gotoAuthed(page: Page, state: object = {}) {
     );
   }, state);
   await page.goto("/");
+  // O seeding acima não autentica (ver signInIfNeeded): o gate pode estar ativo.
+  await signInIfNeeded(page);
   await expect(page.locator(".card-apartment").first()).toBeVisible();
 }
 
@@ -72,6 +76,7 @@ test("test_modo_visualizacao_anuncia_e_nao_perde_o_estado_da_busca", async ({
   await page.locator('[data-view-mode="quadro"]').click();
   await expect(page.getByTestId("kanban-view")).toBeVisible();
   await page.reload();
+  await signInIfNeeded(page);
   await expect(page.getByTestId("kanban-view")).toBeVisible();
 });
 
@@ -284,6 +289,7 @@ test("test_kanban_customizacao_painel_renomear_reload_reset", async ({
 
   // Reload: o modo choice (quadro) E a customização sobrevivem (AC-9).
   await page.reload();
+  await signInIfNeeded(page);
   await expect(page.getByTestId("kanban-view")).toBeVisible();
   const view2 = page.getByTestId("kanban-view");
   await expect(
@@ -306,12 +312,13 @@ test("test_kanban_customizacao_painel_renomear_reload_reset", async ({
 test("test_kanban_filtro_so_sem_retorno", async ({ page }) => {
   const errors: string[] = [];
   // 1 follow-up pendente há 8 dias (acima do limiar de 7).
-  // O id precisa existir na base ativa: a leva 6 podou os imóveis acima do
-  // teto de R$ 3.500 all-in e o antigo zap-portao-124-5525 saiu com ele
-  // (total 5.700), o que fazia o selo "sem retorno" não aparecer.
+  // O id vem do POOL do perfil ativo, nunca de um literal: as duasEthics já
+  // quebraram aqui — a leva 6 podou o imóvel fixo (total 5.700) e o perfil
+  // `thais` nunca teve esse id, então o selo "sem retorno" não aparecia.
+  const alvo = activePool().pool[0].id;
   await gotoAuthed(page, {
     followUps: {
-      "zap-agua-verde-96-0258": {
+      [alvo]: {
         attempts: 2,
         status: "aguardando",
         lastContactAt: "2026-09-15T12:00:00.000Z",
@@ -378,7 +385,10 @@ test("test_kanban_scroll_interno_todos_cards", async ({ page }) => {
   const view = await openKanban(page);
 
   const col = view.getByRole("region", { name: /Não visitado/ });
-  await expect(col.locator("article")).toHaveCount(89);
+  // Todo imóvel sem status cai em "Não visitado" (default `novo`), e a coluna
+  // não recolhe nada abaixo de KANBAN_VISIBLE_CAP (200). Número derivado do
+  // pool do perfil ativo, não literal: a base cresce a cada leva.
+  await expect(col.locator("article")).toHaveCount(activePool().total);
   await expect(
     col.getByRole("button", { name: /imóveis ocultos em/ }),
   ).toHaveCount(0);
@@ -441,12 +451,34 @@ test("test_kanban_dedupe_filtro_coluna_e_whatsapp", async ({ page }) => {
     await expect(card).toHaveCount(1);
   }
 
-  const filters = view.getByRole("group", { name: "Filtrar por coluna" });
-  await filters.getByRole("button", { name: "Contactado", exact: true }).click();
-  await expect(view.getByRole("region", { name: /Contactado/ })).toHaveCount(1);
-  await expect(view.getByRole("region", { name: /Não visitado/ })).toHaveCount(0);
-  await filters.getByRole("button", { name: "Todas", exact: true }).click();
-  await expect(view.getByRole("region", { name: /Contactado/ })).toBeVisible();
+  // Filtro de ETAPA: o painel do quadro (Filtros -> Etapa do funil). Antes isso
+  // morava num group "Filtrar por coluna" dentro do board, que deixou de existir
+  // na unificacao busca/quadro -- o seletor antigo nao acha mais nada e o teste
+  // morria sem exercitar o filtro. Sao `<input type=checkbox>` dentro de um
+  // `<label>` (CheckGroup), logo o papel e `checkbox` e o rotulo carrega a
+  // contagem por etapa ("Contactado (1)"). O recorte nao remove a coluna da
+  // tela (ela continua com contagem 0): o que ele faz e esvaziar os cards das
+  // outras etapas, entao o assert e sobre `article`, nao sobre a region.
+  await view.getByRole("button", { name: /^Filtros/ }).click();
+  const painel = view.getByRole("region", { name: "Filtros do quadro" });
+  const etapas = painel.getByRole("group", { name: "Etapa do funil" });
+  await etapas.getByRole("checkbox", { name: /^Contactado/ }).check();
+  await expect(
+    view.getByRole("region", { name: /Contactado/ }).locator("article"),
+  ).toHaveCount(1);
+  await expect(
+    view.getByRole("region", { name: /Não visitado/ }).locator("article"),
+  ).toHaveCount(0);
+  // A contagem da barra de recorte acompanha: 1 de <pool>.
+  await expect(view.getByTestId("kanban-visible-count")).toContainText(
+    // O pool do perfil + o imóvel semeado por este teste (chave
+    // `apartamentos-app-new`), que é o 153º.
+    `1 de ${activePool().total + 1} imóveis visíveis`,
+  );
+  await etapas.getByRole("checkbox", { name: /^Contactado/ }).uncheck();
+  await expect(
+    view.getByRole("region", { name: /Não visitado/ }).locator("article").first(),
+  ).toBeVisible();
 
   await expect(card.getByRole("link", { name: /Abrir WhatsApp/ })).toHaveAttribute(
     "href",
