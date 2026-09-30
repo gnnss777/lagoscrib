@@ -35,6 +35,7 @@ import {
   type ApartmentStatus,
   type ColumnConfig,
   type FollowUp,
+  type KanbanColumn,
   type StatusType,
 } from "@/lib/kanban";
 import { useApp } from "@/lib/AppContext";
@@ -82,6 +83,91 @@ function slotFromPoint(
   const first = cards[0].getBoundingClientRect();
   if (clientY < first.top) return { status, index: 0 };
   return { status, index: cards.length };
+}
+
+/**
+ * Colunas do quadro para um conjunto de imóveis: descarta status fora do
+ * funil (descartado/inativo), mapeia visita→agendado e visitado→feita, e
+ * sintetiza posição para quem ainda não tem status (default "novo", no fim).
+ *
+ * Mora aqui (e não no núcleo) porque é a VISUALIZAÇÃO. O KanbanSection
+ * precisa das mesmas contagens por etapa para o filtro de coluna do painel —
+ * duas cópias dessa regra divergem, então há uma só.
+ */
+export function kanbanColumns(
+  apartments: Apartment[],
+  statuses: ApartmentStatus[],
+  followUps: Record<string, FollowUp>,
+  cfg: ColumnConfig,
+): KanbanColumn[] {
+  const entriesByApartmentId = new Map<string, ApartmentStatus>();
+  for (const apartment of apartments) {
+    const found = statuses.find(
+      (status) => status.apartmentId === apartment.id,
+    );
+    if (found && isKanbanExcludedStatus(found.status)) continue;
+    const mapped = found ? toKanbanStatus(found.status) : null;
+    entriesByApartmentId.set(
+      apartment.id,
+      found
+        ? { ...found, ...(mapped ? { status: mapped } : {}) }
+        : {
+            apartmentId: apartment.id,
+            status: "novo" as const,
+            updatedAt: "",
+            index: Number.MAX_SAFE_INTEGER,
+          },
+    );
+    if (found && !mapped) entriesByApartmentId.delete(apartment.id);
+  }
+  return buildColumns(
+    [...entriesByApartmentId.values()],
+    followUps,
+    cfg,
+  );
+}
+
+/**
+ * Índice REAL da coluna a partir do slot VISUAL (leva kanban-filtros).
+ *
+ * `slotFromPoint` conta só o que está na tela (`visibleIds`: filtro de
+ * staleOnly, cap do "+N restantes" e agora os filtros do quadro). Com filtro
+ * ligado o índice visual deixa de bater com o índice real e o card cai na
+ * posição errada. Aqui o slot vira posição na lista REAL da coluna, que é o
+ * que `moveCard` consome: o destino é o card visível que deve ficar DEPOIS
+ * da inserção (ou o fim da coluna), e o `moveCard` já remove a entrada
+ * antiga antes de aplicar o índice.
+ *
+ * Detalhe que custa um bug: o `toIndex` do `moveCard` é comparado com o
+ * campo `index` das entradas restantes, não com a posição no array. Arrastar
+ * DENTRO da própria coluna abre um buraco na sequência de `index`, então a
+ * posição do âncora no array já sem o card arrastado não serve — a posição
+ * dela na coluna CHEIA é a que vale, porque é igual ao `index` que o
+ * `moveCard` vai empurrar.
+ *
+ * Sem filtro (`visibleIds === columnIds`) isto degenera no índice antigo.
+ */
+export function realIndexFromVisual(
+  columnIds: string[],
+  visibleIds: string[],
+  draggedId: string | null,
+  visualIndex: number,
+): number {
+  const rest = draggedId
+    ? columnIds.filter((id) => id !== draggedId)
+    : columnIds;
+  const shown = draggedId
+    ? visibleIds.filter((id) => id !== draggedId)
+    : visibleIds;
+  // O card arrastado continua na tela (opacity-50), então o slot visual o
+  // conta. Depois de removê-lo da lista, tudo abaixo dele escorrega -1.
+  const dragAt = draggedId ? visibleIds.indexOf(draggedId) : -1;
+  const at = dragAt >= 0 && visualIndex > dragAt ? visualIndex - 1 : visualIndex;
+  // Fim da coluna: `moveCard` empurra quem está >= at, e o último índice real
+  // da coluna é rest.length - 1, então o fim é rest.length.
+  if (at >= shown.length) return rest.length;
+  const target = columnIds.indexOf(shown[at]);
+  return target < 0 ? rest.length : target;
 }
 
 // Linha de selo do follow-up (AC-3: texto visível, nunca só cor).
@@ -191,9 +277,6 @@ export default function KanbanBoard({
     markReturned,
   } = useApp();
   const [staleOnly, setStaleOnly] = useState(false);
-  const [columnFilter, setColumnFilter] = useState<StatusType | "todas">(
-    "todas",
-  );
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const [announce, setAnnounce] = useState("");
@@ -246,44 +329,33 @@ export default function KanbanBoard({
   }, [apartments, statuses]);
 
   // Entradas sintetizadas: todo imóvel do pool tem posição (default = novo/fim).
-  const columns = useMemo(() => {
-    const entriesByApartmentId = new Map<string, ApartmentStatus>();
-    for (const apartment of byId.values()) {
-      const found = statuses.find(
-        (status) => status.apartmentId === apartment.id,
-      );
-      const mapped = found ? toKanbanStatus(found.status) : null;
-      entriesByApartmentId.set(
-        apartment.id,
-        found
-          ? { ...found, ...(mapped ? { status: mapped } : {}) }
-          : {
-              apartmentId: apartment.id,
-              status: "novo" as const,
-              updatedAt: "",
-              index: Number.MAX_SAFE_INTEGER,
-            },
-      );
-      if (found && !mapped) entriesByApartmentId.delete(apartment.id);
-    }
-    return buildColumns(
-      [...entriesByApartmentId.values()],
-      followUps,
-      colConfig,
-    );
-  }, [byId, statuses, followUps, colConfig]);
-
-  const visibleColumns = useMemo(
-    () =>
-      columnFilter === "todas"
-        ? columns
-        : columns.filter((column) => column.status === columnFilter),
-    [columnFilter, columns],
+  const columns = useMemo(
+    () => kanbanColumns([...byId.values()], statuses, followUps, colConfig),
+    [byId, statuses, followUps, colConfig],
   );
 
+  // O que está DE FATO na tela, por coluna: filtro de staleOnly + cap do
+  // "+N restantes". Fonte única do DOM e da matemática do drop — se o
+  // slotFromPoint mede a tela e o commitDrop mede outra lista, o card cai
+  // na posição errada (leva kanban-filtros).
+  const renderedByStatus = useMemo(() => {
+    const out: Partial<
+      Record<StatusType, { visible: string[]; hidden: string[] }>
+    > = {};
+    for (const col of columns) {
+      const ids = staleOnly
+        ? col.ids.filter((id) => isHanging(followUps[id], FOLLOWUP_STALE_DAYS))
+        : col.ids;
+      out[col.status] = splitColumnOverflow(ids, KANBAN_VISIBLE_CAP);
+    }
+    return out;
+  }, [columns, staleOnly, followUps]);
+
+  const emptyColumn = { visible: [] as string[], hidden: [] as string[] };
+
   const visibleOrder = useMemo(
-    () => visibleColumns.map((column) => column.status),
-    [visibleColumns],
+    () => columns.map((column) => column.status),
+    [columns],
   );
 
   const move = (
@@ -302,10 +374,9 @@ export default function KanbanBoard({
     setMenuFor(null);
   };
 
-  // Commit do drop (leva kanban-drag-drop): ajusta o índice quando o card
-  // se move dentro da própria coluna (slot conta posições VISÍVEIS
-  // incluindo o card arrastado; moveCard espera a posição SEM o card).
-  // No-op se a posição não mudou.
+  // Commit do drop (leva kanban-drag-drop): traduz o slot VISUAL para o
+  // índice REAL da coluna. Com filtro ligado os dois indices divergem —
+  // usar o visual aqui gravava o card na posição errada. No-op se não mudou.
   const commitDrop = () => {
     const id = dragIdRef.current;
     const slot = dropSlotRef.current;
@@ -313,11 +384,14 @@ export default function KanbanBoard({
     setSlot(null);
     if (!id || !slot) return;
     const col = columns.find((c) => c.status === slot.status);
-    const ids = col ? col.ids : [];
-    const origIdx = ids.indexOf(id);
-    let target = slot.index;
-    if (origIdx >= 0 && origIdx < target) target -= 1;
-    if (origIdx === target) return;
+    if (!col) return;
+    const target = realIndexFromVisual(
+      col.ids,
+      renderedByStatus[slot.status]?.visible ?? [],
+      id,
+      slot.index,
+    );
+    if (col.ids[target] === id) return;
     move(id, slot.status, target);
   };
 
@@ -326,17 +400,12 @@ export default function KanbanBoard({
     [followUps],
   );
 
-  // Ids ocultos da coluna com o dialog "+N restantes" aberto
-  // (mesmo filtro staleOnly da coluna — conta sempre fecha).
+  // Ids ocultos da coluna com o dialog "+N restantes" aberto — mesma
+  // lista renderizada que a coluna mostra, então a conta sempre fecha.
   const overflowIds = useMemo(() => {
     if (!overflowFor) return [];
-    const col = columns.find((c) => c.status === overflowFor);
-    if (!col) return [];
-    const ids = staleOnly
-      ? col.ids.filter((id) => isHanging(followUps[id], FOLLOWUP_STALE_DAYS))
-      : col.ids;
-    return splitColumnOverflow(ids, KANBAN_VISIBLE_CAP).hidden;
-  }, [overflowFor, columns, staleOnly, followUps]);
+    return renderedByStatus[overflowFor]?.hidden ?? [];
+  }, [overflowFor, renderedByStatus]);
   const overflowLabel = overflowFor ? columnLabel(overflowFor, colConfig) : "";
 
   // Dialog a11y (padrão DetailModal): foco no painel ao abrir +
@@ -362,39 +431,10 @@ export default function KanbanBoard({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {/* Barra do board: filtro + resumo */}
+      {/* Barra do board: seletor de "sem retorno" + resumo. O filtro de
+          coluna (com contagem por etapa) é do KanbanSection — fica ao lado
+          do board, não aqui dentro. */}
       <div className="mb-3 flex shrink-0 flex-wrap items-center gap-3">
-        <div
-          role="group"
-          aria-label="Filtrar por coluna"
-          className="flex flex-wrap items-center gap-1"
-        >
-          <button
-            onClick={() => setColumnFilter("todas")}
-            aria-pressed={columnFilter === "todas"}
-            className={`min-h-11 rounded-full border px-3 text-xs font-medium transition-colors ${
-              columnFilter === "todas"
-                ? "border-taxi bg-taxi text-ink"
-                : "border-line bg-card text-ink-soft hover:text-ink"
-            }`}
-          >
-            Todas
-          </button>
-          {columns.map((column) => (
-            <button
-              key={column.status}
-              onClick={() => setColumnFilter(column.status)}
-              aria-pressed={columnFilter === column.status}
-              className={`min-h-11 rounded-full border px-3 text-xs font-medium transition-colors ${
-                columnFilter === column.status
-                  ? "border-taxi bg-taxi text-ink"
-                  : "border-line bg-card text-ink-soft hover:text-ink"
-              }`}
-            >
-              {column.label}
-            </button>
-          ))}
-        </div>
         <button
           onClick={() => setStaleOnly((v) => !v)}
           aria-pressed={staleOnly}
@@ -420,20 +460,12 @@ export default function KanbanBoard({
       {/* Board gerenciável (lg+): colunas flex-1 preenchem 100vw.
           Abaixo de lg, scroll horizontal de fallback (documentado na spec). */}
       <div className="flex w-max min-w-full flex-1 items-stretch gap-3 lg:w-full">
-        {visibleColumns.map((col) => {
-          const ids = staleOnly
-            ? col.ids.filter((id) =>
-                isHanging(followUps[id], FOLLOWUP_STALE_DAYS),
-              )
-            : col.ids;
+        {columns.map((col) => {
+          const { visible: ids, hidden } =
+            renderedByStatus[col.status] ?? emptyColumn;
           const hanging = col.ids.filter((id) =>
             isHanging(followUps[id], FOLLOWUP_STALE_DAYS),
           ).length;
-          // Fallback: até KANBAN_VISIBLE_CAP pílulas; resto vira "+N".
-          const { visible, hidden } = splitColumnOverflow(
-            ids,
-            KANBAN_VISIBLE_CAP,
-          );
           return (
             <section
               key={col.status}
@@ -478,7 +510,7 @@ export default function KanbanBoard({
                     {KANBAN_EMPTY_COLUMN_HINT}
                   </p>
                 )}
-                {visible.map((id, i) => {
+                {ids.map((id, i) => {
                   const a = byId.get(id);
                   if (!a) return null;
                   const fu = followUps[id];
@@ -694,7 +726,7 @@ export default function KanbanBoard({
                 {dragId !== null &&
                   dropSlot !== null &&
                   dropSlot.status === col.status &&
-                  dropSlot.index >= visible.length && (
+                  dropSlot.index >= ids.length && (
                     <div
                       data-testid="kanban-drop-indicator"
                       role="presentation"
