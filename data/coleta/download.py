@@ -1,12 +1,15 @@
 """Baixa capa + galeria de cada imóvel normalizado, converte p/ webp local.
 
-Uso: python data/coleta/download.py
+Uso: python data/coleta/download.py [--perfil=NOME] [--corrigir]
 
 - Referer por portal: cada CDN recusa sem o seu (LL-046 era só Zap).
 - Upscale: o coletor entrega o thumbnail; reescreve o parâmetro de dimensão
   para o tamanho de galeria (Zap/VivaReal `dimension=`, OLX `WId=/HId=`).
 - Delay entre requests + retry: sem rate limit o CDN devolve 403 no meio da
   leva (LL-045).
+
+Fotos e manifest são do perfil (perfis.json): a leva de um cliente não encosta
+no disco do outro, e o manifest de cada um fica no diretório do perfil.
 """
 import io
 import json
@@ -18,7 +21,15 @@ from urllib.parse import urlsplit
 
 from PIL import Image
 
-BASE = "public/imoveis"
+# `perfis.py` e importado: sem isto cada roda deixa data/coleta/__pycache__/
+# sujando a arvore de trabalho (o .gitignore nao e nosso para editar).
+sys.dont_write_bytecode = True
+from perfis import caminho_fotos, caminho_manifesto, carregar, ler_merge, separar_argv
+
+FLAGS, ARGV = separar_argv(sys.argv[1:])
+PERFIL = carregar(FLAGS)
+PERFIL.garantir_dir()
+BASE = PERFIL.fotos
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 TIMEOUT = 30
 DELAY = 1.5
@@ -110,10 +121,10 @@ def corrigir_arquivo(caminho):
 
 
 def main():
-    if "--corrigir" in sys.argv:
+    if FLAGS.get("corrigir"):
         alvos = []
-        for x in json.load(open("data/coleta/merge-normalizado.json", encoding="utf-8")):
-            galeria = f"public/imoveis/{x['id']}"
+        for x in ler_merge(PERFIL):
+            galeria = f"{BASE}/{x['id']}"
             alvos.append(f"{galeria}.webp")
             if os.path.isdir(galeria):
                 alvos += [f"{galeria}/{f}" for f in sorted(os.listdir(galeria))]
@@ -127,22 +138,20 @@ def main():
                 print(f"corrigiu {p}: {antes // 1024}KB -> {depois // 1024}KB")
         print(f"corrigidos: {reescritos}/{len(alvos)}")
         return
-    items = json.load(open("data/coleta/merge-normalizado.json", encoding="utf-8"))
+    items = ler_merge(PERFIL)
     manifest = {}
     pulados = 0
     for x in items:
         iid = x["id"]
         got = []
         for i, url in enumerate(x["photoUrls"][:11]):
-            if i == 0:
-                path = f"{BASE}/{iid}.webp"
-            else:
-                os.makedirs(f"{BASE}/{iid}", exist_ok=True)
-                path = f"{BASE}/{iid}/{i:02d}.webp"
+            path = caminho_fotos(BASE, iid, i)
+            if i > 0:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
             # Já existe e tem peso plausível: não refaz request. O
             # `download.py --corrigir` normaliza px/bytes do que já está no disco.
             if os.path.exists(path) and os.path.getsize(path) > 5000:
-                got.append("/" + path.replace("\\", "/"))
+                got.append(caminho_manifesto(path))
                 pulados += 1
                 continue
             for attempt in range(1, RETRIES + 1):
@@ -154,7 +163,7 @@ def main():
                     if len(raw) < 5000:
                         raise OSError(f"resposta pequena demais ({len(raw)}b) - erro/placeholder?")
                     save(raw, path)
-                    got.append("/" + path.replace("\\", "/"))
+                    got.append(caminho_manifesto(path))
                     break
                 except Exception as e:
                     print(f"FALHA {iid} [{i}] try{attempt}: {type(e).__name__}: {e}")
@@ -162,7 +171,8 @@ def main():
             time.sleep(DELAY)
         manifest[iid] = got
         print(f"{iid}: {len(got)}/{min(11, len(x['photoUrls']))}")
-    json.dump(manifest, open("data/coleta/download-manifest.json", "w"))
+    with open(PERFIL.manifest, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(manifest, f)
     ok = sum(1 for v in manifest.values() if v)
     print(f"com-capa: {ok}/{len(manifest)} | reusados do disco: {pulados}")
 

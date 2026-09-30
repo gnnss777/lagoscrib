@@ -1,9 +1,24 @@
 // Coleta de imóveis — Chaves na Mão (leva 4, 29/09/2026).
-// Escreve data/coleta/chaves-2q-ate3600-14b-l4.json no schema que
-// data/coleta/merge.py espera. Coletor NOVO, no formato e com as mesmas regras
-// do coleta.mjs — mas sem browser, e o motivo está no cabeçalho.
+// Escreve data/coleta/<perfil>.json no schema que data/coleta/merge.py espera.
+// Coletor NOVO, no formato e com as mesmas regras do coleta.mjs — mas sem
+// browser, e o motivo está no cabeçalho.
 //
-// Uso: node scripts/coleta/chavesnamao.mjs [--bairros=batel,centro] [--delay=2000]
+// Uso:
+//   node scripts/coleta/chavesnamao.mjs                    # perfil de hoje
+//   node scripts/coleta/chavesnamao.mjs --tipo=casa --min-quartos=3 \
+//        --max-quartos=99 --teto=8000                       # outro cliente
+//
+// Flags: --tipo= (padrao apartamento) · --teto= (3600, all-in) ·
+//        --min-quartos= (2) · --max-quartos= (3) · --saida= · --bairros= ·
+//        --delay= · --reaplicar-telefone
+//
+// SEM NENHUMA FLAG o comportamento é o de sempre, byte a byte: mesmo arquivo de
+// saída, mesmo nome de log, mesmo teto, mesmo par 2-3 quartos. Os dois clientes
+// rodam a MESMA pipeline; o que muda entre eles é só a linha de comando. Quem
+// define o perfil é o bloco PERFIL, e o padrão dele é o dono original.
+//
+// Aviso ao ler arquivo de outro perfil: `--reaplicar-telefone` precisa das MESMAS
+// flags que produziram o arquivo, senão ele abre a leva de outro perfil.
 //
 // ---------------------------------------------------------------------------
 // Por que `fetch` puro e não o browser do coleta.mjs
@@ -42,8 +57,19 @@
 //   estado ("Sem taxa de condomínio"), que é DECLARAÇÃO de zero, não ausência:
 //   entra como condo 0 sem `condoUnknown`. Nenhum valor é estimado.
 // - IPTU nunca estimado: se o portal não publica, fica 0.
-// - Teto é o all-in (aluguel + condomínio + IPTU) <= R$ 3.600 — o mesmo
-//   `TETO_TOTAL_ALUGUEL` de lib/constants.ts e de merge.py. Não é negociável.
+// - Teto é o all-in (aluguel + condomínio + IPTU) <= R$ 3.600 no perfil padrão —
+//   o mesmo `TETO_TOTAL_ALUGUEL` de lib/constants.ts e de merge.py. Não é
+//   negociável, e por isso virou flag (`--teto=`) só depois de escrito: o valor
+//   padrão continua 3600 e merge.py continua barrando em 3600.
+//
+// ---------------------------------------------------------------------------
+// O slug do anúncio MENTE sobre o tipo (requisito do cliente)
+// ---------------------------------------------------------------------------
+// Anúncio de "Casa Comercial" sai com slug `casa-para-alugar` — o mesmo do
+// residencial. Então filtrar por tipo só no slug deixa comercial entrar na base.
+// O tipo é conferido em DUAS fontes: o slug (barato, antes de gastar request) e
+// o TÍTULO, que é o texto que o anunciante escreveu (autoritativo, na página do
+// anúncio). As palavras rejeitadas por perfil estão em REJEITA_TITULO.
 //
 // ---------------------------------------------------------------------------
 // Reuso, e o que NÃO dá pra reusar
@@ -56,13 +82,120 @@
 // (grade /imn/, "Sem taxa de condomínio", IPTU) estão portadas, e o resto vem
 // do payload RSC, que o import por link não usa. Telefone: `melhorTelefone()` de
 // telefone.mjs (normaliza E.164, mede o nono dígito e prefere celular).
-import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from "node:fs";
 import { melhorTelefone } from "./telefone.mjs";
 
+// ------------------------------------------------------------------ flags
+// Leitor de flag único para o arquivo inteiro. Devolve o PADRÃO quando a flag
+// não está — sem `|| padrao`, porque `0` e `""` são valor legítimo.
+const arg = (nome, padrao) => {
+  const hit = process.argv.find((a) => a.startsWith(`--${nome}=`));
+  return hit === undefined ? padrao : hit.slice(nome.length + 3);
+};
+const argNum = (nome, padrao) => {
+  const bruto = arg(nome, "").trim();
+  // `Number("")` é 0, não NaN: sem este teste, a flag ausente viraria 0 e o
+  // perfil padrão perderia teto e faixa de quartos silenciosamente.
+  if (!bruto) return padrao;
+  const n = Number(bruto);
+  return Number.isFinite(n) ? Math.round(n) : padrao;
+};
+
+// ---------------------------------------------------------------- bairros
+// lib/neighborhoods.ts é a fonte da verdade (LL-006). Slug do anúncio
+// ("agua-verde") vira nome oficial. Bairro fora da lista = imóvel descartado,
+// porque o card ficaria sem regional (cobertura.py).
+function slug(s) {
+  return String(s || "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+// ------------------------------------------------------------------ PERFIL
+// O que define QUEM o app atende é configuração, não literal no código. O
+// padrão é o dono original e não muda: apartamento, 2 ou 3 quartos, teto all-in
+// de R$ 3.600, 14 bairros.
+//
+// `listing` é o único campo que o portal obriga a mudar: o filtro de tipo do
+// Chaves na Mão é o PATH da listagem, não query. MEDIDO: `imoveis-para-alugar/
+// pr-curitiba/?tipo=casa` responde 200 e devolve APARTAMENTO — o filtro é
+// ignorado. Por isso a tabela, e não uma query.
+//
+// Os mesmos 14 bairros servem aos dois perfis: o segundo cliente troca tipo,
+// quartos e teto, não a geografia. Uma tabela por perfil, e o `tipoSlug` é o
+// que o slug do anúncio traz.
+const PERFIS = {
+  apartamento: {
+    listing: "imoveis-para-alugar",
+    tipoSlug: "apartamento",
+    rotulo: "Apartamento",
+    // Específico antes do genérico, porque o motivo de descarte mostra a
+    // palavra casada. `condominio` cobre "casa em condomínio" e "casa em
+    // condomínio fechado" (o slug() de ambos contém "condominio").
+    //
+    // "edificio" NÃO entra, e é deliberado: MEDIDO, 8 anúncios de apartamento
+    // legítimo Says "Edifício" por ser o NOME do prédio ("Apartamento para
+    // alugar no Cristo Rei - Edifício Principe", "3 quartos no Edifício
+    // Virginia Augusta") e caíam fora. O que reprova prédio inteiro é o slug
+    // `predio-para-alugar`, que já é barrado no filtro de tipo. Rejeitar a
+    // palavra apaga imóvel bom do dono original — o oposto do que o cliente pediu.
+    rejeitaTitulo: ["ponto-comercial", "comercial", "predio"],
+  },
+  casa: {
+    listing: "casas-para-alugar",
+    tipoSlug: "casa",
+    rotulo: "Casa",
+    rejeitaTitulo: [
+      "ponto-comercial",
+      "comercial",
+      "predio",
+      "sobrado",
+      "condominio",
+    ],
+  },
+};
+
+const TIPO = slug(arg("tipo", "apartamento"));
+if (!PERFIS[TIPO]) {
+  console.error(
+    `--tipo="${TIPO}" não existe. Perfis: ${Object.keys(PERFIS).join(", ")}.`,
+  );
+  process.exit(1);
+}
+const PERFIL = PERFIS[TIPO];
+// Teto do PRODUTO: all-in = aluguel + condomínio + IPTU. Padrão R$ 3.600, o
+// mesmo número de lib/constants.ts e de merge.py — travado nos três.
+const TETO_TOTAL = argNum("teto", 3600);
+// Faixa de quartos do alvo. O padrão 2-3 é o perfil de hoje; `--max-quartos=99`
+// é "3 ou mais", que o `>=` já resolve sem caso especial.
+const MIN_QT = argNum("min-quartos", 2);
+const MAX_QT = argNum("max-quartos", 3);
+if (MIN_QT > MAX_QT) {
+  console.error(`--min-quartos=${MIN_QT} maior que --max-quartos=${MAX_QT}.`);
+  process.exit(1);
+}
+const qtsAlvo = (q) => q >= MIN_QT && q <= MAX_QT;
+// Rótulo da faixa no nome do arquivo. Mantém a convenção antiga ("2q" = o
+// alvo 2 OU 3, o mínimo manda), para o perfil padrão continuar produzindo
+// exatamente o nome de sempre.
+const QT_LABEL = `${MIN_QT}q`;
+const ehPerfilPadrao =
+  TIPO === "apartamento" && MIN_QT === 2 && MAX_QT === 3 && TETO_TOTAL === 3600;
+
 const BASE = "https://www.chavesnamao.com.br";
-const CIDADE = `${BASE}/imoveis-para-alugar/pr-curitiba`;
+const CIDADE = `${BASE}/${PERFIL.listing}/pr-curitiba`;
 const OUT = "data/coleta";
-const ARQ = "chaves-2q-ate3600-14b-l4";
+// Nome derivado do perfil. `--saida=` vence. Sem ele, o perfil padrão reproduz
+// o nome histórico e qualquer outro perfil recebe outro nome — as duas levas
+// não podem escrever no mesmo arquivo.
+const ARQ = arg("saida", `chaves-${QT_LABEL}-ate${TETO_TOTAL}-14b-l4`);
+// Logs de auditoria. O perfil padrão mantém os nomes de hoje (citados em
+// docs/stories/S011) para não deixar órfão o que a leva 4 já produziu; outro
+// perfil recebe o perfil no nome, para o log de um não sobrescrever o do outro.
+const TAG = ehPerfilPadrao ? "chavesnamao-l4" : `chavesnamao-${TIPO}-${QT_LABEL}-ate${TETO_TOTAL}-l4`;
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36";
 const HOJE = new Date().toISOString().slice(0, 10);
@@ -71,19 +204,13 @@ const PG_MAX = 5; // robots.txt: Allow ?pg=2..5, Disallow /*?*
 // é contornar Cloudflare, não educação do portal), mas 70 listagens + N páginas
 // de anúncio ainda é tráfego constante. `--delay=` sobe se o portal começar a
 // devolver 429.
-const DELAY = Number((process.argv.find((a) => a.startsWith("--delay=")) || "").split("=")[1] || 2000);
+const DELAY = argNum("delay", 2000);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-// Teto do produto: R$ 3.600 all-in. Espelha lib/constants.ts
-// (TETO_TOTAL_ALUGUEL) e data/coleta/merge.py (MAX_TOTAL_ALUGUEL). Mesmo
-// número nos três, travado em teste — se mudar, muda nos três.
-const TETO_TOTAL = 3600;
-// Alvo da leva: 2 ou 3 quartos, apartamento residencial, 14 bairros. Área
-// >= 70 m² é desejável, não bloqueio (entra como info, não como filtro).
-const QTS = new Set([2, 3]);
 
 // Os 14 bairros da leva, no slug do portal. Todos conferidos no sitemap do
 // site. `alto-xv` NÃO existe (200 + zero anúncio): o certo é `alto-da-rua-xv`.
+// É a geografia do PERFIL padrão, e o segundo cliente usa a mesma lista. Área
+// >= 70 m² é desejável, não bloqueio (entra como info, não como filtro).
 const BAIRROS_ALVO = [
   "centro",
   "agua-verde",
@@ -102,18 +229,6 @@ const BAIRROS_ALVO = [
 ];
 
 // ---------------------------------------------------------------- bairros
-// lib/neighborhoods.ts é a fonte da verdade (LL-006). Slug do anúncio
-// ("agua-verde") vira nome oficial. Bairro fora da lista = imóvel descartado,
-// porque o card ficaria sem regional (cobertura.py).
-function slug(s) {
-  return String(s || "")
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 const OFICIAIS = (() => {
   const src = readFileSync("lib/neighborhoods.ts", "utf8");
   const mapa = new Map();
@@ -477,6 +592,26 @@ function candidatos(html) {
   return saida;
 }
 
+/**
+ * Palavra que reprova o anúncio pelo TÍTULO, ou null se o título não tem nenhuma.
+ *
+ * Motivo (requisito do cliente): o slug do anúncio mente. "Casa Comercial" sai
+ * como `casa-para-alugar` — idêntico ao residencial — então o filtro por tipo
+ * sozinho deixa comercial na base. O título é o texto que o anunciante escreveu,
+ * então é ele que diz o que o imóvel é.
+ *
+ * Casa `slug()`-a antes de casar, para o acento e a pontuação não mudarem o
+ * resultado: "Casa em Condomínio" vira `casa-em-condominio` e casa com
+ * `condominio`. Devolve a PALAVRA casada, não o título inteiro, porque é ela
+ * que o relatório de descartes agrega.
+ */
+function recusaDeTitulo(titulo) {
+  const s = slug(titulo);
+  if (!s) return null;
+  for (const p of PERFIL.rejeitaTitulo) if (s.includes(p)) return p;
+  return null;
+}
+
 // ------------------------------------------------- reaplicar telefone no lote
 // Modo de correção pontual, sem refazer a leva inteira:
 //
@@ -593,16 +728,24 @@ for (const sl of bairros) {
     console.log(`  [${sl}] pg${pg} HTTP ${status} ${achados.length} anuncios`);
   }
 
-  // --- pré-filtro do slug
+  // --- pré-filtro do slug e do título do card
   const candidatosBairro = [...brutos.values()];
   brutosPorBairro.set(sl, candidatosBairro.length);
   const pre = candidatosBairro.filter((a) => {
-    if (a.tipo !== "apartamento") {
-      fora(sl, a.href, `tipo ${a.tipo || "desconhecido"} (alvo: apartamento)`);
+    if (a.tipo !== PERFIL.tipoSlug) {
+      fora(sl, a.href, `tipo ${a.tipo || "desconhecido"} (alvo: ${TIPO})`);
       return false;
     }
-    if (a.qts && !QTS.has(a.qts)) {
-      fora(sl, a.href, `${a.qts} quartos (alvo 2-3)`);
+    // O card já diz "comercial"/"sobrado" no título. Barato (nenhum request
+    // gasto) e o portal é quem escreveu. Quem decide mesmo é a página do
+    // anúncio, conferida abaixo — mas o que o card já denuncia não vale abrir.
+    const recusa = recusaDeTitulo(a.card);
+    if (recusa) {
+      fora(sl, a.href, `titulo "${a.card}" rejeitado (${recusa})`);
+      return false;
+    }
+    if (a.qts && !qtsAlvo(a.qts)) {
+      fora(sl, a.href, `${a.qts} quartos (alvo ${MIN_QT}-${MAX_QT})`);
       return false;
     }
     if (a.rent && a.rent > TETO_TOTAL) {
@@ -639,12 +782,22 @@ for (const sl of bairros) {
       fora(sl, c.href, `transacao ${x.transaction || "?"} (alvo aluguel)`);
       continue;
     }
-    if (x.category !== "residential" || x.tipoSlug !== "apartamento") {
+    if (x.category !== "residential" || x.tipoSlug !== PERFIL.tipoSlug) {
       fora(
         sl,
         c.href,
         `nao residencial (category=${x.category || "?"} tipo=${x.tipoSlug || "?"} realtyType=${x.realtyType || "?"})`,
       );
+      continue;
+    }
+    // Autoritativo do tipo. `category: residential` e o slug batem, mas o
+    // TÍTUTO diz que é comercial — é o caso do slug que mente. O `|| c.card`
+    // é o mesmo texto do portal visto de outro lugar: o ld+json `name` é o
+    // título da página, o `title` do card é o título da listagem.
+    const titulo = x.titulo || c.card;
+    const recusa = recusaDeTitulo(titulo);
+    if (recusa) {
+      fora(sl, c.href, `titulo "${titulo}" rejeitado (${recusa})`);
       continue;
     }
     if (!x.bairro) {
@@ -655,8 +808,8 @@ for (const sl of bairros) {
       fora(sl, c.href, `bairro do anuncio "${x.bairro}" difere da listagem "${nome}"`);
       continue;
     }
-    if (!QTS.has(x.quartos)) {
-      fora(sl, c.href, `${x.quartos} quartos (alvo 2-3)`);
+    if (!qtsAlvo(x.quartos)) {
+      fora(sl, c.href, `${x.quartos} quartos (alvo ${MIN_QT}-${MAX_QT})`);
       continue;
     }
     if (!x.rent) {
@@ -698,7 +851,7 @@ for (const sl of bairros) {
     const end = x.numero ? `, ${x.numero}` : "";
     const registro = {
       id: `chavesnamao-${slug(x.bairro)}-${x.area}-${x.rent}-${x.imovelId}`.slice(0, 90),
-      title: (x.titulo || `Apartamento para alugar — ${x.bairro}`).slice(0, 120),
+      title: (x.titulo || `${PERFIL.rotulo} para alugar — ${x.bairro}`).slice(0, 120),
       neighborhood: x.bairro,
       address: `${x.rua}${end}, ${x.bairro}, Curitiba - PR`,
       area: x.area,
@@ -754,15 +907,30 @@ const resumoBairro = (sl) => {
 };
 const tabela = bairros.map(resumoBairro);
 
-writeFileSync(`${OUT}/${ARQ}.json`, JSON.stringify({ imoveis: itens }, null, 1), "utf8");
-writeFileSync(
-  `${OUT}/descartados-chavesnamao-l4.json`,
-  JSON.stringify(descartados, null, 1),
-  "utf8",
-);
-writeFileSync(`${OUT}/log-chavesnamao-l4.json`, JSON.stringify({ paginas: log, porBairro: tabela }, null, 1), "utf8");
-writeFileSync(`${OUT}/telefones-chavesnamao-l4.json`, JSON.stringify(telefones, null, 1), "utf8");
+// Anti-apagão na ESCRITA (AGENTS.md regra 3). Com dois clientes na mesma
+// pipeline, uma leva vazia passa a ser capaz de apagar a do outro: um
+// `--tipo=` ou `--bairros=` errado zera tudo e sobrescreve o arquivo bom com
+// zero imóveis, sem erro nenhum. Leva vazia sobre arquivo com conteúdo não
+// acontece — o coletor avisa e sai com código 1.
+const destino = `${OUT}/${ARQ}.json`;
+if (!itens.length && existsSync(destino)) {
+  const anterior = JSON.parse(readFileSync(destino, "utf8")).imoveis?.length ?? 0;
+  if (anterior > 0) {
+    console.error(
+      `\nABORTADO: a leva saiu vazia e ${destino} tem ${anterior} imóveis. ` +
+        `Nada foi escrito (anti-apagão).`,
+    );
+    console.error(`  causas prováveis: --tipo/--bairros/--teto errados, ou o portal mudou a listagem.`);
+    process.exit(1);
+  }
+}
 
+writeFileSync(`${OUT}/${ARQ}.json`, JSON.stringify({ imoveis: itens }, null, 1), "utf8");
+writeFileSync(`${OUT}/descartados-${TAG}.json`, JSON.stringify(descartados, null, 1), "utf8");
+writeFileSync(`${OUT}/log-${TAG}.json`, JSON.stringify({ paginas: log, porBairro: tabela }, null, 1), "utf8");
+writeFileSync(`${OUT}/telefones-${TAG}.json`, JSON.stringify(telefones, null, 1), "utf8");
+
+console.log(`\nperfil: ${TIPO} | ${MIN_QT}-${MAX_QT} quartos | teto all-in R$${TETO_TOTAL} | ${bairros.length} bairros`);
 console.log("\n=================== Chaves na Mão ===================");
 console.log("bairro                bruto  cand   passou");
 for (const t of tabela) {
@@ -784,7 +952,9 @@ if (itens.length && !comTel) {
 console.log(`\nmotivos de descarte:`);
 const contagem = new Map();
 for (const d of descartados) {
-  const k = d.motivo.replace(/\d+/g, "N").replace(/<[^>]*>/g, "");
+  // Números e o texto entre aspas viram placeholders: o motivo é o que
+  // agrega (o título rejeitado é um por anúncio e viraria 200 linhas).
+  const k = d.motivo.replace(/\d+/g, "N").replace(/"[^"]*"/g, '"T"').replace(/<[^>]*>/g, "");
   contagem.set(k, (contagem.get(k) || 0) + 1);
 }
 for (const [k, v] of [...contagem].sort((a, b) => b[1] - a[1]).slice(0, 14)) {

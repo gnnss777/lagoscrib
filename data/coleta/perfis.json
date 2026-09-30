@@ -1,0 +1,20 @@
+{
+  "default": "dono",
+  "perfis": {
+    "dono": {
+      "dir": "data/coleta",
+      "data": "lib/data.ts",
+      "tetoAllin": 3600,
+      "fotos": "public/imoveis",
+      "fontes": ["zap", "viva", "olx", "apolar", "imobiliarias"]
+    },
+    "thais": {
+      "dir": "data/thais",
+      "data": "lib/data-thais.ts",
+      "tetoAllin": 8000,
+      "fotos": "public/imoveis-thais",
+      "seed": "data/thais/data-seed.ts",
+      "fontes": ["chavesnamao"]
+    }
+  }
+}

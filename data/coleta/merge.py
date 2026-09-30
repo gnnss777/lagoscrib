@@ -1,15 +1,30 @@
 """Merge-check da leva: normaliza, valida e detecta colisões (sem escrever no app).
 
-Uso: python data/coleta/merge.py [fonte ...]
-     fontes sem argumento = as 5 listas do snapshot 22/09/2026 (retrocompat).
+Uso: python data/coleta/merge.py [--perfil=NOME] [--teto=N] [fonte ...]
+     sem argumento = as fontes do perfil default (retrocompat: as 5 listas do
+     snapshot 22/09/2026, base `dono`).
      Exemplo: python data/coleta/merge.py zap-l4 viva-l4 olx-l4 apolar-l4
+     Exemplo: python data/coleta/merge.py --perfil=thais data/thais/chaves.json
+
+Cada perfil tem o seu diretório, a sua base de dados e o seu teto — ver
+`perfis.json`. Teto: --teto= > COLETA_TETO_ALLIN > perfil.tetoAllin > 3600.
 """
-import json, re, sys, unicodedata
+import json, os, re, sys, unicodedata
 from collections import Counter
 
-BASE = "data/coleta"
-DEFAULT_SOURCES = ["zap", "viva", "olx", "apolar", "imobiliarias"]
-SOURCES = [s.removesuffix(".json") for s in sys.argv[1:]] or DEFAULT_SOURCES
+# `perfis.py` e importado: sem isto cada roda deixa data/coleta/__pycache__/
+# sujando a arvore de trabalho (o .gitignore nao e nosso para editar).
+sys.dont_write_bytecode = True
+from perfis import caminho_fonte, carregar, separar_argv
+
+FLAGS, ARGV = separar_argv(sys.argv[1:])
+PERFIL = carregar(FLAGS)
+BASE = PERFIL.dir
+# Fonte = nome dentro do diretório do perfil (`zap`) ou caminho direto
+# (`data/thais/x.json`), porque o coletor do 2º cliente escolhe o nome do arquivo.
+SOURCES = ARGV or PERFIL.fontes
+RESOLVIDAS = [caminho_fonte(BASE, s) for s in SOURCES]
+FONTES = [nome for _caminho, nome in RESOLVIDAS]
 
 # Correções de quartos (divergência Quartos×dormitórios sinalizada pelos coletores;
 # vale o descritivo/dormitórios). Vazio na leva 4 — o coletor já valida.
@@ -19,7 +34,9 @@ DROP_NO_PHOTOS = set()
 # Teto do produto: R$ 3.600 com TODAS as taxas (aluguel + condomínio + IPTU).
 # O filtro de busca dos portais é só por aluguel (--preco-max), então sem esta
 # regra a base aceita imóvel de R$ 2.500 de aluguel com R$ 1.300 de condomínio.
-MAX_TOTAL_ALUGUEL = 3600
+# Por perfil: o dono barra em 3600, o 2º cliente tem teto 8000. É o choke point
+# do filtro (ADR-005) — trocar o valor aqui é a única coisa que muda.
+MAX_TOTAL_ALUGUEL = PERFIL.teto_allin
 # Ids derrubados por esse teto, para o motivo sair certo na evidência.
 ACIMA_DO_TETO = set()
 
@@ -38,17 +55,26 @@ def key_of(address, area, bedrooms, transaction):
 
 def load_new():
     items = []
-    for name in SOURCES:
-        d = json.load(open(f"{BASE}/{name}.json", encoding="utf-8"))
+    for caminho, nome in RESOLVIDAS:
+        if not os.path.exists(caminho):
+            # Fonte ausente não derruba a leva: avisa e segue. Zerar a base
+            # inteira por um nome de arquivo errado seria apagão.
+            print(f"AVISO: fonte ausente, ignorada: {caminho}")
+            continue
+        d = json.load(open(caminho, encoding="utf-8"))
         for x in d["imoveis"]:
             x = dict(x)
-            x["_fonte"] = name
+            x["_fonte"] = nome
             items.append(x)
     return items
 
 
 def read_data_ts():
-    return open("lib/data.ts", encoding="utf-8").read()
+    # Base do próprio perfil: a colisão é medida contra a base que este cliente
+    # realmente tem. Antes da 1a leva a base não existe (2º cliente) — vazio.
+    if not os.path.exists(PERFIL.data):
+        return ""
+    return open(PERFIL.data, encoding="utf-8").read()
 
 
 def existing_keys():
@@ -131,10 +157,13 @@ def normalize(x):
 
 
 def main():
+    PERFIL.garantir_dir()
     raw = load_new()
-    print("fontes:", ", ".join(SOURCES))
+    print(f"perfil: {PERFIL.nome} | base: {PERFIL.dir} -> {PERFIL.data}")
+    print("teto all-in: R$", PERFIL.teto_allin)
+    print("fontes:", ", ".join(FONTES))
     print("brutas:", len(raw))
-    normed, problems = [], []
+    normed, problemas = [], []
     for x in raw:
         n = normalize(x)
         if n is None:
@@ -145,14 +174,14 @@ def main():
             # total consistente?
             if n.get("transaction") == "venda":
                 if n["total"] != n["salePrice"]:
-                    problems.append(("total-venda", n["id"]))
+                    problemas.append(("total-venda", n["id"]))
             else:
                 if n["total"] != n["rent"] + n["condo"] + n["iptu"]:
-                    problems.append(("total-aluguel", n["id"]))
+                    problemas.append(("total-aluguel", n["id"]))
             if (n.get("photosCount") or 99) < 8:
-                problems.append(("fotos<8", n["id"]))
+                problemas.append(("fotos<8", n["id"]))
             normed.append(n)
-    print("normalizadas:", len(normed), "| problemas:", problems)
+    print("normalizadas:", len(normed), "| problemas:", problemas)
 
     seen = {}
     for id_, addr, area, bed, trans in existing_keys():
@@ -194,13 +223,20 @@ def main():
         print("max condo (aluguel):", max(x["condo"] for x in rent))
     if venda:
         print("max venda:", max(x["total"] for x in venda))
-    print("max area:", max(x["area"] for x in kept))
-    json.dump(
-        kept,
-        open(f"{BASE}/merge-normalizado.json", "w", encoding="utf-8"),
-        ensure_ascii=False,
-    )
-    print("merge-normalizado.json gravado")
+    if kept:
+        print("max area:", max(x["area"] for x in kept))
+    else:
+        print("nada sobreviveu a teto/foto — base do perfil vai ficar vazia")
+
+    # Anti-apagão: nenhuma fonte lida é motivo para não sobrescrever uma leva
+    # boa já normalizada. Sem esse guarda, `merge.py --perfil=x` com nome de
+    # arquivo errado zerava a base inteira.
+    if not raw and os.path.exists(PERFIL.merge):
+        print(f"AVISO: 0 imóveis lidos — {PERFIL.merge} preservado")
+        return
+    with open(PERFIL.merge, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(kept, f, ensure_ascii=False)
+    print(f"{PERFIL.merge} gravado ({len(kept)} imóveis)")
 
 
 main()

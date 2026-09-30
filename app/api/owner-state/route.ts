@@ -5,7 +5,7 @@ import { logger } from "@/lib/logger";
 import { redisConfigured, redisGet, redisSet, RedisNotConfiguredError } from "@/lib/redis";
 import {
   MAX_SNAPSHOT_BYTES,
-  OWNER_STATE_KEY,
+  resolveOwnerStateKey,
   snapshotSchema,
 } from "@/lib/ownerState";
 
@@ -17,12 +17,20 @@ import {
  *
  * A credencial é a sessão do NextAuth, não um código: o dono já faz login para
  * usar o app, então exigir um segundo segredo por aparelho só criava atrito. É
- * a mesma regra das outras rotas `/api/*` — mesma sessão, mesmo portão.
+ * a mesma regra das outras rotas `/api/*` — mesma sessão, mesmo portão. Nada
+ * aqui reintroduz token: se não há sessão, é 401.
  *
  * Isso é single-tenant de propósito: o dono pediu o caminho simples, e o ADR-001
  * recusou inventar multiusuário. O preço é que existe um único documento — se
- * algum dia forem duas pessoas, isto é o primeiro lugar a refazer.
+ * algum dia forem duas pessoas, isto é o primeiro lugar a refazer. Um segundo
+ * cliente (outro dono, outro deploy, outro Redis) não precisa de refazer nada:
+ * basta apontar `OWNER_STATE_KEY` para o namespace dele, que aí o documento
+ * continua sendo único, só que por namespace.
  */
+
+function chaveInvalida(reason: string) {
+  return NextResponse.json({ error: reason }, { status: 503 });
+}
 
 /** Há sessão válida? Autorização das duas rotas. */
 async function temSessao(): Promise<boolean> {
@@ -37,6 +45,10 @@ function unauthorized() {
 
 export async function GET(request: Request) {
   if (!(await temSessao())) return unauthorized();
+  // Antes do Redis: sem chave válida não há para onde ler, e cair no default
+  // com a env estragada seria ler o documento de outro cliente.
+  const chave = resolveOwnerStateKey();
+  if (!chave.ok) return chaveInvalida(chave.reason);
   if (!redisConfigured()) {
     return NextResponse.json(
       { error: "Sync não configurado (UPSTASH_REDIS_REST_URL/TOKEN)" },
@@ -53,7 +65,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const raw = await redisGet(OWNER_STATE_KEY);
+    const raw = await redisGet(chave.key);
     if (!raw) return NextResponse.json({ data: null }, { headers: { "Cache-Control": "no-store" } });
     const parsed = snapshotSchema.safeParse(JSON.parse(raw));
     if (!parsed.success) {
@@ -73,6 +85,8 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   if (!(await temSessao())) return unauthorized();
+  const chave = resolveOwnerStateKey();
+  if (!chave.ok) return chaveInvalida(chave.reason);
 
   // Payload primeiro, Redis depois: entrada inválida é erro da requisição (400)
   // e vale saber disso mesmo com a infra fora do ar. O contrário faria todo
@@ -112,7 +126,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    await redisSet(OWNER_STATE_KEY, JSON.stringify(parsed.data));
+    await redisSet(chave.key, JSON.stringify(parsed.data));
     return NextResponse.json({ ok: true, updatedAt: parsed.data.updatedAt });
   } catch (e) {
     if (e instanceof RedisNotConfiguredError) {

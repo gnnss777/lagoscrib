@@ -2,6 +2,10 @@
 // no schema que data/coleta/merge.py espera.
 //
 // Uso: node scripts/coleta/coleta.mjs [--qtd-zap=10] [--qtd-viva=10] [--qtd-olx=20] [--qtd-apolar=10]
+//      [--tipo=casa] [--quartos=3,4] [--preco-max=8000] [--teto-total=8000]
+//
+// `--tipo=` (padrão apartamento) escolhe o path de listagem do Zap, do VivaReal e
+// do Apolar, e o `property_type` da API do Apolar. Sem a flag, é a leva de hoje.
 //
 // Por que browser real e não fetch: Zap e VivaReal respondem 403 a fetch e o
 // Cloudflare barra Chromium headless (LL-045). Edge real + perfil persistente
@@ -217,7 +221,9 @@ function coletarUrls(no) {
 }
 
 // ---------------------------------------------------------------- Zap/VivaReal
-// Zap: /aluguel/apartamentos/pr+curitiba/  ·  VivaReal: /aluguel/parana/curitiba/
+// A URL de listagem deriva de `--tipo=` (ver PERFIS, com o aviso de que os paths
+// de casa ainda não foram medidos). Padrão: Zap /aluguel/apartamentos/pr+curitiba/
+// e VivaReal /aluguel/parana/curitiba/apartamento/.
 // --quartos=2,3: preenche ?quartos= na busca do Zap/VivaReal e filtra no
 // cliente a lista da API do Apolar (o filtro bedrooms dela é inconsistente:
 // pede 4,5,6 e devolve 2 e 3 quartos).
@@ -308,13 +314,40 @@ function bairroOficialNoSlug(url) {
   return melhor ? BAIRROS.get(melhor) : null;
 }
 
+// ------------------------------------------------------------------ PERFIL
+// Zap e VivaReal filtram tipo pelo PATH da listagem, como o Chaves na Mão.
+// `pathZap`/`pathViva` são o plural do Zap e o singular do VivaReal no perfil
+// padrão — as duas URLs de hoje, character a character.
+//
+// >>> ATENÇÃO: os paths de `casa` NÃO foram verificados. Zap e VivaReal
+// >>> respondem 403 a `fetch` puro (Cloudflare, medido), então a listagem só
+// >>> pode ser conferida com browser logado (`--cdp=`). `casas`/`casa` são o
+// >>> palpite do padrão de URL dos dois portais, não medido. Se um `--tipo=casa`
+// >>> logar "nenhuma URL de busca respondeu", o consome é AQUI: corrige
+// >>> `pathZap`/`pathViva` em PERFIS (nada mais no arquivo depende delas).
+//
+// A tabela é duplicada de proposito em chavesnamao.mjs e apolar-telefone.mjs em
+// vez de virar um módulo: os três campos de cada tabela são de PORTAL (path,
+// rótulo), não um tipo compartilhado, e o chavesnamao.mjs é standalone por
+// desenho (não consegue importar nada do app).
+const PERFIS = {
+  apartamento: { pathZap: "apartamentos", pathViva: "apartamento", pathApolar: "apartamento", rotulo: "Apartamento" },
+  casa: { pathZap: "casas", pathViva: "casa", pathApolar: "casa", rotulo: "Casa" },
+};
+const TIPO = slug((process.argv.find((a) => a.startsWith("--tipo=")) || "").split("=")[1] || "apartamento");
+if (!PERFIS[TIPO]) {
+  console.error(`--tipo="${TIPO}" não existe. Perfis: ${Object.keys(PERFIS).join(", ")}.`);
+  process.exit(1);
+}
+const PERFIL = PERFIS[TIPO];
+
 const BUSCAS = {
   zap: [
-    "https://www.zapimoveis.com.br/aluguel/apartamentos/pr+curitiba/",
+    `https://www.zapimoveis.com.br/aluguel/${PERFIL.pathZap}/pr+curitiba/`,
     "https://www.zapimoveis.com.br/aluguel/imoveis/pr+curitiba/",
   ],
   viva: [
-    "https://www.vivareal.com.br/aluguel/parana/curitiba/apartamento/",
+    `https://www.vivareal.com.br/aluguel/parana/curitiba/${PERFIL.pathViva}/`,
     "https://www.vivareal.com.br/aluguel/parana/curitiba/",
   ],
 };
@@ -458,7 +491,7 @@ async function coletarZap(portal) {
     conta(bairro);
     saida.push({
       id: partes.filter(Boolean).join("-"),
-      title: (h1 || prod?.name || `Apartamento para alugar — ${bairro}`).slice(0, 120),
+      title: (h1 || prod?.name || `${PERFIL.rotulo} para alugar — ${bairro}`).slice(0, 120),
       neighborhood: bairro,
       address: `${rua || bairro}, ${bairro}, Curitiba - PR`,
       area,
@@ -586,6 +619,10 @@ async function coletarOlx() {
     }
     saida.push({
       id: `olx-${slug(bairro)}-${area}-${oid.slice(-5)}`,
+      // Literal "Apartamento", não PERFIL.rotulo: a busca do OLX acima é fixa em
+      // `f[type]=apartment` e não é parametrizada por perfil (e está desligada
+      // por padrão, qtd-olx=0). Se algum dia rodar com --tipo=casa, o certo é
+      // dizer "Apartamento", que é o que o anúncio é — não "Casa" por herança.
       title: (h1 || prod?.name || `Apartamento para alugar — ${bairro}`).slice(0, 120),
       neighborhood: bairro,
       address: `${ruaDe(texto.slice(0, 1500)) || bairro}, ${bairro}, Curitiba - PR`,
@@ -627,8 +664,11 @@ async function coletarApolar() {
   // 1. URLs reais de anúncio: a listagem paginada traz
   // /alugar/curitiba/<bairro>/alugar-residencial-apartamento-curitiba-<bairro>-<ref>?
   // (a API devolve só ?ref=, que abre a home — inútil como banco de links).
+  // O path da LISTAGEM também é o do tipo (`/alugar/apartamento/…`). `casa` é
+  // palpite do mesmo jeito que o Zap/VivaReal: a API do Apolar é pública (a
+  // `property_type` abaixo), mas a listagem precisa de browser para conferir.
   const porRef = new Map();
-  const listagem = "https://www.apolar.com.br/alugar/apartamento/curitiba";
+  const listagem = `https://www.apolar.com.br/alugar/${PERFIL.pathApolar}/curitiba`;
   for (let p = 1; porRef.size < 200 && p <= 5; p++) {
     const st = await abrir(p === 1 ? listagem : `${listagem}?pagina=${p}`, 5000);
     if (st !== 200) break;
@@ -648,7 +688,7 @@ async function coletarApolar() {
   let brutos = [];
   for (const district of lotes) {
     const bruto = await page.evaluate(
-      async ([api, fields, qtos, teto, district]) => {
+      async ([api, fields, qtos, teto, district, tipo]) => {
         const milhar = new Intl.NumberFormat("pt-BR");
         const r = await fetch(api, {
           method: "POST",
@@ -656,7 +696,7 @@ async function coletarApolar() {
           body: JSON.stringify({
             business: "Locacao", business_subfilter: "", reference: "",
             city: "Curitiba", country: "Brasil", district: district ? [district] : [],
-            property_type: ["Apartamento"], property_type_combo: [],
+            property_type: [tipo], property_type_combo: [],
             bedrooms: qtos, garage: [], bathrooms: [],
             price_max: teto ? `R$ ${milhar.format(teto)},00` : "R$ 0,00",
             price_min: "R$ 0,00",
@@ -671,7 +711,7 @@ async function coletarApolar() {
         });
         return await r.json();
       },
-      [APOLAR_API, APOLAR_FIELDS, QTS_BUSCA ? [...QTS_SET].map(String) : [], PRECO_MAX, district],
+      [APOLAR_API, APOLAR_FIELDS, QTS_BUSCA ? [...QTS_SET].map(String) : [], PRECO_MAX, district, PERFIL.rotulo],
     );
     const lote = bruto?.data ?? [];
     console.log(`  [apolar] ${district || "todos os bairros"}: ${lote.length} anuncios`);
@@ -762,7 +802,7 @@ async function coletarApolar() {
     }
     saida.push({
       id: `apolar-${slug(bairro)}-${slug(x.endereco)}-${area}-${ref}`.slice(0, 90),
-      title: `${x.tipo || "Apartamento"} para alugar — ${bairro}`.slice(0, 120),
+      title: `${x.tipo || PERFIL.rotulo} para alugar — ${bairro}`.slice(0, 120),
       neighborhood: bairro,
       address: `${x.endereco || bairro}, ${bairro}, Curitiba - PR`,
       area,

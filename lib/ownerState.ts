@@ -31,9 +31,73 @@ export const APP_STATE_KEY = "apartamentos-app-state";
 
 
 export const SNAPSHOT_VERSION = 1;
-export const OWNER_STATE_KEY = "lagoscrib:owner-state:v1";
 /** Teto do documento. A base tem 88 imóveis; folga grande, o payload é minúsculo. */
 export const MAX_SNAPSHOT_BYTES = 512 * 1024;
+
+/**
+ * Chave padrão do documento no Redis. NÃO MUDE: o estado do dono já está gravado
+ * com este nome e o Redis não renomeia nada — trocar o default faz o app abrir
+ * vazio sem nenhum erro, porque a chave nova simplesmente não existe.
+ */
+export const DEFAULT_OWNER_STATE_KEY = "lagoscrib:owner-state:v1";
+
+/** Teto da chave: pegadinha de .env colado errado não vira chave de 4 KB. */
+const MAX_KEY_LENGTH = 256;
+
+export type OwnerStateKey =
+  | { ok: true; key: string }
+  | { ok: false; reason: string };
+
+/**
+ * Chave do documento, resolvida na HORA DO USO — não no import.
+ *
+ * Era `export const OWNER_STATE_KEY = "lagoscrib:owner-state:v1"`, avaliada uma
+ * vez quando o módulo carrega. Isso quebrava nos dois lugares que mais importam:
+ * num teste, que faz `vi.stubEnv` depois do import (a const já estava congelada
+ * com o valor antigo), e num runtime onde a env chega depois do módulo estar na
+ * cache. Como função, cada requisição relê o ambiente — e é isso que permite o
+ * segundo deploy apontar para o namespace dele sem tocar em código.
+ *
+ * Precedência: `OWNER_STATE_KEY` explícita; sem ela, o default acima.
+ *
+ * Env setada mas inválida NÃO cai no default de propósito: o default é o
+ * namespace do dono, e um segundo cliente que caísse nele continuaria
+ * enxergando — e sobrescrevendo — o kanban alheio. Falhar fechado (503) é
+ * barulhento; herdar a chave do outro é silencioso.
+ *
+ * Aspas em volta são removidas pelo mesmo motivo do `env()` em lib/redis.ts: um
+ * `.env.local` escrito à mão como `OWNER_STATE_KEY="cliente-b:owner-state"`
+ * entregaria aspas como parte da chave, e GET/PUT passariam a bater em outra
+ * chave sem erro nenhum. O `env()` de lá não é importado aqui porque este
+ * módulo entra no bundle do cliente — não se arrasta a infra de Redis junto.
+ */
+export function resolveOwnerStateKey(
+  raw: string | undefined = process.env.OWNER_STATE_KEY,
+): OwnerStateKey {
+  // Ausente = dono. Setada e estragada = fail closed (ver acima).
+  if (raw === undefined) return { ok: true, key: DEFAULT_OWNER_STATE_KEY };
+
+  const key = raw.trim().replace(/^["']|["']$/g, "").trim();
+  if (!key) {
+    return {
+      ok: false,
+      reason: "OWNER_STATE_KEY vazia — apague a variável para usar a chave padrão",
+    };
+  }
+  if (key.length > MAX_KEY_LENGTH) {
+    return { ok: false, reason: `OWNER_STATE_KEY acima de ${MAX_KEY_LENGTH} caracteres` };
+  }
+  // Allowlist, não deny-list: o namespace é nosso, então o conjunto é fechado e
+  // qualquer caractere fora dele (espaço, aspa interna, `\n` de .env quebrado)
+  // recusa em vez de passar adiante. Chave é URL-safe de propósito.
+  if (/[^a-zA-Z0-9:._/-]/.test(key)) {
+    return {
+      ok: false,
+      reason: "OWNER_STATE_KEY com caractere fora de [letras, números, : - _ . /]",
+    };
+  }
+  return { ok: true, key };
+}
 
 const noteSchema = z.object({
   id: z.string().min(1).max(64),

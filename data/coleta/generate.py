@@ -1,12 +1,25 @@
-"""Gera os literais TS da leva e appenda em lib/data.ts (idempotente).
+"""Gera os literais TS da leva e escreve na base do perfil (idempotente).
 
-Uso: python data/coleta/generate.py [AAAA-MM-DD]
+Uso: python data/coleta/generate.py [--perfil=NOME] [AAAA-MM-DD]
 
-- Lê merge-normalizado.json + download-manifest.json.
-- Pula imóvel sem capa local e imóvel cujo id já está em lib/data.ts, então
+- Lê <perfil>/merge-normalizado.json + <perfil>/download-manifest.json.
+- Pula imóvel sem capa local e imóvel cujo id já está na base do perfil, então
   rodar duas vezes não duplica nada.
-- Appenda no fim do array `apartments` (aluguel) ou `saleApartments` (venda).
+- Acrescenta no fim do array `apartments` (aluguel) ou `saleApartments` (venda).
   Nada de âncora: o snapshot 22/09/2026 usou uma âncora de uso único.
+
+## Append ou gerar do zero?
+A base de cada cliente é **gerada do zero a partir do seed do perfil**, nunca
+append no arquivo de outro cliente. Sem isso, `lib/data-thais.ts` nasceria como
+uma cópia de `lib/data.ts` e o 2º cliente herdaria os 152 imóveis do dono — a
+base dele jamais poderia ser regenerada nem zerada sem perder a linha de
+produção do dono, e `verify` do app leria os dois clientes misturados.
+
+O seed (`perfis.json` → `seed`) é o schema em branco com os arrays vazios. Na
+1a vez o arquivo alvo não existe e o seed vira o arquivo; a partir daí é append
+normal. Idempotência não vem do seed, vem de `known` ser lido **do arquivo do
+perfil**: nunca de `lib/data.ts`. Recomeçar a base do 2º cliente, portanto, é
+apagar o arquivo dele e rodar de novo — os dados do dono não são atingidos.
 """
 import json
 import os
@@ -14,9 +27,15 @@ import re
 import sys
 from datetime import date
 
-BASE = "data/coleta"
-DATA = "lib/data.ts"
-VERIFIED_AT = sys.argv[1] if len(sys.argv) > 1 else date.today().isoformat()
+# `perfis.py` e importado: sem isto cada roda deixa data/coleta/__pycache__/
+# sujando a arvore de trabalho (o .gitignore nao e nosso para editar).
+sys.dont_write_bytecode = True
+from perfis import carregar, ler_manifest, ler_merge, seed_de, separar_argv, url_publico
+
+FLAGS, ARGV = separar_argv(sys.argv[1:])
+PERFIL = carregar(FLAGS)
+DATA = PERFIL.data
+VERIFIED_AT = ARGV[0] if ARGV else date.today().isoformat()
 # Portal de origem -> campo de id no schema do app. Derivado do próprio item
 # (não do nome do arquivo), então "zap-l4" e "zap" geram o mesmo campo.
 PORTAL_ID_FIELDS = ("zapId", "vivaId", "olxId", "apolarId", "codigoAnunciante")
@@ -105,10 +124,14 @@ def append_to_array(src, name, block):
 
 
 def main():
-    items = json.load(open(f"{BASE}/merge-normalizado.json", encoding="utf-8"))
-    manifest = json.load(open(f"{BASE}/download-manifest.json", encoding="utf-8"))
-    src = open(DATA, encoding="utf-8").read()
+    items = ler_merge(PERFIL)
+    manifest = ler_manifest(PERFIL)
+    ja_existia = os.path.exists(DATA)
+    src = seed_de(PERFIL)
     known = set(re.findall(r'id:\s*"([^"]+)"', src))
+    if not ja_existia:
+        print(f"{DATA} nao existia: gerado do zero a partir do seed {PERFIL.seed}")
+    print(f"perfil: {PERFIL.nome} | {len(items)} no merge | {len(known)} ids na base")
 
     rent_ts, sale_ts, drops, dupes = [], [], [], []
     for x in items:
@@ -116,7 +139,7 @@ def main():
             dupes.append(x["id"])
             continue
         got = [
-            p.replace("/public/imoveis", "/imoveis")
+            url_publico(p)
             for p in manifest.get(x["id"], [])
             if os.path.exists(p.lstrip("/"))
         ]
@@ -133,11 +156,13 @@ def main():
         src = append_to_array(src, "apartments", "\n".join(rent_ts))
     if sale_ts:
         src = append_to_array(src, "saleApartments", "\n".join(sale_ts))
-    if rent_ts or sale_ts:
+    # Base nova entra em disco mesmo vazia: sem isso o app não tem o que importar
+    # e o próximo run refaz o seed do zero (idempotente, mas inútil).
+    if rent_ts or sale_ts or not ja_existia:
         open(DATA, "w", encoding="utf-8", newline="\n").write(src)
-        print("data.ts atualizado")
+        print(f"{DATA} atualizado")
     else:
-        print("nada novo para injetar — data.ts intacto")
+        print(f"nada novo para injetar — {DATA} intacto")
 
 
 main()

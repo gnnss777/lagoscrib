@@ -6,11 +6,40 @@
 // campo: estava em APOLAR_FIELDS desde sempre e o mapping nunca referenciou
 // (ADR-004).
 //
-// Uso: node scripts/coleta/apolar-telefone.mjs
+// Uso: node scripts/coleta/apolar-telefone.mjs [--tipo=apartamento] [--preco-max=3500]
 //
 // E-mail NÃO existe: nenhum dos 4 portais publica e-mail do anunciante.
 import { readFileSync, writeFileSync } from "node:fs";
 import { telApolar } from "./telefone.mjs";
+
+// ------------------------------------------------------------------ PERFIL
+// A busca por `reference` é a MESMA para qualquer imóvel do Apolar, então o que
+// precisa mudar por cliente é só o que a API usa como filtro: o `property_type`
+// e o `price_max`. Os dois viraram flag com o valor de hoje como padrão —
+// `["Apartamento"]` e `R$ 3.500,00` —, então rodar sem flag é rodar como sempre.
+//
+// `--preco-max=` (e não `--teto=`) porque o `price_max` da API é o filtro de
+// ALUGUEL do portal, não o all-in. O all-in é o `--teto-total=` do coleta.mjs, e
+// ele corta depois, no cliente. Note que o padrão daqui é 3.500, diferente do
+// teto do produto (3.600): são coisas diferentes e a divergência é de propósito.
+const arg = (nome, padrao) => {
+  const hit = process.argv.find((a) => a.startsWith(`--${nome}=`));
+  return hit === undefined ? padrao : hit.slice(nome.length + 3);
+};
+const PERFIS = {
+  apartamento: "Apartamento",
+  casa: "Casa",
+};
+const TIPO = arg("tipo", "apartamento").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+if (!PERFIS[TIPO]) {
+  console.error(`--tipo="${TIPO}" não existe. Perfis: ${Object.keys(PERFIS).join(", ")}.`);
+  process.exit(1);
+}
+const PROPERTY_TYPE = PERFIS[TIPO];
+const PRECO_MAX = Number(arg("preco-max", "3500"));
+// A API quer o valor no formato brasileiro: "R$ 3.500,00".
+const PRICE_MAX = `R$ ${new Intl.NumberFormat("pt-BR").format(PRECO_MAX)},00`;
+console.log(`perfil: ${TIPO} (${PROPERTY_TYPE}) | price_max ${PRICE_MAX}`);
 
 // lib/data.ts NÃO é UTF-8: é Windows-1252 ("VivaReal · 211095", "Lançamentos").
 // Ler como "utf8" troca cada byte inválido por U+FFFD e escrever de volta
@@ -42,12 +71,12 @@ for (const ref of refs) {
         city: "Curitiba",
         country: "Brasil",
         district: [],
-        property_type: ["Apartamento"],
+        property_type: [PROPERTY_TYPE],
         property_type_combo: [],
         bedrooms: [],
         garage: [],
         bathrooms: [],
-        price_max: "R$ 3.500,00",
+        price_max: PRICE_MAX,
         price_min: "R$ 0,00",
         area_max: "0,00 m²",
         area_min: "0,00 m²",

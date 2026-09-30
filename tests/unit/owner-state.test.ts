@@ -1,10 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   APP_STATE_KEY,
+  DEFAULT_OWNER_STATE_KEY,
   applySnapshot,
   buildSnapshot,
   emptySnapshot,
   reconcileOnLoad,
+  resolveOwnerStateKey,
   samePayload,
   snapshotSchema,
   type OwnerSnapshot,
@@ -174,5 +176,73 @@ describe("owner state", () => {
     // (a credencial agora é o cookie de sessão), então não há mais nada a
     // gravar aqui.
     expect(buildSnapshot().removedIds).toEqual([]);
+  });
+});
+
+/**
+ * A chave do documento no Redis é por env porque um segundo cliente vai rodar em
+ * outro deploy, com o próprio Redis. Com a chave fixa no código, os dois
+ * apontando para o mesmo Redis enxergavam o mesmo kanban e uma aba anônima de um
+ * apagava o estado do outro.
+ */
+describe("chave do estado do dono", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("test_ownerstate_chave_sem_env_continua_a_do_dono", () => {
+    // O dono depende disto: o documento já está gravado com este nome no Redis
+    // dele. Se o default mudar, o app abre vazio sem erro nenhum — a chave nova
+    // simplesmente não existe. Este é o teste que protege o estado de produção.
+    vi.stubEnv("OWNER_STATE_KEY", undefined);
+    expect(DEFAULT_OWNER_STATE_KEY).toBe("lagoscrib:owner-state:v1");
+    expect(resolveOwnerStateKey()).toEqual({ ok: true, key: "lagoscrib:owner-state:v1" });
+  });
+
+  it("test_ownerstate_chave_env_trocada_muda_o_namespace", () => {
+    // O stub acontece DEPOIS do import do topo do arquivo, que é exatamente onde
+    // a antiga `const OWNER_STATE_KEY` morria: avaliada no import, congelada com
+    // o valor antigo, ignorando a env. Se virar const de novo, este teste falha.
+    vi.stubEnv("OWNER_STATE_KEY", "cliente-b:owner-state:v1");
+    expect(resolveOwnerStateKey()).toEqual({ ok: true, key: "cliente-b:owner-state:v1" });
+  });
+
+  it("test_ownerstate_chave_tira_aspas_da_env", () => {
+    // O mesmo bug que quebrou UPSTASH_REDIS_REST_URL: `.env.local` escrito à mão
+    // como OWNER_STATE_KEY="cliente-b:owner-state:v1" entregaria aspas como parte
+    // da chave e GET/PUT bateria numa chave fantasma — app vazio, zero erro.
+    vi.stubEnv("OWNER_STATE_KEY", '"cliente-b:owner-state:v1"');
+    expect(resolveOwnerStateKey()).toEqual({ ok: true, key: "cliente-b:owner-state:v1" });
+  });
+
+  it("test_ownerstate_chave_env_estragada_falha_fechado", () => {
+    // O default é o namespace do DONO. Deixar uma env vazia ou estragada cair
+    // nele é exatamente o vazamento que a chave configurável veio para evitar:
+    // um cliente herdando e sobrescrevendo o documento alheio. Recusa, e a rota
+    // transforma em 503 (barulhento) em vez de sucesso silencioso.
+    const quebradas = ["", '""', "   ", "com espaco", "a".repeat(257)];
+    for (const quebrada of quebradas) {
+      vi.stubEnv("OWNER_STATE_KEY", quebrada);
+      const r = resolveOwnerStateKey();
+      expect(r.ok).toBe(false);
+      // Nem a chave nem a mensagem podem citar a chave do dono.
+      expect(JSON.stringify(r)).not.toContain("lagoscrib:owner-state:v1");
+    }
+  });
+
+  it("test_ownerstate_chave_env_nao_vaza_um_namespace_no_outro", () => {
+    // O efeito que importa: dois deploys, duas envs, dois documentos — mais o
+    // dono, que continua no seu. Um GET no cliente B não acha o estado do A.
+    const chaveDe = (env: string | undefined) => {
+      vi.stubEnv("OWNER_STATE_KEY", env);
+      const r = resolveOwnerStateKey();
+      if (!r.ok) throw new Error(`OWNER_STATE_KEY deveria resolver: ${r.reason}`);
+      return r.key;
+    };
+    expect([chaveDe("cliente-b:owner-state:v1"), chaveDe("cliente-c:owner-state:v1"), chaveDe(undefined)]).toEqual([
+      "cliente-b:owner-state:v1",
+      "cliente-c:owner-state:v1",
+      "lagoscrib:owner-state:v1",
+    ]);
   });
 });
