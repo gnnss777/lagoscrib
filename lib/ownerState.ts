@@ -224,6 +224,11 @@ export function emptySnapshot(now: Date = new Date()): OwnerSnapshot {
  * acumulado. Só depois que o aparelho tem uma base comparada é que o relógio
  * local vale, e ainda assim só quando o conteúdo mudou de verdade
  * (`samePayload`).
+ *
+ * "Adota o servidor" é ADOTAR CAMPO A CAMPO (`mergeSnapshots`), nunca o
+ * documento inteiro: o documento do dono está no Upstash, então num aparelho
+ * real o remoto nunca está vazio e a substituição pura apagava o que só
+ * existia aqui — inclusive os imóveis que o dono cadastrou à mão.
  */
 export function reconcileOnLoad(
   local: OwnerSnapshot,
@@ -239,11 +244,124 @@ export function reconcileOnLoad(
   // servidor, e o aparelho que tinha o kanban real o adotava no próximo pull —
   // apagando o trabalho do dono. O sintoma era "entro e o kanban está vazio".
   //
-  // Aqui só se inverte quando o local tem conteúdo e o remoto não. Se os dois
-  // têm conteúdo, o remoto continua mandando (last-write-wins normal) e se os
-  // dois estão vazios, tanto faz.
+  // A trava fica mesmo depois do merge virar união, porque com o merge o
+  // resultado seria o local de qualquer jeito — ela existe para o
+  // `adoptedRemote` valer: servidor vazio não é "adotado", é "ignorado", e é
+  // isso que faz o aparelho subir o local em vez de se applieditar.
   if (vazio(remote) && !vazio(local)) return { snapshot: local, adoptedRemote: false };
-  return { snapshot: remote, adoptedRemote: true };
+  return { snapshot: mergeSnapshots(local, remote), adoptedRemote: true };
+}
+
+/**
+ * União por id, na ordem do primeiro documento e sem repetir id.
+ *
+ * `idDe` devolve `null` quando o item não tem id usável: aí ele entra assim
+ * mesmo (jogar fora dato do dono seria pior que duplicá-lo) e só não conta
+ * como visto, porque não há como casá-lo com o do outro lado.
+ */
+function unionById<T>(
+  primeiro: readonly T[],
+  segundo: readonly T[],
+  idDe: (item: T) => string | null,
+): T[] {
+  const vistos = new Set<string>();
+  const saida: T[] = [];
+  for (const item of [...primeiro, ...segundo]) {
+    const id = idDe(item);
+    if (id !== null) {
+      if (vistos.has(id)) continue;
+      vistos.add(id);
+    }
+    saida.push(item);
+  }
+  return saida;
+}
+
+/** `userAdded` é `unknown[]` no schema: o id se extrai sem confiar no formato. */
+function idDeImovel(item: unknown): string | null {
+  const id = (item as { id?: unknown } | null | undefined)?.id;
+  return typeof id === "string" && id.length > 0 ? id : null;
+}
+
+/**
+ * Uma entrada por imóvel, com o `updatedAt` mais novo. O empate fica com o
+ * remoto, que é o acumulado: foi ele que o dono acabou de escrever no outro
+ * aparelho.
+ */
+function mesclarPorMaisNovo<T extends { updatedAt: string }>(
+  local: readonly T[],
+  remote: readonly T[],
+  idDe: (item: T) => string,
+): T[] {
+  const porId = new Map<string, T>();
+  for (const item of remote) porId.set(idDe(item), item);
+  for (const item of local) {
+    const atual = porId.get(idDe(item));
+    if (!atual || item.updatedAt > atual.updatedAt) porId.set(idDe(item), item);
+  }
+  return [...porId.values()];
+}
+
+/**
+ * Documento único a partir do que este aparelho tem e do que o servidor tem.
+ *
+ * Cada campo recebe a regra que O DADO pede, não uma regra única:
+ *
+ * - `userAdded` — UNIÃO por id. Um imóvel digitado à mão neste aparelho é
+ *   local por natureza: o servidor não tem como saber que ele existe, então
+ *   um documento remoto velho não pode apagá-lo.
+ *
+ *   ponytail: a união não propaga a EXCLUSÃO de um imóvel cadastrado à mão —
+ *   `removeApartment` tira a linha da lista e não deixa lápide (o
+ *   `test_delete_new_remove_fisico_sem_removed_ids` exige `removed === null`),
+ *   então no outro aparelho a união traz o imóvel de volta. Teto conhecido.
+ *   Subir para uma lápide no documento (`deletedUserAdded`) quando o dono
+ *   precisar excluir em dois aparelhos.
+ *
+ * - `removedIds` — UNIÃO. É um conjunto de lápides: a única forma de
+ *   encolhê-lo é limpar o storage do aparelho, e limpar o storage joga fora as
+ *   lápides daquele aparelho junto. Nada no app desfaz remoção, então a união
+ *   não devolve imóvel excluído por um documento que não conhece a exclusão —
+ *   que é o dano que a substituição pura causava.
+ *
+ * - `notes` — UNIÃO por id. `addNote` gera `note-<agora>-<aleatório>`: dois
+ *   aparelhos nunca colidem no mesmo id, então unir não duplica nem perde.
+ *
+ * - `statuses` — LAST-WRITE-WINS por imóvel, pelo `updatedAt`. Aqui o valor é
+ *   uma POSIÇÃO, não um evento: são duas linhas para o mesmo imóvel, e o card
+ *   some da coluna se houver duplicata. decided o relógio que o próprio campo
+ *   carrega (e não o do aparelho, que é justamente o que não se confia).
+ *
+ * - `checklist` / `followUps` — UNIÃO por CHAVE, com o valor do remoto
+ *   vencendo a chave que ele conhece. Unir os ITENS do checklist seria
+ *   errado no caminho inverso: desticar um item num aparelho e voltar no
+ *   outro o traz de volta. O que se preserva é a chave que o servidor nunca
+ *   viu (checklist de um imóvel que só existe aqui), não o conteúdo de uma
+ *   chave que ele já viu.
+ *
+ * `updatedAt` é o do remoto, nunca o local: o relógio do cliente já provou
+ * não valer para decidir nada aqui (ver a nota do last-write-wins acima).
+ *
+ * Com o local vazio o resultado é o remoto INTEIRO — nenhuma regra acima
+ * muda isso, porque união com nada é o documento e last-write-wins sem
+ * concorrência é o documento. É o que faz o aparelho novo abrir com o funil
+ * do dono em vez de vazio.
+ */
+function mergeSnapshots(local: OwnerSnapshot, remote: OwnerSnapshot): OwnerSnapshot {
+  return {
+    v: SNAPSHOT_VERSION,
+    updatedAt: remote.updatedAt,
+    removedIds: unionById(remote.removedIds, local.removedIds, (id) => id),
+    userAdded: unionById(remote.userAdded, local.userAdded, idDeImovel),
+    notes: unionById(remote.notes, local.notes, (n) => n.id),
+    statuses: mesclarPorMaisNovo(local.statuses, remote.statuses, (s) => s.apartmentId),
+    // remote por cima de local: a chave que o servidor conhece fica com o
+    // valor dele, a que ele nunca viu sobrevive. A ordem das chaves fica a
+    // do local — só muda quando o aparelho realmente tem algo a mais, e
+    // nesse caso os dois documentos são mesmo diferentes.
+    checklist: { ...local.checklist, ...remote.checklist },
+    followUps: { ...local.followUps, ...remote.followUps },
+  };
 }
 
 /** O documento não carrega nada que o dono tenha feito? */

@@ -197,6 +197,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // grava no localStorage. Extraído porque o pull do mount e o pull do poll
   // adotam exatamente do mesmo jeito — duas cópias divergem na primeira vez
   // que alguém acrescenta um campo.
+  //
+  // O que entra aqui já é o MESCLADO (`reconcileOnLoad`), nunca o documento
+  // remoto cru: esta função escreve as três chaves por cima do que o dono tem
+  // no aparelho, então Receber o remoto inteiro é o que apagava o imóvel
+  // cadastrado à mão no reload.
   const adotaRemoto = useCallback((winner: OwnerSnapshot) => {
     applySnapshot(winner);
     setState((prev) => ({
@@ -248,6 +253,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const { snapshot: winner, adoptedRemote } = reconcileOnLoad(local, snapshot);
       if (adoptedRemote && snapshot) {
         adotaRemoto(winner);
+        // O merge é união, então ele pode ter guardado algo que o servidor nunca
+        // viu — o imóvel que o dono cadastrou à mão neste aparelho. Sem este
+        // push o outro aparelho do dono nunca fica sabendo; e sem ele o poll
+        // seguinte re-mesclaria para sempre, achando que o servidor mudou.
+        // O que sobe é o MESMO documento que acabou de ser aplicado aqui: nunca
+        // mais pobre que o do servidor (união só acrescenta).
+        if (!samePayload(snapshot, winner)) await pushSnapshot(winner);
       } else {
         // O local venceu: servidor vazio na primeira vez, ou servidor vazio
         // porque alguma aba sem localStorage passou por aqui. Nos dois casos o
@@ -317,10 +329,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (cancelled || !ok || !snapshot) return;
       // Nada mudou no servidor desde a última carga deste aparelho.
       if (samePayload(lastSyncedRef.current, snapshot)) return;
-      // Mudou aqui no meio da ida: de novo, a edição local vence.
-      if (!samePayload(lastSyncedRef.current, buildSnapshot())) return;
-      adotaRemoto(snapshot);
-      lastSyncedRef.current = snapshot;
+      // Mudou aqui no meio da ida: de novo, a edição local vence. Esta leitura
+      // é DEPOIS do `await` de propósito — é ela que pega a edição que o dono
+      // fez enquanto o pull estava na rede — e como não há `await` entre ela e
+      // o merge, o mesmo `local` serve aos dois.
+      const local = buildSnapshot();
+      if (!samePayload(lastSyncedRef.current, local)) return;
+      // Mesmo merge do mount: o servidor mudou, mas o dono também pode ter
+      // criado coisa só aqui — adotar o remoto cru por este caminho apagava o
+      // imóvel cadastrado à mão do mesmo jeito que no mount.
+      const { snapshot: winner } = reconcileOnLoad(local, snapshot);
+      // Recaiu no que este aparelho já tem (o servidor ganhou em tudo que os
+      // dois conhecem): não regrava as três chaves a cada tique do poll.
+      if (samePayload(lastSyncedRef.current, winner)) return;
+      adotaRemoto(winner);
+      lastSyncedRef.current = winner;
     };
 
     const t = setInterval(() => void puxar(), SYNC_POLL_MS);

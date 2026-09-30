@@ -52,6 +52,30 @@ export default function ApartmentCard({
       }}
       data-id={apartment.id}
       className="card-apartment cursor-pointer group"
+      // Teclado: sem isto a ação principal do card (abrir o DetailModal) só
+      // existia para o mouse — o `it.fails` de acessibilidade em
+      // tests/unit/perfil-isolamento.test.ts é o teste disso. Mesmo padrão do
+      // card do kanban (KanbanBoard.tsx): `tabIndex={0}` + `onKeyDown` + nome
+      // acessível, com o anel de foco vindo do `:focus-visible` global do
+      // globals.css — nenhum estilo novo aqui.
+      //
+      // Sem `role="button"` de propósito: o card tem checkbox "Comparar", botão
+      // "Excluir" e dois links dentro, e botão com filho focalizável é a
+      // violação `nested-interactive` do axe. Fica como div focalizável
+      // acionável por Enter/Espaço, que é o mesmo contrato do card do kanban.
+      tabIndex={0}
+      aria-label={`Abrir detalhes de ${apartment.title}`}
+      onKeyDown={(e) => {
+        // Tecla dentro de um filho (checkbox Comparar, Excluir, links de
+        // WhatsApp/anúncio) é do filho: sem esta guarda o Enter no botão
+        // Excluir também abriria o modal.
+        if (e.target !== e.currentTarget) return;
+        if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar") return;
+        // Espaço numa div rolaria a página; num botão nativo o preventDefault
+        // viria do próprio navegador.
+        e.preventDefault();
+        onSelect(apartment);
+      }}
       onClick={() => onSelect(apartment)}
     >
       {/* Image (S003: capa default — mini-galeria P2 fora de escopo) */}

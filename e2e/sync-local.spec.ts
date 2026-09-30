@@ -1,18 +1,18 @@
 import { test, expect } from "@playwright/test";
 
 // ---------------------------------------------------------------------------
-// BUG DE CÓDIGO TRAVADO (P0 — perda de dado do dono)
+// P0 — perda de dado do dono pelo sync (CORRIGIDO, teste normal)
 //
 // `lib/AppContext.tsx` puxa `/api/owner-state` no mount e a cada virada de
-// `isAuthenticated` (isto é, no login). `reconcileOnLoad` (lib/ownerState.ts)
-// só recusa o remoto quando ele está vazio INTEIRO:
+// `isAuthenticated` (isto é, no login). O `reconcileOnLoad` (lib/ownerState.ts)
+// adotava o documento remoto INTEIRO sempre que ele não estivesse vazio inteiro:
 //
 //     if (vazio(remote) && !vazio(local)) return { snapshot: local, ... }
 //     return { snapshot: remote, adoptedRemote: true };
 //
 // Num aparelho de teste o remoto NÃO está vazio (o documento do dono está no
-// Upstash, alcançado pelo SYNC_TOKEN do .env.local), então o remoto vence e
-// `applySnapshot` reescreve as três chaves locais: `apartamentos-app-state`
+// Upstash, alcançado pelo cookie de sessão), então o remoto vencia e
+// `applySnapshot` reescrevia as três chaves locais: `apartamentos-app-state`
 // (notas/status/checklist/follow-ups), `apartamentos-app-removed` e
 // `apartamentos-app-new` (imóveis cadastrados à mão).
 //
@@ -21,20 +21,17 @@ import { test, expect } from "@playwright/test";
 // filtros-bairro-novo, dedupe, sem-retorno, delete-new) com sintoma de "o dado
 // semeado sumiu" e nenhum erro no console.
 //
-// `test.fail()` marca a falha como ESPERADA: a suíte fica verde enquanto o bug
-// existe e fica VERMELHA no dia que alguém corrigir o reconcile — que é o sinal
-// para trocar esta anotação por um `test()` normal. O conserto é mesclar campo a
-// campo em vez de adotar o documento inteiro.
+// O conserto foi mesclar campo a campo (`mergeSnapshots`): `userAdded`,
+// `removedIds` e `notes` por união; `statuses` por last-write-wins no
+// `updatedAt` do próprio campo; `checklist`/`followUps` por união de chave com
+// o valor do remoto. Este teste deixou de ser `test.fail()` na mesma hora — é
+// o que trava a regressão agora.
 //
 // NÃO usar `signInIfNeeded` aqui: ele corta `/api/owner-state` (isolamento de
 // harness, ver e2e/open-app.ts) e com o corte este bug simplesmente não
 // aparece — que é justamente o que se quer provar que acontece.
 // ---------------------------------------------------------------------------
 test("test_sync_remoto_nao_apaga_o_que_esta_so_no_local", async ({ page }) => {
-  test.fail(
-    true,
-    "reconcileOnLoad adota o documento remoto inteiro e apaga o estado local (imóveis cadastrados à mão somem no reload) — corrigir lib/ownerState.ts e remover esta anotação",
-  );
   const seed = {
     isAuthenticated: true,
     username: "guinness",
