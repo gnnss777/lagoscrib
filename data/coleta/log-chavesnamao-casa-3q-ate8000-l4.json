@@ -1,0 +1,664 @@
+{
+ "paginas": [
+  {
+   "bairro": "centro",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "centro",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "batel",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "portao",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "portao",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "portao",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "portao",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "portao",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-francisco",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sao-francisco",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-francisco",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-francisco",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-francisco",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cabral",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "merces",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "merces",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "merces",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "merces",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "merces",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-gloria",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "alto-da-gloria",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-gloria",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-gloria",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-gloria",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-rua-xv",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "alto-da-rua-xv",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-rua-xv",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-rua-xv",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-da-rua-xv",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "juveve",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "juveve",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "juveve",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "juveve",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "juveve",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  }
+ ],
+ "porBairro": [
+  {
+   "bairro": "Centro",
+   "slug": "centro",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 3
+  },
+  {
+   "bairro": "Água Verde",
+   "slug": "agua-verde",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 3
+  },
+  {
+   "bairro": "Batel",
+   "slug": "batel",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 0
+  },
+  {
+   "bairro": "Bigorrilho",
+   "slug": "bigorrilho",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 2
+  },
+  {
+   "bairro": "Portão",
+   "slug": "portao",
+   "brutos": 15,
+   "candidatos": 8,
+   "passou": 5
+  },
+  {
+   "bairro": "Rebouças",
+   "slug": "reboucas",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 3
+  },
+  {
+   "bairro": "Centro Cívico",
+   "slug": "centro-civico",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 1
+  },
+  {
+   "bairro": "Cristo Rei",
+   "slug": "cristo-rei",
+   "brutos": 15,
+   "candidatos": 5,
+   "passou": 1
+  },
+  {
+   "bairro": "São Francisco",
+   "slug": "sao-francisco",
+   "brutos": 15,
+   "candidatos": 3,
+   "passou": 1
+  },
+  {
+   "bairro": "Cabral",
+   "slug": "cabral",
+   "brutos": 15,
+   "candidatos": 5,
+   "passou": 0
+  },
+  {
+   "bairro": "Mercês",
+   "slug": "merces",
+   "brutos": 15,
+   "candidatos": 5,
+   "passou": 3
+  },
+  {
+   "bairro": "Alto da Glória",
+   "slug": "alto-da-gloria",
+   "brutos": 15,
+   "candidatos": 5,
+   "passou": 2
+  },
+  {
+   "bairro": "Alto da Rua XV",
+   "slug": "alto-da-rua-xv",
+   "brutos": 15,
+   "candidatos": 3,
+   "passou": 1
+  },
+  {
+   "bairro": "Juvevê",
+   "slug": "juveve",
+   "brutos": 15,
+   "candidatos": 3,
+   "passou": 0
+  }
+ ]
+}

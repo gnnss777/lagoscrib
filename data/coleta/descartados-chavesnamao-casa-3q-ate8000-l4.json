@@ -1,0 +1,1112 @@
+[
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-centro-388m2-RS20000/id-46549750/",
+  "motivo": "titulo \"Casa comercial para locação, com 388 m², Centro - Curitiba/PR\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-centro-493m2-RS10000/id-46549766/",
+  "motivo": "aluguel R$10000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-centro-178m2-RS13000/id-32807476/",
+  "motivo": "titulo \"Casa Comercial para alugar, 178.30 m2 por R$13000.00  - Centro - Curitiba/PR\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-centro-29000m2-RS4700/id-45926263/",
+  "motivo": "titulo \"Sobrado com 3 dormitórios para alugar, 274 m² por R$ 5.219,00 - Centro - Curitiba/PR\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-batel-526m2-RS22000/id-37910045/",
+  "motivo": "titulo \"Oportunidade comercial no batel!  Casa em excelente localização!\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-agua-verde-302m2-RS9900/id-44773615/",
+  "motivo": "aluguel R$9900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-bom-retiro-347m2-RS12500/id-39195186/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-195m2-RS11500/id-42796874/",
+  "motivo": "aluguel R$11500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-agua-verde-311m2-RS4900/id-43584520/",
+  "motivo": "bairro do anuncio \"Água Verde\" difere da listagem \"Centro\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-agua-verde-302m2-RS9900/id-44773615/",
+  "motivo": "aluguel R$9900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-agua-verde-414m2-RS8500/id-45622838/",
+  "motivo": "aluguel R$8500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-agua-verde-280m2-RS6500/id-34865667/",
+  "motivo": "titulo \"Charmoso sobrado estilo germânico totalmente mobiliado no Água Verde!!!\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-agua-verde-194m2-RS2990/id-41133688/",
+  "motivo": "titulo \"Sobrado para Locação com 3 Quartos e 2 Vagas – Parolin/Água Verde\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-batel-526m2-RS22000/id-37910045/",
+  "motivo": "titulo \"Oportunidade comercial no batel!  Casa em excelente localização!\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-seminario-604m2-RS12900/id-40762643/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-195m2-RS11500/id-42796874/",
+  "motivo": "aluguel R$11500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-agua-verde-191m2-RS6900/id-40106454/",
+  "motivo": "all-in R$8017 (aluguel 6900 + condo 0 + iptu 1117) acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-parolin-233m2-RS4500/id-44050299/",
+  "motivo": "bairro do anuncio \"Parolin\" difere da listagem \"Água Verde\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "agua-verde",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-novo-mundo-329m2-RS6900/id-43311859/",
+  "motivo": "bairro do anuncio \"Novo Mundo\" difere da listagem \"Água Verde\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-batel-526m2-RS22000/id-37910045/",
+  "motivo": "titulo \"Oportunidade comercial no batel!  Casa em excelente localização!\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-batel-268m2-RS12900/id-46549714/",
+  "motivo": "titulo \"Casa residencial e comercial para locação no Batel, Curitiba\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-batel-339m2-RS15900/id-45836492/",
+  "motivo": "aluguel R$15900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-batel-526m2-RS18000/id-37910046/",
+  "motivo": "titulo \"Oportunidade comercial no batel!  Casa em excelente localização!\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-batel-350m2-RS22000/id-46549721/",
+  "motivo": "aluguel R$22000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-7-quartos-com-garagem-pr-curitiba-batel-401m2-RS18500/id-32761041/",
+  "motivo": "aluguel R$18500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-batel-180m2-RS11500/id-43874355/",
+  "motivo": "aluguel R$11500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-batel-319m2-RS14000/id-44488389/",
+  "motivo": "aluguel R$14000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-agua-verde-302m2-RS9900/id-44773615/",
+  "motivo": "aluguel R$9900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-seminario-604m2-RS12900/id-40762643/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-195m2-RS11500/id-42796874/",
+  "motivo": "aluguel R$11500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-bigorrilho-795m2-RS29000/id-46042710/",
+  "motivo": "aluguel R$29000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-agua-verde-311m2-RS4900/id-43584520/",
+  "motivo": "bairro do anuncio \"Água Verde\" difere da listagem \"Batel\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "batel",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-agua-verde-192m2-RS5500/id-39812466/",
+  "motivo": "bairro do anuncio \"Água Verde\" difere da listagem \"Batel\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-bigorrilho-795m2-RS29000/id-46042710/",
+  "motivo": "aluguel R$29000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-195m2-RS11500/id-42796874/",
+  "motivo": "aluguel R$11500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-12-quartos-com-garagem-pr-curitiba-bigorrilho-3154m2-RS40000/id-45890192/",
+  "motivo": "aluguel R$40000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-131m2-RS8700/id-43645866/",
+  "motivo": "titulo \"Sobrado com 3 Quartos para alugar, 159 m² por R$ 8.839/mês - Bigorrilho - Curitiba/PR\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-12-quartos-com-garagem-pr-curitiba-bigorrilho-375m2-RS19500/id-47098650/",
+  "motivo": "aluguel R$19500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-195m2-RS8300/id-41830254/",
+  "motivo": "aluguel R$8300 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-bigorrilho-200m2-RS11000/id-43292791/",
+  "motivo": "aluguel R$11000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-bigorrilho-330m2-RS9900/id-44485997/",
+  "motivo": "aluguel R$9900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-bigorrilho-180m2-RS8500/id-40790907/",
+  "motivo": "aluguel R$8500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-merces-283m2-RS9800/id-44158620/",
+  "motivo": "aluguel R$9800 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-batel-526m2-RS22000/id-37910045/",
+  "motivo": "titulo \"Oportunidade comercial no batel!  Casa em excelente localização!\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "bigorrilho",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-seminario-604m2-RS12900/id-40762643/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-portao-508m2-RS10500/id-37670460/",
+  "motivo": "titulo \"Alto Padrão com 6 Dormitórios e Piscina no Portão â Ideal para Uso Residencial ou Comercial\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-portao-176m2-RS9500/id-46944919/",
+  "motivo": "aluguel R$9500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-portao-100m2-RS4200/id-39644062/",
+  "motivo": "titulo \"Casa comercial para locação no Água Verde com 5 salas e excelente localização\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-portao-649m2-RS13000/id-35283147/",
+  "motivo": "aluguel R$13000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-portao-37m2-RS1600/id-42056193/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-portao-RS10000/id-46832286/",
+  "motivo": "aluguel R$10000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-portao-508m2-RS10500/id-37625118/",
+  "motivo": "titulo \"Alto Padrão com 6 Dormitórios e Piscina no Portão â Ideal para Uso Residencial ou Comercial\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-portao-200m2-RS6000/id-46549812/",
+  "motivo": "0 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-portao-170m2-RS5000/id-34432056/",
+  "motivo": "0 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "portao",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-novo-mundo-329m2-RS6900/id-43311859/",
+  "motivo": "bairro do anuncio \"Novo Mundo\" difere da listagem \"Portão\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-reboucas-RS2500/id-42654275/",
+  "motivo": "titulo \"Sobrado para Locação em Curitiba, Rebouças, 1 dormitório, 1 suíte, 2 banheiros, 1 vaga\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-2-quartos-com-garagem-pr-curitiba-reboucas-218m2-RS4425/id-31900022/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-reboucas-430m2-RS12000/id-30755776/",
+  "motivo": "aluguel R$12000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-reboucas-35m2-RS1800/id-41570787/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-reboucas-727m2-RS15500/id-43318417/",
+  "motivo": "aluguel R$15500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-reboucas-372m2-RS14100/id-43333650/",
+  "motivo": "titulo \"Sobrado com 5 dormitórios para alugar, 372 m² por R$ 14.100/mês - Rebouças - Curitiba/PR\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-reboucas-278m2-RS17000/id-45227802/",
+  "motivo": "aluguel R$17000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-reboucas-280m2-RS17000/id-32344120/",
+  "motivo": "aluguel R$17000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-reboucas-70m2-RS1700/id-47230317/",
+  "motivo": "0 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-agua-verde-311m2-RS4900/id-43584520/",
+  "motivo": "bairro do anuncio \"Água Verde\" difere da listagem \"Rebouças\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "reboucas",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-parolin-233m2-RS4500/id-44050299/",
+  "motivo": "bairro do anuncio \"Parolin\" difere da listagem \"Rebouças\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-bom-retiro-347m2-RS12500/id-39195186/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-vista-alegre-2611m2-RS19500/id-41905543/",
+  "motivo": "aluguel R$19500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-1020m2-RS12900/id-40762644/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-merces-283m2-RS9800/id-44158620/",
+  "motivo": "aluguel R$9800 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bacacheri-130m2-RS4900/id-46755068/",
+  "motivo": "titulo \"Casa / Sobrado para Locação em Curitiba, Bacacheri, 3 dormitórios, 2 suítes, 3 banheiros, 1 vaga\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-sao-lourenco-210m2-RS5100/id-27138336/",
+  "motivo": "titulo \"Sobrado 3 Quartos 210m² para Alugar no São Lourenço em Curitiba\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-jardim-botanico-510m2-RS13900/id-45030506/",
+  "motivo": "aluguel R$13900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-195m2-RS11500/id-42796874/",
+  "motivo": "aluguel R$11500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-ahu-192m2-RS5000/id-47092021/",
+  "motivo": "bairro do anuncio \"Ahú\" difere da listagem \"Centro Cívico\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bom-retiro-86m2-RS3000/id-46616467/",
+  "motivo": "bairro do anuncio \"Bom Retiro\" difere da listagem \"Centro Cívico\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "centro-civico",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-vista-alegre-174m2-RS5790/id-45532118/",
+  "motivo": "bairro do anuncio \"Vista Alegre\" difere da listagem \"Centro Cívico\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-7-quartos-com-garagem-pr-curitiba-cristo-rei-672m2-RS15000/id-47025678/",
+  "motivo": "aluguel R$15000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-4-quartos-pr-curitiba-cristo-rei-211m2-RS10000/id-37682133/",
+  "motivo": "aluguel R$10000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-2-quartos-com-garagem-pr-curitiba-cristo-rei-672m2-RS14000/id-42118629/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-jardim-botanico-510m2-RS13900/id-45030506/",
+  "motivo": "aluguel R$13900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-1020m2-RS12900/id-40762644/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-jardim-social-175m2-RS8990/id-46418051/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bacacheri-130m2-RS4900/id-46755068/",
+  "motivo": "titulo \"Casa / Sobrado para Locação em Curitiba, Bacacheri, 3 dormitórios, 2 suítes, 3 banheiros, 1 vaga\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-guabirotuba-665m2-RS8100/id-30776867/",
+  "motivo": "aluguel R$8100 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-cristo-rei-477m2-RS6600/id-47193084/",
+  "motivo": "all-in R$8368 (aluguel 6600 + condo 0 + iptu 1768) acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-jardim-botanico-223m2-RS5000/id-1403889/",
+  "motivo": "bairro do anuncio \"Jardim Botânico\" difere da listagem \"Cristo Rei\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-guabirotuba-250m2-RS4500/id-46276796/",
+  "motivo": "bairro do anuncio \"Guabirotuba\" difere da listagem \"Cristo Rei\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cristo-rei",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-parolin-233m2-RS4500/id-44050299/",
+  "motivo": "bairro do anuncio \"Parolin\" difere da listagem \"Cristo Rei\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-sao-francisco-177m2-RS4000/id-45718109/",
+  "motivo": "titulo \"Casa Comercial para alugar, 177.00 m2 por R$ 4500.00 - Sao Francisco - Curitiba/PR\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-2-quartos-com-garagem-pr-curitiba-sao-francisco-540m2-RS22000/id-38553345/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-sao-francisco-320m2-RS8900/id-46398705/",
+  "motivo": "aluguel R$8900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-2-quartos-com-garagem-pr-curitiba-sao-francisco-RS22000/id-45870186/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-2-quartos-com-garagem-pr-curitiba-sao-francisco-396m2-RS5900/id-36943938/",
+  "motivo": "titulo \"Excelente Casa Comercial no São Francisco  Ideal para Escritórios e Clínicas\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-sao-francisco-200m2-RS6999/id-46972947/",
+  "motivo": "titulo \"Sobrado de esquina 200m² para Alugar no São Francisco  4 pavimentos com 3 quartos, 1 suíte, ético com churrasqueira, lareira, amplo jardim e 3 vagas.\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-bom-retiro-347m2-RS12500/id-39195186/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-merces-283m2-RS9800/id-44158620/",
+  "motivo": "aluguel R$9800 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-vista-alegre-2611m2-RS19500/id-41905543/",
+  "motivo": "aluguel R$19500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bom-retiro-86m2-RS3000/id-46616467/",
+  "motivo": "bairro do anuncio \"Bom Retiro\" difere da listagem \"São Francisco\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "sao-francisco",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-vista-alegre-174m2-RS5790/id-45532118/",
+  "motivo": "bairro do anuncio \"Vista Alegre\" difere da listagem \"São Francisco\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bacacheri-130m2-RS4900/id-46755068/",
+  "motivo": "titulo \"Casa / Sobrado para Locação em Curitiba, Bacacheri, 3 dormitórios, 2 suítes, 3 banheiros, 1 vaga\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-1020m2-RS12900/id-40762644/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-vista-alegre-2611m2-RS19500/id-41905543/",
+  "motivo": "aluguel R$19500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-bom-retiro-347m2-RS12500/id-39195186/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-jardim-botanico-510m2-RS13900/id-45030506/",
+  "motivo": "aluguel R$13900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-jardim-social-175m2-RS8990/id-46418051/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-sao-lourenco-210m2-RS5100/id-27138336/",
+  "motivo": "titulo \"Sobrado 3 Quartos 210m² para Alugar no São Lourenço em Curitiba\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-cabral-330m2-RS7000/id-40217591/",
+  "motivo": "all-in R$8022 (aluguel 7000 + condo 0 + iptu 1022) acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-ahu-192m2-RS5000/id-47092021/",
+  "motivo": "bairro do anuncio \"Ahú\" difere da listagem \"Cabral\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-jardim-botanico-223m2-RS5000/id-1403889/",
+  "motivo": "bairro do anuncio \"Jardim Botânico\" difere da listagem \"Cabral\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-vista-alegre-174m2-RS5790/id-45532118/",
+  "motivo": "bairro do anuncio \"Vista Alegre\" difere da listagem \"Cabral\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "cabral",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bom-retiro-86m2-RS3000/id-46616467/",
+  "motivo": "bairro do anuncio \"Bom Retiro\" difere da listagem \"Cabral\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-merces-283m2-RS9800/id-44158620/",
+  "motivo": "aluguel R$9800 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-450m2-RS16000/id-46249489/",
+  "motivo": "aluguel R$16000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-merces-178m2-RS9900/id-40897019/",
+  "motivo": "aluguel R$9900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-459m2-RS17000/id-43801685/",
+  "motivo": "aluguel R$17000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-2-quartos-com-garagem-pr-curitiba-merces-551m2-RS4000/id-46823188/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-450m2-RS17000/id-41016469/",
+  "motivo": "aluguel R$17000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-merces-20m2-RS12000/id-35774239/",
+  "motivo": "titulo \"Sobrado para alugar no Mercês, Curitiba - PR | 3 dormitórios (3 suítes), 2 vagas de garagem,\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-2-quartos-pr-curitiba-merces-93m2-RS3000/id-15758317/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bigorrilho-195m2-RS11500/id-42796874/",
+  "motivo": "aluguel R$11500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-merces-208m2-RS6000/id-29712006/",
+  "motivo": "0 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "merces",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-merces-112m2-RS7000/id-46803679/",
+  "motivo": "0 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-alto-da-gloria-962m2-RS15000/id-45397681/",
+  "motivo": "titulo \"Conceito Imoveis Aluga, Residencial o Comercial no Alto da Gloria\" rejeitado (comercial)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-1020m2-RS12900/id-40762644/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-bom-retiro-347m2-RS12500/id-39195186/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-vista-alegre-2611m2-RS19500/id-41905543/",
+  "motivo": "aluguel R$19500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bacacheri-130m2-RS4900/id-46755068/",
+  "motivo": "titulo \"Casa / Sobrado para Locação em Curitiba, Bacacheri, 3 dormitórios, 2 suítes, 3 banheiros, 1 vaga\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-jardim-botanico-510m2-RS13900/id-45030506/",
+  "motivo": "aluguel R$13900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-jardim-social-175m2-RS8990/id-46418051/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-ahu-192m2-RS5000/id-47092021/",
+  "motivo": "bairro do anuncio \"Ahú\" difere da listagem \"Alto da Glória\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-jardim-botanico-223m2-RS5000/id-1403889/",
+  "motivo": "bairro do anuncio \"Jardim Botânico\" difere da listagem \"Alto da Glória\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-gloria",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-vista-alegre-174m2-RS5790/id-45532118/",
+  "motivo": "bairro do anuncio \"Vista Alegre\" difere da listagem \"Alto da Glória\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-1020m2-RS12900/id-40762644/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-446m2-RS18000/id-26823750/",
+  "motivo": "aluguel R$18000 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-2-quartos-pr-curitiba-alto-da-rua-xv-85m2-RS2680/id-13821432/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-2-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-120m2-RS4220/id-41754535/",
+  "motivo": "2 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-389m2-RS14070/id-41929260/",
+  "motivo": "aluguel R$14070 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-jardim-botanico-510m2-RS13900/id-45030506/",
+  "motivo": "aluguel R$13900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bacacheri-130m2-RS4900/id-46755068/",
+  "motivo": "titulo \"Casa / Sobrado para Locação em Curitiba, Bacacheri, 3 dormitórios, 2 suítes, 3 banheiros, 1 vaga\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-jardim-social-175m2-RS8990/id-46418051/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-guabirotuba-665m2-RS8100/id-30776867/",
+  "motivo": "aluguel R$8100 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-jardim-botanico-223m2-RS5000/id-1403889/",
+  "motivo": "bairro do anuncio \"Jardim Botânico\" difere da listagem \"Alto da Rua XV\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "alto-da-rua-xv",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-ahu-192m2-RS5000/id-47092021/",
+  "motivo": "bairro do anuncio \"Ahú\" difere da listagem \"Alto da Rua XV\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-juveve-270m2-RS8854/id-47208926/",
+  "motivo": "aluguel R$8854 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-alto-da-gloria-348m2-RS10500/id-37601030/",
+  "motivo": "aluguel R$10500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-alto-da-rua-xv-1020m2-RS12900/id-40762644/",
+  "motivo": "aluguel R$12900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-1-quarto-pr-curitiba-centro-28m2-RS1708/id-34356544/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-bacacheri-130m2-RS4900/id-46755068/",
+  "motivo": "titulo \"Casa / Sobrado para Locação em Curitiba, Bacacheri, 3 dormitórios, 2 suítes, 3 banheiros, 1 vaga\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-5-quartos-com-garagem-pr-curitiba-bom-retiro-347m2-RS12500/id-39195186/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-vista-alegre-2611m2-RS19500/id-41905543/",
+  "motivo": "aluguel R$19500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-1-quarto-com-garagem-pr-curitiba-jardim-social-175m2-RS8990/id-46418051/",
+  "motivo": "1 quartos (alvo 3-99)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-sao-lourenco-210m2-RS5100/id-27138336/",
+  "motivo": "titulo \"Sobrado 3 Quartos 210m² para Alugar no São Lourenço em Curitiba\" rejeitado (sobrado)"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-merces-278m2-RS12500/id-40988888/",
+  "motivo": "aluguel R$12500 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-4-quartos-com-garagem-pr-curitiba-jardim-botanico-510m2-RS13900/id-45030506/",
+  "motivo": "aluguel R$13900 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-merces-283m2-RS9800/id-44158620/",
+  "motivo": "aluguel R$9800 acima do teto de R$8000"
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-com-garagem-pr-curitiba-ahu-192m2-RS5000/id-47092021/",
+  "motivo": "bairro do anuncio \"Ahú\" difere da listagem \"Juvevê\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-pr-curitiba-jardim-botanico-223m2-RS5000/id-1403889/",
+  "motivo": "bairro do anuncio \"Jardim Botânico\" difere da listagem \"Juvevê\""
+ },
+ {
+  "fonte": "chavesnamao",
+  "bairro": "juveve",
+  "ref": "/imovel/casa-para-alugar-3-quartos-com-garagem-pr-curitiba-vista-alegre-174m2-RS5790/id-45532118/",
+  "motivo": "bairro do anuncio \"Vista Alegre\" difere da listagem \"Juvevê\""
+ }
+]

@@ -1,11 +1,16 @@
-// Pool único de imóveis (fecha B2): estáticos (data.ts) + adicionados
+// Pool único de imóveis (fecha B2): estáticos (base do perfil) + adicionados
 // pelo usuário (localStorage). Dashboard e Kanban consomem a mesma função.
 // SSR-safe: sem localStorage (servidor/node), retorna só os estáticos.
+//
+// Os estáticos vêm de "@/lib/base" (ver aquele arquivo): o next.config.js escolhe
+// a base do deploy por NEXT_PUBLIC_PERFIL — "thais" usa lib/data-thais.ts, sem a
+// env usa lib/data.ts (dono). Só o dado muda; o tipo continua vindo de
+// "@/lib/data", que é o schema comum das duas bases geradas.
 import {
   apartments as staticApartments,
   saleApartments as staticSaleApartments,
-  type Apartment,
-} from "@/lib/data";
+} from "@/lib/base";
+import type { Apartment } from "@/lib/data";
 import {
   REMOVED_IDS_STORAGE_KEY,
   REMOVED_IDS_STORAGE_VERSION,

@@ -1,5 +1,5 @@
 // Auditoria programática das galerias S002 (leva dores-consumidor).
-// Uso: node scripts/audit-photos.mjs
+// Uso: node scripts/audit-photos.mjs [--perfil=thais] [--tudo]
 // Checker por diretório public/imoveis/<id>/: magic RIFF/WEBP (pega HTML/403),
 // lado maior ≥ 800px e lado menor ≥ 500px (orientation-aware — retrato usa a
 // altura como eixo; parse do header VP8/VP8L/VP8X, sem dependências),
@@ -7,18 +7,34 @@
 // Capas avulsas (public/imoveis/*.webp): magic + tamanho (sem regra de largura).
 // Saída != 0 se qualquer checagem falhar.
 //
-// Auditoria só do que o app consome: os ids vêm de lib/data.ts. Fotos de imóveis
-// que saíram da base são órfãs e ficam de fora do gate (não quebram o build, e
-// continuam no disco caso a base volte). Use --tudo para auditar o diretório
-// inteiro, inclusive órfãs.
+// A base auditada vem de data/coleta/perfis.json, a mesma fonte que o app usa
+// para escolher o que entra no bundle (next.config.js): cada perfil declara o
+// diretório de fotos (`fotos`) e o arquivo gerado (`data`). Sem --perfil vale
+// perfis.default (dono) — é o comportamento de sempre.
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
+
+const PERFIS = JSON.parse(readFileSync("data/coleta/perfis.json", "utf8"));
+const iPerfil = process.argv.indexOf("--perfil");
+const argPerfil =
+  process.argv.find((a) => a.startsWith("--perfil="))?.slice("--perfil=".length) ??
+  (iPerfil >= 0 ? process.argv[iPerfil + 1] : undefined);
+const NOME_PERFIL = argPerfil ?? PERFIS.default;
+const PERFIL = PERFIS.perfis[NOME_PERFIL];
+if (!PERFIL) {
+  console.error(
+    `perfil desconhecido: ${NOME_PERFIL} (perfis.json tem: ${Object.keys(PERFIS.perfis).join(", ")})`,
+  );
+  process.exit(2);
+}
 
 // Regra orientation-aware (correção S002 pós-auditoria): o CDN entrega fit-in,
 // então retrato tem largura < 800px por construção. O eixo que importa é o
 // lado maior (viewer + zoom): lado maior ≥ 800px E lado menor ≥ 500px.
 // (DESIGN.md §10 atualizado com a mesma regra.)
-const ROOT = "public/imoveis";
+const ROOT = PERFIL.fotos;
+const DATA_ARQUIVO = PERFIL.data;
+
 const MIN_LONG_EDGE = 800;
 const MIN_SHORT_EDGE = 500;
 const MAX_FILE_BYTES = 350 * 1024;
@@ -57,10 +73,11 @@ const fail = (msg) => {
   console.log(`FAIL: ${msg}`);
 };
 
-// Ids que o app realmente consome (lib/data.ts). Sem --tudo, órfãs ficam de fora.
+// Ids que o app realmente consome no perfil auditado (perfis.json → .data).
+// Sem --tudo, órfãs ficam de fora.
 const auditarTudo = process.argv.includes("--tudo");
 const idsDaBase = new Set(
-  [...readFileSync("lib/data.ts", "utf8").matchAll(/id:\s*"([^"]+)"/g)].map((m) => m[1]),
+  [...readFileSync(DATA_ARQUIVO, "utf8").matchAll(/id:\s*"([^"]+)"/g)].map((m) => m[1]),
 );
 const naBase = (nome) => auditarTudo || idsDaBase.has(nome);
 
@@ -114,7 +131,8 @@ const orfas = entries.filter(
   (x) => !naBase(x.isFile() ? x.name.replace(/\.webp$/, "") : x.name),
 ).length;
 console.log(
-  `\nbase: ${idsDaBase.size} imoveis | orfans fora da auditoria: ${orfas}${auditarTudo ? " (--tudo: auditando tudo)" : ""}`,
+  `\nperfil: ${NOME_PERFIL} (${DATA_ARQUIVO} + ${ROOT})` +
+    `\nbase: ${idsDaBase.size} imoveis | orfans fora da auditoria: ${orfas}${auditarTudo ? " (--tudo: auditando tudo)" : ""}`,
 );
 console.log(errors === 0 ? "--- auditoria PASS (0 erros) ---" : `--- auditoria FAIL (${errors} erros) ---`);
 process.exitCode = errors === 0 ? 0 : 1;
