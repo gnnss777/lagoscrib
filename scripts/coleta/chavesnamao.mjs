@@ -187,11 +187,30 @@ const ehPerfilPadrao =
 
 const BASE = "https://www.chavesnamao.com.br";
 const CIDADE = `${BASE}/${PERFIL.listing}/pr-curitiba`;
-const OUT = "data/coleta";
+// O diretório de saída é o do PERFIL (`dir` em perfis.json), não a pasta do dono
+// fixa. Hardcoded, `--perfil=thais` escrevia os 198 imóveis da Thaís dentro de
+// data/coleta/ — o diretório que o merge.py do dono lê. O anti-apagão seguraria
+// a base dele, mas o arquivo da Thaís ia parar no lado errado, e o próximo
+// merge do dono podia engolir 198 casas de 15km de distância num funil que pede
+// 2 quartos até R$ 3.600.
+const OUT =
+  (() => {
+    const nome = arg("perfil", "dono");
+    try {
+      const d = JSON.parse(readFileSync("data/coleta/perfis.json", "utf8"))?.perfis?.[nome]?.dir;
+      if (typeof d === "string" && d) return d;
+    } catch {
+      // cai no padrão
+    }
+    return "data/coleta";
+  })();
 // Nome derivado do perfil. `--saida=` vence. Sem ele, o perfil padrão reproduz
 // o nome histórico e qualquer outro perfil recebe outro nome — as duas levas
 // não podem escrever no mesmo arquivo.
-const ARQ = arg("saida", `chaves-${QT_LABEL}-ate${TETO_TOTAL}-14b-l4`);
+// O nome carrega a CONTAGEM de bairros medida, não a constante. Com a lista fixa
+// "14b" no nome, a leva da Thaís (68 bairros) escrevia num arquivo que mentia
+// sobre a própria cobertura, e o nome do arquivo entra no manifest e na doc.
+const ARQ = arg("saida", `chaves-${QT_LABEL}-ate${TETO_TOTAL}-${bairrosAlvo().length}b-l4`);
 // Logs de auditoria. O perfil padrão mantém os nomes de hoje (citados em
 // docs/stories/S011) para não deixar órfão o que a leva 4 já produziu; outro
 // perfil recebe o perfil no nome, para o log de um não sobrescrever o do outro.
@@ -686,13 +705,32 @@ if (REAPLICAR) {
 
 // ---------------------------------------------------------------- main
 mkdirSync(OUT, { recursive: true });
+// A geografia mora em data/coleta/perfis.json, não numa linha de comando de 68
+// slugs que ninguém vai conseguir revisar depois. O dono continua nos 14
+// bairros de sempre (BAIRROS_ALVO); a Thaís tem a lista dela, que é a do anel
+// de 15km do Centro.
+function bairrosAlvo() {
+  const nome = arg("perfil", "dono");
+  try {
+    const cfg = JSON.parse(readFileSync("data/coleta/perfis.json", "utf8"));
+    const doPerfil = cfg?.perfis?.[nome];
+    if (Array.isArray(doPerfil?.bairros) && doPerfil.bairros.length) {
+      return doPerfil.bairros;
+    }
+  } catch {
+    // config ausente ou sem lista: cai no padrão abaixo
+  }
+  return BAIRROS_ALVO;
+}
+const perfil = bairrosAlvo();
+
 const soBairros = new Set(
   ((process.argv.find((a) => a.startsWith("--bairros=")) || "").split("=")[1] || "")
     .split(",")
     .map((b) => slug(b))
     .filter(Boolean),
 );
-const bairros = soBairros.size ? BAIRROS_ALVO.filter((b) => soBairros.has(b)) : BAIRROS_ALVO;
+const bairros = soBairros.size ? perfil.filter((b) => soBairros.has(b)) : perfil;
 const itens = [];
 const log = [];
 const brutosPorBairro = new Map();

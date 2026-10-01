@@ -231,9 +231,39 @@ def main():
     # Anti-apagão: nenhuma fonte lida é motivo para não sobrescrever uma leva
     # boa já normalizada. Sem esse guarda, `merge.py --perfil=x` com nome de
     # arquivo errado zerava a base inteira.
+    #
+    # O segundo guarda é o que faltava: `raw` cheio com `kept` vazio. É o caso
+    # MEDIDO de rodar sem argumento de arquivo, que resolve para
+    # PERFIL.fontes ("chavesnamao") e devolve a leva antiga — toda ela já
+    # colidindo com a base, logo 0 mantidos. Escrever aí deixava o arquivo de
+    # staging vazio e imprimia "a base do perfil vai ficar vazia", que é
+    # MENTIRA: a base (lib/data-thais.ts) é aditiva e não era afetada. O que
+    # some é a leva em andamento, e sem erro visível.
+    #
+    # "Li fonte mas não aprovei nada" com staging bom no disco é sempre bug de
+    # chamada, não resultado legítimo. Sai com código != 0 para o pipeline
+    # parar em vez de seguir para o generate com nada.
     if not raw and os.path.exists(PERFIL.merge):
         print(f"AVISO: 0 imóveis lidos — {PERFIL.merge} preservado")
         return
+    if raw and not kept and os.path.exists(PERFIL.merge):
+        anterior = 0
+        try:
+            with open(PERFIL.merge, encoding="utf-8") as f:
+                anterior = len(json.load(f))
+        except Exception:
+            anterior = 0
+        if anterior:
+            print(
+                f"\nERRO: li {len(raw)} imóveis de {', '.join(FONTES)} e mantive 0, "
+                f"mas {PERFIL.merge} tinha {anterior} imóveis de uma leva boa.\n"
+                f"Causa provável: arquivo de fonte errado (sem argumento, o merge "
+                f"resolve para PERFIL.fontes e lê a leva antiga).\n"
+                f"Passa o arquivo: python data/coleta/merge.py --perfil={PERFIL.nome} "
+                f"{PERFIL.dir}/<arquivo>.json\n"
+                f"{PERFIL.merge} PRESERVADO — nada foi escrito."
+            )
+            sys.exit(2)
     with open(PERFIL.merge, "w", encoding="utf-8", newline="\n") as f:
         json.dump(kept, f, ensure_ascii=False)
     print(f"{PERFIL.merge} gravado ({len(kept)} imóveis)")

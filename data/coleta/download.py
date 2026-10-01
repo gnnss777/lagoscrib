@@ -139,7 +139,30 @@ def main():
         print(f"corrigidos: {reescritos}/{len(alvos)}")
         return
     items = ler_merge(PERFIL)
+
+    def salvar_manifesto():
+        # Escrita atômica (temp + replace): o manifesto é a credencial de quais
+        # fotos pertencem a qual imóvel. Uma escrita direta, interrompida no meio
+        # pelo timeout, deixaria JSON truncado e o generate.py perderia o
+        # vanguarda inteira de properties. `os.replace` é atômico no mesmo volume.
+        tmp = PERFIL.manifest + ".tmp"
+        with open(tmp, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(manifest, f)
+        os.replace(tmp, PERFIL.manifest)
+
     manifest = {}
+    # Recomeço: carrega o que já foi creditado. O run anterior é LONGO (176
+    # imóveis × 11 fotos com delay anti-403) e o timeout mata no meio; sem isto o
+    # próximo run começa do zero mesmo com todas as fotos já no disco.
+    if os.path.exists(PERFIL.manifest):
+        try:
+            with open(PERFIL.manifest, encoding="utf-8") as f:
+                carregado = json.load(f)
+            if isinstance(carregado, dict):
+                manifest = carregado
+                print(f"manifesto anterior: {len(manifest)} imoveis ja creditados")
+        except Exception:
+            manifest = {}
     pulados = 0
     for x in items:
         iid = x["id"]
@@ -172,9 +195,9 @@ def main():
                     time.sleep(DELAY * attempt)
             time.sleep(DELAY)
         manifest[iid] = got
-        print(f"{iid}: {len(got)}/{min(11, len(x['photoUrls']))}")
-    with open(PERFIL.manifest, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(manifest, f)
+        salvar_manifesto()
+        print(f"{iid}: {len(got)}/{min(11, len(x['photoUrls']))}", flush=True)
+    salvar_manifesto()
     ok = sum(1 for v in manifest.values() if v)
     print(f"com-capa: {ok}/{len(manifest)} | reusados do disco: {pulados}")
 

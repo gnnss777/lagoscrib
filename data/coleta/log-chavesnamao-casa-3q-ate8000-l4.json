@@ -41,286 +41,6 @@
    "nota": "sem anuncios"
   },
   {
-   "bairro": "agua-verde",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "agua-verde",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "agua-verde",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "agua-verde",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "agua-verde",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "batel",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "batel",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "batel",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "batel",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "batel",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "bigorrilho",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "bigorrilho",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "bigorrilho",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "bigorrilho",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "bigorrilho",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "portao",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "portao",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "portao",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "portao",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "portao",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "reboucas",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "reboucas",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "reboucas",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "reboucas",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "reboucas",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "centro-civico",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "centro-civico",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "centro-civico",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "centro-civico",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "centro-civico",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cristo-rei",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "cristo-rei",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cristo-rei",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cristo-rei",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cristo-rei",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
    "bairro": "sao-francisco",
    "pg": 1,
    "status": 200,
@@ -354,86 +74,6 @@
   },
   {
    "bairro": "sao-francisco",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cabral",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "cabral",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cabral",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cabral",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "cabral",
-   "pg": 5,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "merces",
-   "pg": 1,
-   "status": 200,
-   "erro": "",
-   "n": 15,
-   "nota": ""
-  },
-  {
-   "bairro": "merces",
-   "pg": 2,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "merces",
-   "pg": 3,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "merces",
-   "pg": 4,
-   "status": 200,
-   "erro": "",
-   "n": 0,
-   "nota": "sem anuncios"
-  },
-  {
-   "bairro": "merces",
    "pg": 5,
    "status": 200,
    "erro": "",
@@ -481,6 +121,206 @@
    "nota": "sem anuncios"
   },
   {
+   "bairro": "taboao",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "taboao",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "taboao",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "taboao",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "taboao",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "centro-civico",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "batel",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "batel",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "merces",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "merces",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "merces",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "merces",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "merces",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "reboucas",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
    "bairro": "alto-da-rua-xv",
    "pg": 1,
    "status": 200,
@@ -521,6 +361,46 @@
    "nota": "sem anuncios"
   },
   {
+   "bairro": "bom-retiro",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "bom-retiro",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bom-retiro",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bom-retiro",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bom-retiro",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
    "bairro": "juveve",
    "pg": 1,
    "status": 200,
@@ -554,6 +434,2286 @@
   },
   {
    "bairro": "juveve",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bigorrilho",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "ahu",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "ahu",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "ahu",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "ahu",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "ahu",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hugo-lange",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "hugo-lange",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hugo-lange",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hugo-lange",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hugo-lange",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cristo-rei",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "agua-verde",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-botanico",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "jardim-botanico",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-botanico",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-botanico",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-botanico",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cabral",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cabral",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "prado-velho",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "prado-velho",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "prado-velho",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "prado-velho",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "prado-velho",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "vista-alegre",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "vista-alegre",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "vista-alegre",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "vista-alegre",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "vista-alegre",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "parolin",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "parolin",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "parolin",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "parolin",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "parolin",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "vila-izabel",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "vila-izabel",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "vila-izabel",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "vila-izabel",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "vila-izabel",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "campina-do-siqueira",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "campina-do-siqueira",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "campina-do-siqueira",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "campina-do-siqueira",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "campina-do-siqueira",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "pilarzinho",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "pilarzinho",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "pilarzinho",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "pilarzinho",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "pilarzinho",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "seminario",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "seminario",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "seminario",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "seminario",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "seminario",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-social",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "jardim-social",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "jardim-social",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-social",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-social",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cascatinha",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cascatinha",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cascatinha",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cascatinha",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cascatinha",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-lourenco",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sao-lourenco",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-lourenco",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-lourenco",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-lourenco",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guaira",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "guaira",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guaira",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guaira",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guaira",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guabirotuba",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "guabirotuba",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guabirotuba",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guabirotuba",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "guabirotuba",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bacacheri",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "bacacheri",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "bacacheri",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bacacheri",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bacacheri",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "taruma",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "taruma",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "taruma",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "taruma",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "taruma",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-quiteria",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "santa-quiteria",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-quiteria",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-quiteria",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-quiteria",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-das-americas",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "jardim-das-americas",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "jardim-das-americas",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-das-americas",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "jardim-das-americas",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santo-inacio",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "santo-inacio",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santo-inacio",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santo-inacio",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santo-inacio",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "boa-vista",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "boa-vista",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "boa-vista",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "boa-vista",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "boa-vista",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "lindoia",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "lindoia",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "lindoia",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "lindoia",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "lindoia",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fanny",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "fanny",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fanny",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fanny",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fanny",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-joao",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sao-joao",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-joao",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-joao",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-joao",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "mossungue",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "mossungue",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "mossungue",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "mossungue",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "mossungue",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "portao",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "portao",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "portao",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "portao",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "portao",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hauer",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "hauer",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hauer",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hauer",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "hauer",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "campo-comprido",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "campo-comprido",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "campo-comprido",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "campo-comprido",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "campo-comprido",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-da-imbuia",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "capao-da-imbuia",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-da-imbuia",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-da-imbuia",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-da-imbuia",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-felicidade",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "santa-felicidade",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "santa-felicidade",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "santa-felicidade",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "santa-felicidade",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cajuru",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cajuru",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cajuru",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cajuru",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cajuru",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "barreirinha",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "barreirinha",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "barreirinha",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "barreirinha",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "barreirinha",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "novo-mundo",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "novo-mundo",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "novo-mundo",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "novo-mundo",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "novo-mundo",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "tingui",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "tingui",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "tingui",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "tingui",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "tingui",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bairro-alto",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "bairro-alto",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "bairro-alto",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bairro-alto",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "bairro-alto",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "abranches",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "abranches",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "abranches",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "abranches",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "abranches",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fazendinha",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "fazendinha",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fazendinha",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fazendinha",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "fazendinha",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-braz",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sao-braz",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sao-braz",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sao-braz",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-braz",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-candida",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "santa-candida",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-candida",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-candida",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "santa-candida",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "xaxim",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "xaxim",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "xaxim",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "xaxim",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "xaxim",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "atuba",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "atuba",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "atuba",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "atuba",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "atuba",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cidade-industrial",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cidade-industrial",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cidade-industrial",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cidade-industrial",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cidade-industrial",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "orleans",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "orleans",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "orleans",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "orleans",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "orleans",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "uberaba",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "uberaba",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "uberaba",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "uberaba",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "uberaba",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "boqueirao",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "boqueirao",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "boqueirao",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "boqueirao",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "boqueirao",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-raso",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "capao-raso",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-raso",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-raso",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "capao-raso",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "butiatuvinha",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "butiatuvinha",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "butiatuvinha",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "butiatuvinha",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "butiatuvinha",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cachoeira",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "cachoeira",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cachoeira",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cachoeira",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "cachoeira",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "riviera",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "riviera",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "riviera",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "riviera",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "riviera",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "pinheirinho",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "pinheirinho",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "pinheirinho",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "pinheirinho",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "pinheirinho",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-boqueirao",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "alto-boqueirao",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "alto-boqueirao",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-boqueirao",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "alto-boqueirao",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-miguel",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sao-miguel",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-miguel",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-miguel",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sao-miguel",
+   "pg": 5,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sitio-cercado",
+   "pg": 1,
+   "status": 200,
+   "erro": "",
+   "n": 15,
+   "nota": ""
+  },
+  {
+   "bairro": "sitio-cercado",
+   "pg": 2,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sitio-cercado",
+   "pg": 3,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sitio-cercado",
+   "pg": 4,
+   "status": 200,
+   "erro": "",
+   "n": 0,
+   "nota": "sem anuncios"
+  },
+  {
+   "bairro": "sitio-cercado",
    "pg": 5,
    "status": 200,
    "erro": "",
@@ -566,21 +2726,77 @@
    "bairro": "Centro",
    "slug": "centro",
    "brutos": 15,
-   "candidatos": 4,
-   "passou": 3
+   "candidatos": 0,
+   "passou": 0
   },
   {
-   "bairro": "Água Verde",
-   "slug": "agua-verde",
+   "bairro": "São Francisco",
+   "slug": "sao-francisco",
    "brutos": 15,
-   "candidatos": 6,
-   "passou": 3
+   "candidatos": 1,
+   "passou": 0
+  },
+  {
+   "bairro": "Alto da Glória",
+   "slug": "alto-da-gloria",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 1
+  },
+  {
+   "bairro": "Taboão",
+   "slug": "taboao",
+   "brutos": 15,
+   "candidatos": 5,
+   "passou": 1
+  },
+  {
+   "bairro": "Centro Cívico",
+   "slug": "centro-civico",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 1
   },
   {
    "bairro": "Batel",
    "slug": "batel",
    "brutos": 15,
+   "candidatos": 0,
+   "passou": 0
+  },
+  {
+   "bairro": "Mercês",
+   "slug": "merces",
+   "brutos": 30,
+   "candidatos": 5,
+   "passou": 2
+  },
+  {
+   "bairro": "Rebouças",
+   "slug": "reboucas",
+   "brutos": 15,
    "candidatos": 2,
+   "passou": 1
+  },
+  {
+   "bairro": "Alto da Rua XV",
+   "slug": "alto-da-rua-xv",
+   "brutos": 15,
+   "candidatos": 3,
+   "passou": 1
+  },
+  {
+   "bairro": "Bom Retiro",
+   "slug": "bom-retiro",
+   "brutos": 15,
+   "candidatos": 5,
+   "passou": 3
+  },
+  {
+   "bairro": "Juvevê",
+   "slug": "juveve",
+   "brutos": 15,
+   "candidatos": 3,
    "passou": 0
   },
   {
@@ -591,74 +2807,396 @@
    "passou": 2
   },
   {
-   "bairro": "Portão",
-   "slug": "portao",
+   "bairro": "Ahú",
+   "slug": "ahu",
    "brutos": 15,
-   "candidatos": 8,
-   "passou": 5
+   "candidatos": 3,
+   "passou": 0
   },
   {
-   "bairro": "Rebouças",
-   "slug": "reboucas",
+   "bairro": "Hugo Lange",
+   "slug": "hugo-lange",
    "brutos": 15,
-   "candidatos": 6,
-   "passou": 3
-  },
-  {
-   "bairro": "Centro Cívico",
-   "slug": "centro-civico",
-   "brutos": 15,
-   "candidatos": 4,
+   "candidatos": 3,
    "passou": 1
   },
   {
    "bairro": "Cristo Rei",
    "slug": "cristo-rei",
    "brutos": 15,
-   "candidatos": 5,
-   "passou": 1
+   "candidatos": 4,
+   "passou": 0
   },
   {
-   "bairro": "São Francisco",
-   "slug": "sao-francisco",
+   "bairro": "Água Verde",
+   "slug": "agua-verde",
    "brutos": 15,
    "candidatos": 3,
    "passou": 1
+  },
+  {
+   "bairro": "Jardim Botânico",
+   "slug": "jardim-botanico",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 0
   },
   {
    "bairro": "Cabral",
    "slug": "cabral",
    "brutos": 15,
-   "candidatos": 5,
+   "candidatos": 4,
    "passou": 0
   },
   {
-   "bairro": "Mercês",
-   "slug": "merces",
+   "bairro": "Prado Velho",
+   "slug": "prado-velho",
    "brutos": 15,
+   "candidatos": 4,
+   "passou": 1
+  },
+  {
+   "bairro": "Vista Alegre",
+   "slug": "vista-alegre",
+   "brutos": 30,
    "candidatos": 5,
    "passou": 3
   },
   {
-   "bairro": "Alto da Glória",
-   "slug": "alto-da-gloria",
+   "bairro": "Parolin",
+   "slug": "parolin",
    "brutos": 15,
-   "candidatos": 5,
+   "candidatos": 7,
+   "passou": 1
+  },
+  {
+   "bairro": "Vila Izabel",
+   "slug": "vila-izabel",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 0
+  },
+  {
+   "bairro": "Campina do Siqueira",
+   "slug": "campina-do-siqueira",
+   "brutos": 15,
+   "candidatos": 3,
    "passou": 2
   },
   {
-   "bairro": "Alto da Rua XV",
-   "slug": "alto-da-rua-xv",
+   "bairro": "Pilarzinho",
+   "slug": "pilarzinho",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 3
+  },
+  {
+   "bairro": "Seminário",
+   "slug": "seminario",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 2
+  },
+  {
+   "bairro": "Jardim Social",
+   "slug": "jardim-social",
+   "brutos": 30,
+   "candidatos": 3,
+   "passou": 1
+  },
+  {
+   "bairro": "Cascatinha",
+   "slug": "cascatinha",
+   "brutos": 15,
+   "candidatos": 1,
+   "passou": 0
+  },
+  {
+   "bairro": "São Lourenço",
+   "slug": "sao-lourenco",
+   "brutos": 15,
+   "candidatos": 3,
+   "passou": 2
+  },
+  {
+   "bairro": "Guaíra",
+   "slug": "guaira",
+   "brutos": 15,
+   "candidatos": 8,
+   "passou": 1
+  },
+  {
+   "bairro": "Guabirotuba",
+   "slug": "guabirotuba",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 1
+  },
+  {
+   "bairro": "Bacacheri",
+   "slug": "bacacheri",
+   "brutos": 30,
+   "candidatos": 7,
+   "passou": 3
+  },
+  {
+   "bairro": "Tarumã",
+   "slug": "taruma",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 2
+  },
+  {
+   "bairro": "Santa Quitéria",
+   "slug": "santa-quiteria",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 2
+  },
+  {
+   "bairro": "Jardim das Américas",
+   "slug": "jardim-das-americas",
+   "brutos": 30,
+   "candidatos": 9,
+   "passou": 7
+  },
+  {
+   "bairro": "Santo Inácio",
+   "slug": "santo-inacio",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 2
+  },
+  {
+   "bairro": "Boa Vista",
+   "slug": "boa-vista",
+   "brutos": 30,
+   "candidatos": 8,
+   "passou": 6
+  },
+  {
+   "bairro": "Lindóia",
+   "slug": "lindoia",
+   "brutos": 15,
+   "candidatos": 9,
+   "passou": 0
+  },
+  {
+   "bairro": "Fanny",
+   "slug": "fanny",
+   "brutos": 15,
+   "candidatos": 10,
+   "passou": 1
+  },
+  {
+   "bairro": "São João",
+   "slug": "sao-joao",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 1
+  },
+  {
+   "bairro": "Mossunguê",
+   "slug": "mossungue",
+   "brutos": 15,
+   "candidatos": 3,
+   "passou": 2
+  },
+  {
+   "bairro": "Portão",
+   "slug": "portao",
+   "brutos": 30,
+   "candidatos": 9,
+   "passou": 4
+  },
+  {
+   "bairro": "Hauer",
+   "slug": "hauer",
+   "brutos": 15,
+   "candidatos": 7,
+   "passou": 4
+  },
+  {
+   "bairro": "Campo Comprido",
+   "slug": "campo-comprido",
+   "brutos": 45,
+   "candidatos": 1,
+   "passou": 1
+  },
+  {
+   "bairro": "Capão da Imbuia",
+   "slug": "capao-da-imbuia",
    "brutos": 15,
    "candidatos": 3,
    "passou": 1
   },
   {
-   "bairro": "Juvevê",
-   "slug": "juveve",
+   "bairro": "Santa Felicidade",
+   "slug": "santa-felicidade",
+   "brutos": 75,
+   "candidatos": 23,
+   "passou": 22
+  },
+  {
+   "bairro": "Cajuru",
+   "slug": "cajuru",
+   "brutos": 30,
+   "candidatos": 10,
+   "passou": 5
+  },
+  {
+   "bairro": "Barreirinha",
+   "slug": "barreirinha",
    "brutos": 15,
-   "candidatos": 3,
+   "candidatos": 4,
+   "passou": 4
+  },
+  {
+   "bairro": "Novo Mundo",
+   "slug": "novo-mundo",
+   "brutos": 15,
+   "candidatos": 9,
+   "passou": 7
+  },
+  {
+   "bairro": "Tingui",
+   "slug": "tingui",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 1
+  },
+  {
+   "bairro": "Bairro Alto",
+   "slug": "bairro-alto",
+   "brutos": 30,
+   "candidatos": 9,
+   "passou": 8
+  },
+  {
+   "bairro": "Abranches",
+   "slug": "abranches",
+   "brutos": 15,
+   "candidatos": 2,
+   "passou": 1
+  },
+  {
+   "bairro": "Fazendinha",
+   "slug": "fazendinha",
+   "brutos": 15,
+   "candidatos": 5,
+   "passou": 5
+  },
+  {
+   "bairro": "São Braz",
+   "slug": "sao-braz",
+   "brutos": 45,
+   "candidatos": 17,
+   "passou": 13
+  },
+  {
+   "bairro": "Santa Cândida",
+   "slug": "santa-candida",
+   "brutos": 15,
+   "candidatos": 1,
+   "passou": 1
+  },
+  {
+   "bairro": "Xaxim",
+   "slug": "xaxim",
+   "brutos": 30,
+   "candidatos": 18,
+   "passou": 14
+  },
+  {
+   "bairro": "Atuba",
+   "slug": "atuba",
+   "brutos": 30,
+   "candidatos": 7,
+   "passou": 2
+  },
+  {
+   "bairro": "Cidade Industrial",
+   "slug": "cidade-industrial",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 4
+  },
+  {
+   "bairro": "Orleans",
+   "slug": "orleans",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 3
+  },
+  {
+   "bairro": "Uberaba",
+   "slug": "uberaba",
+   "brutos": 45,
+   "candidatos": 17,
+   "passou": 10
+  },
+  {
+   "bairro": "Boqueirão",
+   "slug": "boqueirao",
+   "brutos": 30,
+   "candidatos": 19,
+   "passou": 11
+  },
+  {
+   "bairro": "Capão Raso",
+   "slug": "capao-raso",
+   "brutos": 15,
+   "candidatos": 7,
+   "passou": 5
+  },
+  {
+   "bairro": "Butiatuvinha",
+   "slug": "butiatuvinha",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 2
+  },
+  {
+   "bairro": "Cachoeira",
+   "slug": "cachoeira",
+   "brutos": 15,
+   "candidatos": 4,
    "passou": 0
+  },
+  {
+   "bairro": "riviera",
+   "slug": "riviera",
+   "brutos": 15,
+   "candidatos": 4,
+   "passou": 0
+  },
+  {
+   "bairro": "Pinheirinho",
+   "slug": "pinheirinho",
+   "brutos": 30,
+   "candidatos": 13,
+   "passou": 7
+  },
+  {
+   "bairro": "Alto Boqueirão",
+   "slug": "alto-boqueirao",
+   "brutos": 30,
+   "candidatos": 15,
+   "passou": 4
+  },
+  {
+   "bairro": "São Miguel",
+   "slug": "sao-miguel",
+   "brutos": 15,
+   "candidatos": 6,
+   "passou": 0
+  },
+  {
+   "bairro": "Sítio Cercado",
+   "slug": "sitio-cercado",
+   "brutos": 15,
+   "candidatos": 9,
+   "passou": 2
   }
  ]
 }
