@@ -39,7 +39,22 @@ import { extrairTelefone as _extrairTelefone, telApolar } from "./telefone.mjs";
 const extrairTelefone = () => _extrairTelefone(page);
 
 const PROFILE = "C:/Users/gnnss/AppData/Local/Temp/coleta-edge-profile";
-const OUT = "data/coleta";
+// Diretório de saída = `dir` do perfis.json, não a pasta do dono fixa.
+// MEDIDO: rodar a leva da Thaís aqui escreveu `zap-l4.json`, `viva-l4.json` e
+// `apolar-l4.json` dentro de `data/coleta/`, que é o diretório que o merge.py do
+// DONO lê. Mesmo bug que já foi corrigido em chavesnamao.mjs.
+const OUT = (() => {
+  const nome =
+    (process.argv.find((a) => a.startsWith("--perfil=")) || "").split("=")[1] || "dono";
+  try {
+    const cfg = JSON.parse(readFileSync("data/coleta/perfis.json", "utf8"));
+    const d = cfg?.perfis?.[nome]?.dir;
+    if (typeof d === "string" && d) return d;
+  } catch {
+    // cai no padrão
+  }
+  return "data/coleta";
+})();
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0";
 const HOJE = new Date().toISOString().slice(0, 10);
@@ -175,6 +190,20 @@ const fora = (fonte, ref, motivo) => descartados.push({ fonte, ref, motivo });
 
 async function abrir(url, espera = DELAY) {
   const r = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+  // MEDIDO: dormir um tempo fixo mentia. Zap e VivaReal passam por desafio do
+  // Cloudflare depois do `domcontentloaded`, e nesse intervalo o DOM não tem
+  // link nenhum. Com o sleep de 8s a leva logava "200 e 0 imoveis" nas DUAS URLs
+  // e concluía "nenhuma URL de busca respondeu" — enquanto a página tinha 757
+  // casas. Falso negativo que faz o scraper parecer quebrado quando funciona.
+  // Aqui espera-se o CONTEÚDO, não o tempo.
+  const limite = Date.now() + 45_000;
+  while (Date.now() < limite) {
+    const n = await page
+      .evaluate(() => document.querySelectorAll('a[href*="/imovel/"]').length)
+      .catch(() => 0);
+    if (n > 3) break;
+    await sleep(1200);
+  }
   await sleep(espera);
   return r?.status() ?? 0;
 }
@@ -331,8 +360,15 @@ function bairroOficialNoSlug(url) {
 // rótulo), não um tipo compartilhado, e o chavesnamao.mjs é standalone por
 // desenho (não consegue importar nada do app).
 const PERFIS = {
-  apartamento: { pathZap: "apartamentos", pathViva: "apartamento", pathApolar: "apartamento", rotulo: "Apartamento" },
-  casa: { pathZap: "casas", pathViva: "casa", pathApolar: "casa", rotulo: "Casa" },
+  apartamento: { pathZap: "apartamentos", pathViva: "", pathApolar: "apartamento", rotulo: "Apartamento", slugTipo: "apartamento-" },
+  // `pathViva: "casa"` era PALPITE e medido em 404: o VivaReal responde
+  // "Oops. Não conseguimos encontrar a página solicitada" tanto em
+  // `/aluguel/parana/curitiba/casa/` quanto em `/casas/`. A URL genérica
+  // funciona e o TIPO vai no slug, que é o filtro de verdade:
+  // `.../imovel/casa-3-quartos-pinheirinho-bairros-curitiba-...-id-X`.
+  // Filtrar por prefixo `casa-` também descarta `sobrado-` de brinde, que é
+  // slug separado e reprovado pelo filtro de título da Thaís.
+  casa: { pathZap: "casas", pathViva: "", pathApolar: "casa", rotulo: "Casa", slugTipo: "casa-" },
 };
 const TIPO = slug((process.argv.find((a) => a.startsWith("--tipo=")) || "").split("=")[1] || "apartamento");
 if (!PERFIS[TIPO]) {
@@ -343,13 +379,12 @@ const PERFIL = PERFIS[TIPO];
 
 const BUSCAS = {
   zap: [
-    `https://www.zapimoveis.com.br/aluguel/${PERFIL.pathZap}/pr+curitiba/`,
+    ...(PERFIL.pathZap
+      ? [`https://www.zapimoveis.com.br/aluguel/${PERFIL.pathZap}/pr+curitiba/`]
+      : []),
     "https://www.zapimoveis.com.br/aluguel/imoveis/pr+curitiba/",
   ],
-  viva: [
-    `https://www.vivareal.com.br/aluguel/parana/curitiba/${PERFIL.pathViva}/`,
-    "https://www.vivareal.com.br/aluguel/parana/curitiba/",
-  ],
+  viva: ["https://www.vivareal.com.br/aluguel/parana/curitiba/"],
 };
 
 async function coletarZap(portal) {
@@ -368,7 +403,12 @@ async function coletarZap(portal) {
   }
   if (!base) {
     console.log(`  [${portal}] nenhuma URL de busca respondeu`);
-    return [];
+    // Forma OBRIGATORIA: `{ itens, sufixo }`. Devolver `[]` aqui quebrava o
+    // `save(\`${portal}${r.sufixo}\`)` lá embaixo e gravava um arquivo chamado
+    // `zapundefined-l4.json` com `itens` undefined — e essa é justamente a
+    // rota que roda quando a leva falha, ou seja, a hora que mais importa ter
+    // arquivo legível.
+    return { itens: [], sufixo: sufixoPorPortal };
   }
 
   const sep = base.includes("?") ? "&" : "?";
@@ -379,15 +419,21 @@ async function coletarZap(portal) {
       if (st !== 200) break;
     }
     const achados = (await hrefs()).filter((h) => h.includes("/imovel/") && /aluguel-/.test(h));
+    // Tipo no slug, ANTES do bairro e antes de abrir a página: no VivaReal a
+    // URL é genérica e a listagem mistura apartamento/casa/sala/sobrado
+    // (MEDIDO: 29 anúncios = 18 apartamento + 5 casa + 3 sala + 2 sobrado +
+    // 1 imóvel). No Zap a URL já filtra por `casas`, mas o slug também traz
+    // `casa`, e o filtro barato protege dos dois.
+    const doTipo = achados.filter((h) => h.includes(PERFIL.slugTipo));
     // Filtro de bairro no slug, ANTES de abrir a página: o Zap e o VivaReal
     // não filtram por bairro na url, mas o slug carrega o bairro
     // (.../aluguel-apartamento-2-quartos-...-batel-curitiba-pr-40m2-id-X).
-    const noBairro = achados.filter((h) => {
+    const noBairro = doTipo.filter((h) => {
       if (!BAIRROS_SLUG.size) return true;
       return bairroNoSlug(h, BAIRROS_SLUG) !== null;
     });
     console.log(
-      `  [${portal}] pagina ${p}: ${achados.length} anuncios, ${noBairro.length} nos bairros-alvo`,
+      `  [${portal}] pagina ${p}: ${achados.length} anuncios, ${doTipo.length} do tipo ${PERFIL.slugTipo}, ${noBairro.length} nos bairros-alvo`,
     );
     for (const l of noBairro) alvos.push(l.split("?")[0]);
   }
@@ -872,12 +918,17 @@ try {
 } finally {
   writeFileSync(`${OUT}/descartados-l4.json`, JSON.stringify(descartados, null, 1), "utf8");
   writeFileSync(`${OUT}/telefones-l4.json`, JSON.stringify(telefones, null, 1), "utf8");
-  const total = Object.values(salvo).reduce((a, b) => a + b.length, 0);
+  // `salvo` só tem a chave do portal que rodou. Com `--qtd-olx=0` (ou qualquer
+  // portal desligado) a chave não existe e o `b.length` estourava no fim da
+  // leva — DEPOIS de todo o trabalho, no bloco finally. Agora um portal ausente
+  // conta como 0 em vez de derrubar a leva.
+  const listas = Object.values(salvo).filter(Array.isArray);
+  const total = listas.reduce((a, b) => a + b.length, 0);
   // Cobertura de telefone, sobre TODOS os portais (o Apolar vem da API, sem
   // clique). Alerta, não erro: uma leva pode legitamente ficar sem número em
   // parte dos imóveis. Zero em TODOS é sinal de que o scraper quebrou — foi
   // exatamente o que o ADR-001 §5 escondeu por meses.
-  const todos = Object.values(salvo).flat();
+  const todos = listas.flat();
   const comTel = todos.filter((x) => x.phone).length;
   const pct = todos.length ? Math.round((comTel / todos.length) * 100) : 0;
   console.log(`TOTAL: ${total} | descartados: ${descartados.length} | telefone: ${comTel}/${todos.length} (${pct}%)`);
