@@ -7,6 +7,7 @@ import type { Apartment } from "@/lib/data";
 import {
   applyFilters,
   countActiveFilters,
+  sourceOf,
   type FilterState,
   type FurnishedFilter,
   type PetsFilter,
@@ -183,6 +184,28 @@ export default function FilterPanel({
     </SelectField>
   );
 
+  // Plataformas disponíveis: derivadas da própria base, nunca uma lista fixa.
+  // Hardcode aqui vira linha morta no dropdown no dia que um portal sair do ar,
+  // e o usuário não tem como distinguir "não tem anúncio" de "não existe mais".
+  const plataformas = (() => {
+    const contagem = new Map<string, number>();
+    for (const a of pool) {
+      const k = sourceOf(a);
+      contagem.set(k, (contagem.get(k) ?? 0) + 1);
+    }
+    return [...contagem.entries()].sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+    );
+  })();
+
+  const alternarPlataforma = (p: string) =>
+    onChange({
+      ...filters,
+      sources: filters.sources.includes(p)
+        ? filters.sources.filter((x) => x !== p)
+        : [...filters.sources, p],
+    });
+
   return (
     <div className="mb-6">
       <button
@@ -232,6 +255,48 @@ export default function FilterPanel({
               PARKING_OPTIONS,
               "parkingMin"
             )}
+          </div>
+
+          {/* Plataforma de origem (Zap, VivaReal, Chaves na Mão...). A pergunta
+              que o painel não respondia: de onde veio esse imóvel. */}
+          <div role="group" aria-label="Plataforma de origem">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-ink-soft">
+                Plataforma de origem
+              </span>
+              {filters.sources.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => onChange({ ...filters, sources: [] })}
+                  data-testid="f-origem-limpar"
+                  className="text-xs text-amberink hover:text-ink font-medium min-h-11 px-2"
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {plataformas.map(([nome, n]) => {
+                const marcado = filters.sources.includes(nome);
+                return (
+                  <button
+                    key={nome}
+                    type="button"
+                    aria-pressed={marcado}
+                    data-testid={`f-origem-${nome}`}
+                    onClick={() => alternarPlataforma(nome)}
+                    className={`${chipBase} ${
+                      marcado
+                        ? "bg-ink text-paper border-ink"
+                        : "bg-card text-ink border-inputbd hover:border-ink"
+                    }`}
+                  >
+                    {marcado && <Check size={14} weight="bold" aria-hidden />}
+                    {nome} ({n})
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Preço por slider duplo (leva kanban-tela-inteira-ui, AC-U4):

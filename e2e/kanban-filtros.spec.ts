@@ -242,12 +242,18 @@ test("test_kanban_filtros_persistem_no_reload_sem_tocar_a_busca", async ({ page 
   const busca = JSON.parse(chaves.busca!) as {
     filters: Record<string, unknown>;
   };
-  for (const campo of ["sources", "totalBands", "columns"]) {
+  // `sources` saiu da lista de exclusão: a busca ganhou filtro de plataforma,
+  // então `busca.filters.sources` existe legitimamente como `[]` do
+  // DEFAULT_FILTERS. A propriedade existir NÃO é mais sinal de vazaamento — o
+  // sinal é o VALOR. A checagem ficou mais forte: o recorte do quadro não pode
+  // escrever a escolha de origem na busca.
+  for (const campo of ["totalBands", "columns"]) {
     expect(
       busca.filters,
       `campo do quadro (${campo}) vazou para a chave da busca`,
     ).not.toHaveProperty(campo);
   }
+  expect(busca.filters.sources, "a origem marcada no quadro mudou a busca").toEqual([]);
   expect(busca.filters.neighborhood, "o bairro marcado no quadro mudou a busca").toBe(
     NEIGHBORHOOD_ALL,
   );

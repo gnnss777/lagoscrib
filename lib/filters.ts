@@ -19,9 +19,32 @@ export type SortOption =
   | "menor-preco-m2"
   | "maior-area";
 
+/** Grupo dos imóveis sem plataforma preenchida. */
+export const SEM_ORIGEM = "sem origem";
+
+/**
+ * Só a PLATAFORMA, para o filtro.
+ *
+ * MEDIDO na base do dono: `source` tem 105 valores distintos em 152 imóveis,
+ * porque o campo empacota portal + imobiliária + CRECI num texto só
+ * ("Zap Imóveis · AP1936", "Chaves na Mão · CIBRACO · CRECI J00020",
+ * "Apolar · LocaAção"). Filtrar pelo texto inteiro renderiza 105 chips na tela —
+ * inalcançável e sem sentido para quem quer só "de onde veio".
+ *
+ * O detalhe da imobiliária continua valuable e continua sendo MOSTRADO: ele está
+ * no card e no modal. Aqui só o filtro reduz ao portal.
+ */
+export function sourceOf(a: Pick<Apartment, "source">): string {
+  const bruto = (a.source ?? "").trim();
+  if (!bruto) return SEM_ORIGEM;
+  const plataforma = bruto.split("·")[0].trim();
+  return plataforma || SEM_ORIGEM;
+}
+
 export interface FilterState {
   search: string;
   neighborhood: string;
+  sources: string[];
   bedroomsMin: number;
   bathroomsMin: number;
   parkingMin: number;
@@ -41,6 +64,7 @@ export interface FilterState {
 export const DEFAULT_FILTERS: FilterState = {
   search: "",
   neighborhood: NEIGHBORHOOD_ALL,
+  sources: [],
   bedroomsMin: 0,
   bathroomsMin: 0,
   parkingMin: 0,
@@ -130,6 +154,8 @@ export function applyFilters(
       return false;
     if (f.neighborhood !== NEIGHBORHOOD_ALL && a.neighborhood !== f.neighborhood)
       return false;
+    // OR dentro do grupo, AND entre grupos: o resto do arquivo já é assim.
+    if (f.sources.length > 0 && !f.sources.includes(sourceOf(a))) return false;
     if (f.bedroomsMin > 0 && a.bedrooms != null && a.bedrooms < f.bedroomsMin)
       return false;
     if (f.bathroomsMin > 0 && a.bathrooms != null && a.bathrooms < f.bathroomsMin)
@@ -237,6 +263,7 @@ export function countActiveFilters(f: FilterState): number {
   let n = 0;
   if (normalizeText(f.search)) n += 1;
   if (f.neighborhood !== NEIGHBORHOOD_ALL) n += 1;
+  if (f.sources.length > 0) n += 1;
   if (f.bedroomsMin > 0) n += 1;
   if (f.bathroomsMin > 0) n += 1;
   if (f.parkingMin > 0) n += 1;
