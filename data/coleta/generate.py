@@ -30,7 +30,15 @@ from datetime import date
 # `perfis.py` e importado: sem isto cada roda deixa data/coleta/__pycache__/
 # sujando a arvore de trabalho (o .gitignore nao e nosso para editar).
 sys.dont_write_bytecode = True
-from perfis import carregar, ler_manifest, ler_merge, seed_de, separar_argv, url_publico
+from perfis import (
+    carregar,
+    ler_manifest,
+    ler_merge,
+    ler_merged_away,
+    seed_de,
+    separar_argv,
+    url_publico,
+)
 
 FLAGS, ARGV = separar_argv(sys.argv[1:])
 PERFIL = carregar(FLAGS)
@@ -133,8 +141,17 @@ def main():
         print(f"{DATA} nao existia: gerado do zero a partir do seed {PERFIL.seed}")
     print(f"perfil: {PERFIL.nome} | {len(items)} no merge | {len(known)} ids na base")
 
-    rent_ts, sale_ts, drops, dupes = [], [], [], []
+    # Generate é ADITIVO, então um id que o dedupe absorbiu voltaria na próxima
+    # leva e o duplicado renasceria. A lápide é o que impede.
+    lapide = ler_merged_away(PERFIL)
+    if lapide:
+        print(f"lapide do dedupe: {len(lapide)} ids absorvidos ficam fora")
+
+    rent_ts, sale_ts, drops, dupes, absorvidos = [], [], [], [], []
     for x in items:
+        if x["id"] in lapide:
+            absorvidos.append(x["id"])
+            continue
         if x["id"] in known:
             dupes.append(x["id"])
             continue
@@ -152,6 +169,8 @@ def main():
     print(f"aluguel: {len(rent_ts)} | venda: {len(sale_ts)}")
     print(f"sem-capa (fora da leva): {drops}")
     print(f"ja-injetados (pulados): {dupes}")
+    if absorvidos:
+        print(f"absorvidos pelo dedupe (pulados): {len(absorvidos)} {absorvidos}")
     if rent_ts:
         src = append_to_array(src, "apartments", "\n".join(rent_ts))
     if sale_ts:

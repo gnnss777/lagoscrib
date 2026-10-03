@@ -39,6 +39,11 @@ export interface Apartment {
   pets?: string;
   guarantor?: string;
   verifiedAt?: string;
+  // Anúncios do MESMO imóvel em outros portais, que o dedupe absorveu
+  // (data/coleta/dedupe.py). O anúncio vencedor mantém a foto e a descrição
+  // mais completas; os links dos outros ficam aqui para a procedência não se
+  // perder. Aditivo: ausente = imóvel veio de um portal só.
+  otherLinks?: string[];
 }
 
 // Leva 4 (27/09/2026): base repovoada so com ALUGUEL de 2-3 quartos ate R$ 3.000.
@@ -812,42 +817,7 @@ export const apartments: Apartment[] = [
     vivaId: "2914110240",
     verifiedAt: "2026-09-27",
   },
-  {
-    id: "viva-cristo-rei-66-6313",
-    title: "Apartamento com 2 Quartos para alugar, 66m² - Cristo Rei",
-    neighborhood: "Cristo Rei",
-    address: "Cristo Rei, Cristo Rei, Curitiba - PR",
-    area: 66,
-    bedrooms: 2,
-    bathrooms: 2,
-    parking: 1,
-    rent: 2300,
-    condo: 506,
-    iptu: 130,
-    total: 2936,
-    phone: "+5541987010407",
-    email: "",
-    link: "https://www.vivareal.com.br/imovel/apartamento-2-quartos-cristo-rei-bairros-curitiba-com-garagem-66m2-aluguel-RS2300-id-2913776313/",
-    image: "/imoveis/viva-cristo-rei-66-6313.webp",
-    photos: [
-      { src: "/imoveis/viva-cristo-rei-66-6313.webp", caption: "Foto principal" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/01.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/02.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/03.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/04.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/05.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/06.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/07.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/08.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/09.webp" },
-      { src: "/imoveis/viva-cristo-rei-66-6313/10.webp" },
-    ],
-    features: ["Alugar", "Comprar", "Lançamentos", "Descobrir", "Anunciar", "Financiamento", "Ajuda", "Aluguel", "...", "PR"],
-    description: "Se você procura um apartamento com ambientes bem distribuídos e espaço para organizar sua rotina, conheça esta opção no Edifício Marajoara, no Cristo Rei, em Curitiba. Com 66,88 m² privativos, o imóvel oferece sala para dois ambientes com acesso à sacada, permitindo separar os espaços de estar e jantar. Os dois quartos, sendo uma suíte, proporcionam privacidade, enquanto o segundo dormitório pode acomodar a família ou receber seu escritório. A localização no Cristo Rei é uma opção para quem valoriza a rotina urbana. Para completar, a vaga coberta traz praticidade e proteção para o veículo, e o condomínio conta com portaria em horário comercial. Características do imóvel: •66,88 m² de área privativa; •2 quartos, sendo 1 suíte; •Sala para dois ambientes; •Sacada; •Cozinha com armários; •Área de serviço; •Face sul; •1 vaga de garagem coberta, nº 10, no subsolo S1; •Portaria 24h. Valores: · Aluguel Bruto: R$ 2.875,00 · Bonificação: R$ 575,00 · (*) Aluguel Líquido: R$ 2.300,00 · (*) IPTU: R$ 130,02 · (*) FCI: R$ 115,00 · (*) Seguro Incêndio: R$ 34,73 · (*) Condomínio: R$ 506,19 · Vistoria de entrada: R$ 253,00 · (*) Valor total a partir do segundo mês: R$ 3.085,94 (Valor sem a garantia locatícia que depende de análise cadastral) Observações: · Os valores de IPTU, seguro contra incêndio e outros encargos podem sofrer alterações sem aviso prévio. · O valor do condomínio informado está sujeito a alterações sem prévio aviso prévio e varia de acordo com o custo mensal de administração do condomínio. · No primeiro mês de locação, será cobrado o valor integral, sem desconto de pontualidade, além das taxas aplicáveis. · As informações sobre o imóvel, como preço, área e número de vagas, são aproximadas e devem ser confirmadas pelo cliente durante a visita ou na documentação do imóvel. Quer conhecer a planta e avaliar se este apartamento combina com sua rotina? Entre em contato com a Innova Imobiliária Digital e agende sua visita!",
-    source: "VivaReal · 00763",
-    vivaId: "2913776313",
-    verifiedAt: "2026-09-27",
-  },
+
   {
     id: "apolar-santa-candida-rua-joao-gbur-50-550500",
     title: "Apartamento para alugar — Santa Cândida",
@@ -1747,39 +1717,7 @@ export const apartments: Apartment[] = [
     apolarId: "88434",
     verifiedAt: "2026-09-27",
   },
-  {
-    id: "zap-agua-verde-48-5418",
-    title: "Apartamento com 2 Quartos para alugar, 48m² - Água Verde",
-    neighborhood: "Água Verde",
-    address: "Água Verde, Água Verde, Curitiba - PR",
-    area: 48,
-    bedrooms: 2,
-    bathrooms: 1,
-    parking: 1,
-    rent: 2500,
-    condo: 706,
-    iptu: 98,
-    total: 3304,
-    phone: "+5541996690773",
-    email: "",
-    link: "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-churrasqueira-agua-verde-curitiba-pr-48m2-id-2913835418/",
-    image: "/imoveis/zap-agua-verde-48-5418.webp",
-    photos: [
-      { src: "/imoveis/zap-agua-verde-48-5418.webp", caption: "Foto principal" },
-      { src: "/imoveis/zap-agua-verde-48-5418/01.webp" },
-      { src: "/imoveis/zap-agua-verde-48-5418/02.webp" },
-      { src: "/imoveis/zap-agua-verde-48-5418/03.webp" },
-      { src: "/imoveis/zap-agua-verde-48-5418/04.webp" },
-      { src: "/imoveis/zap-agua-verde-48-5418/05.webp" },
-      { src: "/imoveis/zap-agua-verde-48-5418/06.webp" },
-      { src: "/imoveis/zap-agua-verde-48-5418/07.webp" },
-    ],
-    features: ["Alugar", "Comprar", "Lançamentos", "Descobrir", "Anunciar", "Financiamento", "Ajuda", "Aluguel", "...", "Apartamentos"],
-    description: "Este aconchegante apartamento de 2 dormitórios é perfeito para quem busca qualidade de vida e praticidade em um condomínio completo. O imóvel conta com 2 dormitórios (sendo um com armário), 1 banheiro social com armários, 1 sala arejada, cozinha funcional com armários e fogão, além de lavanderia conjugada com a cozinha. Com metragem privativa de 47,89 m² e total de 62,49 m², o espaço é bem distribuído e aproveitado. Destaques do imóvel: • 2 dormitórios com armários • 1 banheiro social com armários • Cozinha com fogão e armários • Lavanderia conjugada • 1 vaga de garagem • Construído em 2013 Destaques do condomínio: • Portaria 24 horas • Salão de festas adulto e infantil • Espaço gourmet com 2 churrasqueiras cobertas • Academia completa • Quadra poliesportiva • Playground e brinquedoteca • Sala de jogos e cinema • Interfone e portão eletrônico Entre em contato agora mesmo com a Cadena Imoveis! Valor anunciado com bonificacao para pagamento ate a data de vencimento. Apos esse prazo, sera cobrado o valor integral acrescido de R$ 300,00. Taxas de condominio, IPTU 2026 e demais encargos com base em dados disponiveis no mes de setembro. Estes valores sao estimativas e podem sofrer alteracoes sem aviso previo. Confirme os valores atualizados e a composicao completa com o(a) consultor(a) responsavel. Seguro incendio: R$ 50,00/mes, valores aproximados. Itens mobiliados e equipamentos estao sujeitos a disponibilidade. Consulte o que permanece no imovel no momento da visita. Areas comuns do condominio estao sujeitas a disponibilidade, funcionamento e manutencao condominial.Permita-se. Viva essa experiência!",
-    source: "Zap Imóveis · 8270",
-    zapId: "2913835418",
-    verifiedAt: "2026-09-27",
-  },
+
   {
     id: "zap-agua-verde-70-1150",
     title: "Apartamento com 2 Quartos para alugar, 70m² - Água Verde",
@@ -2720,42 +2658,7 @@ export const apartments: Apartment[] = [
     apolarId: "2039",
     verifiedAt: "2026-09-28",
   },
-  {
-    id: "zap-portao-54-9732",
-    title: "Apartamento com 2 Quartos para alugar, 54m² - Portão",
-    neighborhood: "Portão",
-    address: "Portão, Portão, Curitiba - PR",
-    area: 54,
-    bedrooms: 2,
-    bathrooms: 2,
-    parking: 0,
-    rent: 2300,
-    condo: 615,
-    iptu: 108,
-    total: 3023,
-    phone: "+5541987464427",
-    email: "",
-    link: "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-portao-curitiba-pr-54m2-id-2913539732/",
-    image: "/imoveis/zap-portao-54-9732.webp",
-    photos: [
-      { src: "/imoveis/zap-portao-54-9732.webp", caption: "Foto principal" },
-      { src: "/imoveis/zap-portao-54-9732/01.webp" },
-      { src: "/imoveis/zap-portao-54-9732/02.webp" },
-      { src: "/imoveis/zap-portao-54-9732/03.webp" },
-      { src: "/imoveis/zap-portao-54-9732/04.webp" },
-      { src: "/imoveis/zap-portao-54-9732/05.webp" },
-      { src: "/imoveis/zap-portao-54-9732/06.webp" },
-      { src: "/imoveis/zap-portao-54-9732/07.webp" },
-      { src: "/imoveis/zap-portao-54-9732/08.webp" },
-      { src: "/imoveis/zap-portao-54-9732/09.webp" },
-      { src: "/imoveis/zap-portao-54-9732/10.webp" },
-    ],
-    features: ["Alugar", "Comprar", "Lançamentos", "Descobrir", "Anunciar", "Financiamento", "Ajuda", "Aluguel", "...", "Apartamentos"],
-    description: "Apartamento mobiliado para aluguel no Portão, ideal para quem busca praticidade. O imóvel conta com 54 m² de área construída, 2 quartos e 2 banheiros completos. A parte interna dispõe de sala de jantar equipada com geladeira e cozinha independente. O condomínio oferece estrutura de lazer completa com piscina, churrasqueira, campo de futebol, salão de festas, playground, brinquedoteca, bicicletário e área verde preservada. A localização no Portão garante excelente conectividade, sendo uma área de perfil residencial e dinâmico com fácil acesso ao transporte público, supermercados, farmácias, instituições de ensino e comércio local estruturado para atender todas as necessidades diárias. Valor do Aluguel Bruto: R$2.555,55 Bonificação para pagamento em dia: 10% Valor do Aluguel líquido: R$2.300,00 + taxas Condomínio: R$615,00 IPTU: R$108,00 Seguro Incêndio: A cotar FCI 6%: R$154,00 *A bonificação é concedida somente a partir do 2º mês integral de locação, para pagamento em dia. O 1º boleto de aluguel integral permanece com o valor bruto + taxas",
-    source: "Zap Imóveis · AP1882-A3MA",
-    zapId: "2913539732",
-    verifiedAt: "2026-09-28",
-  },
+
   {
     id: "zap-portao-70-6792",
     title: "Apartamento com 2 Quartos para alugar, 70m² - Portão",
@@ -3386,6 +3289,10 @@ export const apartments: Apartment[] = [
     phone: "+5541996990773",
     email: "",
     link: "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-agua-verde-62m2-RS2500/id-47005457/",
+    // Anúncios do mesmo imóvel em outros portais (dedupe).
+    otherLinks: [
+    "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-com-churrasqueira-agua-verde-curitiba-pr-48m2-id-2913835418/",
+    ],
     image: "/imoveis/chavesnamao-agua-verde-48-2500-47005457.webp",
     photos: [
       { src: "/imoveis/chavesnamao-agua-verde-48-2500-47005457.webp", caption: "Foto principal" },
@@ -3873,6 +3780,10 @@ export const apartments: Apartment[] = [
     phone: "+5541987464427",
     email: "",
     link: "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-pr-curitiba-portao-RS2300/id-46935635/",
+    // Anúncios do mesmo imóvel em outros portais (dedupe).
+    otherLinks: [
+    "https://www.zapimoveis.com.br/imovel/aluguel-apartamento-2-quartos-portao-curitiba-pr-54m2-id-2913539732/",
+    ],
     image: "/imoveis/chavesnamao-portao-54-2300-46935635.webp",
     photos: [
       { src: "/imoveis/chavesnamao-portao-54-2300-46935635.webp", caption: "Foto principal" },
@@ -4610,6 +4521,10 @@ export const apartments: Apartment[] = [
     phone: "+5541987010407",
     email: "",
     link: "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-pr-curitiba-cristo-rei-108m2-RS2300/id-46978478/",
+    // Anúncios do mesmo imóvel em outros portais (dedupe).
+    otherLinks: [
+    "https://www.vivareal.com.br/imovel/apartamento-2-quartos-cristo-rei-bairros-curitiba-com-garagem-66m2-aluguel-RS2300-id-2913776313/",
+    ],
     image: "/imoveis/chavesnamao-cristo-rei-66-2300-46978478.webp",
     photos: [
       { src: "/imoveis/chavesnamao-cristo-rei-66-2300-46978478.webp", caption: "Foto principal" },

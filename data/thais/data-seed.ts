@@ -45,6 +45,11 @@ export interface Apartment {
   pets?: string;
   guarantor?: string;
   verifiedAt?: string;
+  // Anúncios do MESMO imóvel em outros portais, absorvidos pelo dedupe
+  // (data/coleta/dedupe.py). Aditivo: ausente = imóvel veio de um portal só.
+  // Precisa bater com o `lib/data.ts`, senão a base da Thaís não compila o
+  // campo que a do dono usa.
+  otherLinks?: string[];
 }
 
 // Fonte única: Chaves na Mão (perfis.json → thais.fontes). Teto all-in R$ 8.000

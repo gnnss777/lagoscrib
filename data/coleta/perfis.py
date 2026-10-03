@@ -49,6 +49,16 @@ class Perfil:
     def manifest(self):
         return f"{self.dir}/download-manifest.json"
 
+    @property
+    def merged_away(self):
+        """Lápide dos ids que o dedupe absorbou.
+
+        Necessária porque `generate.py` é ADITIVO: sem ler isto, a próxima leva
+        traz de volta o id absorvido e o duplicado renasce. Ausente = nenhum
+        absorvido (base nunca passou pelo dedupe).
+        """
+        return f"{self.dir}/merged-away.json"
+
     def garantir_dir(self):
         os.makedirs(self.dir, exist_ok=True)
         return self.dir
@@ -131,6 +141,24 @@ def ler_manifest(p):
             f"`python data/coleta/download.py --perfil={p.nome}` antes."
         )
     return json.load(open(p.manifest, encoding="utf-8"))
+
+
+def ler_merged_away(p):
+    """Ids absorvidos pelo dedupe. Vazio quando a base nunca passou por ele."""
+    if not os.path.exists(p.merged_away):
+        return set()
+    try:
+        d = json.load(open(p.merged_away, encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        # Lápide ilegível não pode ser tratada como "nada absorvido": seria
+        # ressuscitar duplicata em silêncio. O dedupe é quem escreve, então
+        # arquivo corrompido é bug de escrita —_avisa_ e não adivinha.
+        raise SystemExit(
+            f"{p.merged_away} ilegivel — rode `python data/coleta/dedupe.py "
+            f"--perfil={p.nome}` para regravá-lo. Não vou assumir lista vazia: "
+            f"isto traria os absorvidos de volta."
+        )
+    return set(d.get("absorvidos", []))
 
 
 def caminho_fotos(fotos, iid, i):
